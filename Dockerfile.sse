@@ -1,0 +1,16 @@
+# Use a base image with Java and Node.js (for Supergateway)
+FROM nikolaik/python-nodejs:python3.11-nodejs23
+
+# Install libs
+RUN apt-get update && apt-get install -y openjdk-17-jre
+RUN npm install -g supergateway
+
+WORKDIR /app
+ARG APP_VERSION=0.1.4
+COPY bsl-context-exporter-${APP_VERSION}.jar /app/bsl-context-exporter.jar
+
+# Expose the port for Streamable HTTP
+EXPOSE 8000
+
+# Run Supergateway with the MCP server JAR
+CMD ["npx", "-y", "supergateway", "--stdio", "java -jar /app/bsl-context-exporter.jar mcp-server --platform-path /app/1c-platform --verbose", "--port", "8000"]

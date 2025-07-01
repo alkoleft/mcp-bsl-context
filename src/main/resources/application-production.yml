@@ -1,0 +1,5 @@
+# Профиль продакшена
+logging:
+  level:
+    root: WARN
+    ru.alkoleft.context.platform: INFO 

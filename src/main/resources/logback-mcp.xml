@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Свойство для имени файла лога -->
+    <property name="LOG_FILE" value="${LOG_FILE:-mcp-server.log}"/>
+
+    <!-- Аппендер для записи в файл -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+
+        <!-- Ротация файлов -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>5</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ВАЖНО: НЕ логируем в консоль для MCP режима -->
+    <!-- stdout используется для JSON-RPC протокола -->
+
+    <!-- Логгеры -->
+    <!-- ПРИМЕЧАНИЕ: Уровни логгирования могут переопределяться из application.yml или профилей -->
+    <logger name="ru.alkoleft.context.platform.mcp" level="DEBUG"/>
+    <logger name="org.springframework.ai.mcp" level="INFO"/>
+    <logger name="org.springframework.boot" level="WARN"/>
+    <logger name="org.springframework.cache" level="DEBUG"/>
+
+    <!-- ROOT логгер - только файл -->
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration> 

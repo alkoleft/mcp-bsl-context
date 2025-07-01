@@ -1,0 +1,13 @@
+# Работает и на Intel, и на Apple Silicon
+FROM eclipse-temurin:17-jre-jammy
+
+ARG APP_VERSION=0.1.4
+
+WORKDIR /app
+COPY bsl-context-exporter-${APP_VERSION}.jar /app/bsl-context-exporter.jar
+
+# ENTRYPOINT чтобы STDIO сразу уходил наружу
+ENTRYPOINT ["java","-jar","/app/bsl-context-exporter.jar","mcp-server"]
+
+# Дополнительные аргументы (например --platform-path)
+# получим из docker run, поэтому CMD не задаём

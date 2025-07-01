@@ -1,0 +1,64 @@
+spring:
+  profiles:
+    active: develop
+  application:
+    name: bsl-context-exporter
+  cache:
+    type: simple
+  ai:
+    mcp:
+      server:
+        # Информация о сервере
+        name: "1C Platform API Server"
+        version: "1.0.0"
+        description: "MCP сервер для поиска по API платформы 1С Предприятие"
+        instructions: "MCP сервер для поиска по API платформы 1С Предприятие. Выполняет поиск по свойствам, методам и типам."
+        type: SYNC
+        # Транспорт - используем STDIO для интеграции с MCP клиентами
+        stdio: true
+
+        # Возможности сервера
+        capabilities:
+          tools:
+            # Поддержка инструментов
+            enabled: true
+          resources:
+            # Поддержка ресурсов (отключено для простоты)
+            enabled: false
+          prompts:
+            # Поддержка промптов (отключено для простоты)
+            enabled: false
+  # Отключаем баннер Spring Boot для чистого STDIO вывода
+  main:
+    banner-mode: off
+    web-application-type: none
+  # Отключаем автоконфигурацию веб-слоя
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
+
+# Настройки платформы 1С
+platform:
+  context:
+    # Путь к каталогу с файлами платформы (содержащий shcntx_ru.hbk)
+    # Можно переопределить через переменную окружения PLATFORM_CONTEXT_PATH
+    path: ${PLATFORM_CONTEXT_PATH:}
+
+# Отключаем веб-сервер (используем только STDIO)
+server:
+  port: -1
+
+# Настройки логирования
+logging:
+  config: classpath:logback-mcp.xml
+  # Все остальные настройки логгирования теперь берутся из logback-mcp.xml
+
+# Настройки кэширования
+cache:
+  api-search:
+    expire-after-write: 1h
+  api-info:
+    expire-after-write: 1h
+  caffeine:
+    spec: maximumSize=1000,expireAfterWrite=5m
