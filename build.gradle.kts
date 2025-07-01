@@ -9,6 +9,7 @@ plugins {
     id("org.springframework.boot") version "3.5.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("maven-publish")
+    id("jacoco")
 }
 
 group = "io.github.alkoleft"
@@ -156,5 +157,19 @@ publishing {
         register<MavenPublication>("gpr") {
             from(components["java"])
         }
+    }
+}
+
+// Настройка JaCoCo для генерации отчёта покрытия тестов
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
     }
 }
