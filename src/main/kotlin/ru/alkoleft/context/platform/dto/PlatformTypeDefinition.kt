@@ -13,9 +13,9 @@ package ru.alkoleft.context.platform.dto
  * Заменяет Java record PlatformTypeDefinition с полной функциональной совместимостью
  */
 data class PlatformTypeDefinition(
-        val name: String,
-        val description: String,
-        val methods: List<MethodDefinition>,
-        val properties: List<PropertyDefinition>,
-        val constructors: List<ISignature>,
+    val name: String,
+    val description: String,
+    val methods: List<MethodDefinition>,
+    val properties: List<PropertyDefinition>,
+    val constructors: List<ISignature>,
 )

@@ -99,7 +99,7 @@ compileOnly("org.projectlombok:lombok")
 
 ### Команда запуска
 ```bash
-java -jar build/libs/bsl-context-exporter-feature-mpc-51bea75-DIRTY.jar mcp-server -p /path/to/1c/platform
+java -jar build/libs/mcp-bsl-context-feature-mpc-51bea75-DIRTY.jar mcp-server -p /path/to/1c/platform
 ```
 
 ### MCP Tools

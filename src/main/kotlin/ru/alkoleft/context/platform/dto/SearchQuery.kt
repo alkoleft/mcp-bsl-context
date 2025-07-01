@@ -13,10 +13,10 @@ package ru.alkoleft.context.platform.dto
  * Основная структура для типобезопасного поиска по API платформы
  */
 data class SearchQuery(
-        val text: String,
-        val type: ApiType? = null,
-        val limit: Int = 10,
-        val options: SearchOptions = SearchOptions(),
+    val text: String,
+    val type: ApiType? = null,
+    val limit: Int = 10,
+    val options: SearchOptions = SearchOptions(),
 ) {
     /**
      * Ключ для кэширования запроса
@@ -30,10 +30,10 @@ data class SearchQuery(
  * Конфигурирует поведение поискового алгоритма
  */
 data class SearchOptions(
-        var intelligent: Boolean = true,
-        var includeInherited: Boolean = false,
-        var caseSensitive: Boolean = false,
-        var exactMatch: Boolean = false,
+    var intelligent: Boolean = true,
+    var includeInherited: Boolean = false,
+    var caseSensitive: Boolean = false,
+    var exactMatch: Boolean = false,
 )
 
 /**
@@ -42,7 +42,7 @@ data class SearchOptions(
  * Содержит результаты поиска по всем типам API элементов
  */
 data class SearchResults(
-        val methods: List<MethodDefinition> = emptyList(),
-        val properties: List<PropertyDefinition> = emptyList(),
-        val types: List<PlatformTypeDefinition> = emptyList(),
+    val methods: List<MethodDefinition> = emptyList(),
+    val properties: List<PropertyDefinition> = emptyList(),
+    val types: List<PlatformTypeDefinition> = emptyList(),
 )

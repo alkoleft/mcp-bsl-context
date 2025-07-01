@@ -15,10 +15,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * Заменяет Java record MethodDefinition с полной функциональной совместимостью
  */
 data class MethodDefinition(
-        val name: String,
-        val description: String,
-        val signature: List<Signature>,
-        @JsonProperty("return") val returnType: String,
+    val name: String,
+    val description: String,
+    val signature: List<Signature>,
+    @JsonProperty("return") val returnType: String,
 ) {
     /**
      * Получение определения типа возврата
@@ -33,7 +33,7 @@ data class MethodDefinition(
      * Заменяет вложенный Java record TypeDefinition
      */
     data class TypeDefinition(
-            val name: String,
-            val description: String,
+        val name: String,
+        val description: String,
     )
 }

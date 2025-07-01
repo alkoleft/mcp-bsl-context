@@ -16,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ParameterDefinition(
-        val required: Boolean,
-        val name: String,
-        val description: String,
-        val type: String,
+    val required: Boolean,
+    val name: String,
+    val description: String,
+    val type: String,
 )

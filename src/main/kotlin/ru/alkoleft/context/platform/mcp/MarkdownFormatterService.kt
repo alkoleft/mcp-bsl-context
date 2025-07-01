@@ -30,8 +30,8 @@ class MarkdownFormatterService {
      * Форматирование результатов поиска
      */
     fun formatSearchResults(
-            query: String,
-            results: List<Any>,
+        query: String,
+        results: List<Any>,
     ): String {
         if (results.isEmpty()) {
             return formatEmptyResults(query)
@@ -80,85 +80,85 @@ class MarkdownFormatterService {
      * Форматирование детальной информации об элементе
      */
     fun formatDetailedInfo(obj: Any): String =
-            when (obj) {
-                is MethodDefinition -> formatMethodDefinition(obj)
-                is PropertyDefinition -> formatPropertyDefinition(obj)
-                is PlatformTypeDefinition -> formatPlatformTypeDefinition(obj)
-                else -> "❌ **Неподдерживаемый тип объекта:** ${obj::class.simpleName}"
-            }
+        when (obj) {
+            is MethodDefinition -> formatMethodDefinition(obj)
+            is PropertyDefinition -> formatPropertyDefinition(obj)
+            is PlatformTypeDefinition -> formatPlatformTypeDefinition(obj)
+            else -> "❌ **Неподдерживаемый тип объекта:** ${obj::class.simpleName}"
+        }
 
     /**
      * Форматирование конструкторов типа
      */
     fun formatConstructors(
-            constructors: List<ISignature>,
-            typeName: String,
+        constructors: List<ISignature>,
+        typeName: String,
     ): String =
-            buildString {
-                appendLine("# 🔨 Конструкторы типа $typeName (${constructors.size} найдено)\n")
+        buildString {
+            appendLine("# 🔨 Конструкторы типа $typeName (${constructors.size} найдено)\n")
 
-                constructors.forEachIndexed { index, constructor ->
-                    appendLine("## Конструктор ${index + 1}")
-                    appendLine("```bsl")
-                    val params = constructor.params.joinToString(", ") { "${it.name}: ${it.type}" }
-                    appendLine("Новый $typeName($params)")
-                    appendLine("```\n")
+            constructors.forEachIndexed { index, constructor ->
+                appendLine("## Конструктор ${index + 1}")
+                appendLine("```bsl")
+                val params = constructor.params.joinToString(", ") { "${it.name}: ${it.type}" }
+                appendLine("Новый $typeName($params)")
+                appendLine("```\n")
 
-                    constructor.description.takeIf { it.isNotBlank() }?.let {
-                        appendLine("**Описание:** $it\n")
+                constructor.description.takeIf { it.isNotBlank() }?.let {
+                    appendLine("**Описание:** $it\n")
+                }
+
+                if (constructor.params.isNotEmpty()) {
+                    appendLine("**Параметры:**")
+                    constructor.params.forEach { param ->
+                        val requiredMark = if (param.required) "(обязательный)" else ""
+                        val description = param.description
+                        appendLine("- **${param.name}** *(${param.type})* $requiredMark - $description")
                     }
-
-                    if (constructor.params.isNotEmpty()) {
-                        appendLine("**Параметры:**")
-                        constructor.params.forEach { param ->
-                            val requiredMark = if (param.required) "(обязательный)" else ""
-                            val description = param.description
-                            appendLine("- **${param.name}** *(${param.type})* $requiredMark - $description")
-                        }
-                        appendLine()
-                    }
+                    appendLine()
                 }
             }
+        }
 
     /**
      * Форматирование всех элементов типа
      */
     fun formatTypeMembers(type: PlatformTypeDefinition): String =
-            buildString {
-                appendLine("# 📦 Элементы типа ${type.name}\n")
+        buildString {
+            appendLine("# 📦 Элементы типа ${type.name}\n")
 
-                // Методы
-                if (type.methods.isNotEmpty()) {
-                    appendLine("## 🔧 Методы (${type.methods.size})\n")
-                    type.methods.forEach { method ->
-                        val signature = method.buildMethodSignature()
-                        val description = method.description
-                        appendLine("- **$signature** - $description")
-                    }
-                    appendLine()
+            // Методы
+            if (type.methods.isNotEmpty()) {
+                appendLine("## 🔧 Методы (${type.methods.size})\n")
+                type.methods.forEach { method ->
+                    val signature = method.buildMethodSignature()
+                    val description = method.description
+                    appendLine("- **$signature** - $description")
                 }
-
-                // Свойства
-                if (type.properties.isNotEmpty()) {
-                    appendLine("## 📋 Свойства (${type.properties.size})\n")
-                    type.properties.forEach { property ->
-                        val description = property.description
-                        appendLine("- **${property.name}** *(${property.type})* - $description")
-                    }
-                    appendLine()
-                }
-
-                // Конструкторы
-                if (type.constructors.isNotEmpty()) {
-                    appendLine("## 🔨 Конструкторы (${type.constructors.size})\n")
-                    appendLine("*Для получения детальной информации о конструкторах используйте getConstructors*\n")
-                }
+                appendLine()
             }
+
+            // Свойства
+            if (type.properties.isNotEmpty()) {
+                appendLine("## 📋 Свойства (${type.properties.size})\n")
+                type.properties.forEach { property ->
+                    val description = property.description
+                    appendLine("- **${property.name}** *(${property.type})* - $description")
+                }
+                appendLine()
+            }
+
+            // Конструкторы
+            if (type.constructors.isNotEmpty()) {
+                appendLine("## 🔨 Конструкторы (${type.constructors.size})\n")
+                appendLine("*Для получения детальной информации о конструкторах используйте getConstructors*\n")
+            }
+        }
 
     // Приватные методы форматирования
 
     private fun formatEmptyResults(query: String): String =
-            """
+        """
         ❌ **Ничего не найдено по запросу:** `$query`
 
         💡 **Попробуйте:**
@@ -168,143 +168,143 @@ class MarkdownFormatterService {
         """.trimIndent()
 
     private fun formatMethodDefinition(method: MethodDefinition): String =
-            buildString {
-                appendLine("# 🔧 ${method.name}\n")
+        buildString {
+            appendLine("# 🔧 ${method.name}\n")
 
-                // Сигнатуры
-                method.signature.forEach { signature ->
-                    appendLine("## Сигнатура: ${signature.name} (${signature.description})")
-                    appendLine("```bsl")
-                    appendLine(method.buildMethodSignature(signature))
-                    appendLine("```\n")
+            // Сигнатуры
+            method.signature.forEach { signature ->
+                appendLine("## Сигнатура: ${signature.name} (${signature.description})")
+                appendLine("```bsl")
+                appendLine(method.buildMethodSignature(signature))
+                appendLine("```\n")
 
-                    // Параметры
-                    if (signature.params.isNotEmpty()) {
-                        appendLine("### Параметры")
-                        signature.params.forEach { param ->
-                            val requiredMark = if (param.required) "(обязательный)" else ""
-                            val description = param.description
-                            appendLine("- **${param.name}** *(${param.type})* $requiredMark - $description")
-                        }
-                        appendLine()
+                // Параметры
+                if (signature.params.isNotEmpty()) {
+                    appendLine("### Параметры")
+                    signature.params.forEach { param ->
+                        val requiredMark = if (param.required) "(обязательный)" else ""
+                        val description = param.description
+                        appendLine("- **${param.name}** *(${param.type})* $requiredMark - $description")
                     }
-                }
-
-                // Возвращаемое значение
-                method.returnType.let { returnType ->
-                    appendLine("## Возвращаемое значение")
-                    val returnTypeDef = method.getReturnTypeDefinition()
-                    val description = returnTypeDef.description
-                    appendLine("**${returnTypeDef.name}** - $description\n")
-                }
-
-                // Описание метода
-                method.description.takeIf { it.isNotBlank() }?.let {
-                    appendLine("## Описание")
-                    appendLine(it)
+                    appendLine()
                 }
             }
+
+            // Возвращаемое значение
+            method.returnType.let { returnType ->
+                appendLine("## Возвращаемое значение")
+                val returnTypeDef = method.getReturnTypeDefinition()
+                val description = returnTypeDef.description
+                appendLine("**${returnTypeDef.name}** - $description\n")
+            }
+
+            // Описание метода
+            method.description.takeIf { it.isNotBlank() }?.let {
+                appendLine("## Описание")
+                appendLine(it)
+            }
+        }
 
     private fun formatPropertyDefinition(property: PropertyDefinition): String =
-            buildString {
-                appendLine("# 📋 ${property.name}\n")
+        buildString {
+            appendLine("# 📋 ${property.name}\n")
 
-                appendLine("**Тип:** ${property.type}")
-                appendLine("**Доступность:** ${if (property.readonly) "Только чтение" else "Чтение/запись"}")
-                appendLine()
+            appendLine("**Тип:** ${property.type}")
+            appendLine("**Доступность:** ${if (property.readonly) "Только чтение" else "Чтение/запись"}")
+            appendLine()
 
-                property.description.takeIf { it.isNotBlank() }?.let {
-                    appendLine("## Описание")
-                    appendLine(it)
-                }
+            property.description.takeIf { it.isNotBlank() }?.let {
+                appendLine("## Описание")
+                appendLine(it)
             }
+        }
 
     private fun formatPlatformTypeDefinition(type: PlatformTypeDefinition): String =
-            buildString {
-                appendLine("# 📦 ${type.name}\n")
+        buildString {
+            appendLine("# 📦 ${type.name}\n")
 
-                type.description.takeIf { it.isNotBlank() }?.let {
-                    appendLine("## Описание")
-                    appendLine("$it\n")
-                }
-
-                // Краткая статистика
-                appendLine("## Статистика")
-                appendLine("- **Методы:** ${type.methods.size}")
-                appendLine("- **Свойства:** ${type.properties.size}")
-                appendLine("- **Конструкторы:** ${type.constructors.size}")
-                appendLine()
-
-                // Основные методы (топ-5)
-                if (type.methods.isNotEmpty()) {
-                    appendLine("## Основные методы")
-                    type.methods.take(5).forEach { method ->
-                        val signature = method.buildMethodSignature()
-                        appendLine("- `$signature`")
-                    }
-                    if (type.methods.size > 5) {
-                        appendLine("- *...и ещё ${type.methods.size - 5} методов*")
-                    }
-                    appendLine()
-                }
-
-                // Основные свойства (топ-5)
-                if (type.properties.isNotEmpty()) {
-                    appendLine("## Основные свойства")
-                    type.properties.take(5).forEach { property ->
-                        appendLine("- **${property.name}** *(${property.type})*")
-                    }
-                    if (type.properties.size > 5) {
-                        appendLine("- *...и ещё ${type.properties.size - 5} свойств*")
-                    }
-                    appendLine()
-                }
-
-                appendLine("💡 *Используйте getMembers для получения полного списка*")
+            type.description.takeIf { it.isNotBlank() }?.let {
+                appendLine("## Описание")
+                appendLine("$it\n")
             }
+
+            // Краткая статистика
+            appendLine("## Статистика")
+            appendLine("- **Методы:** ${type.methods.size}")
+            appendLine("- **Свойства:** ${type.properties.size}")
+            appendLine("- **Конструкторы:** ${type.constructors.size}")
+            appendLine()
+
+            // Основные методы (топ-5)
+            if (type.methods.isNotEmpty()) {
+                appendLine("## Основные методы")
+                type.methods.take(5).forEach { method ->
+                    val signature = method.buildMethodSignature()
+                    appendLine("- `$signature`")
+                }
+                if (type.methods.size > 5) {
+                    appendLine("- *...и ещё ${type.methods.size - 5} методов*")
+                }
+                appendLine()
+            }
+
+            // Основные свойства (топ-5)
+            if (type.properties.isNotEmpty()) {
+                appendLine("## Основные свойства")
+                type.properties.take(5).forEach { property ->
+                    appendLine("- **${property.name}** *(${property.type})*")
+                }
+                if (type.properties.size > 5) {
+                    appendLine("- *...и ещё ${type.properties.size - 5} свойств*")
+                }
+                appendLine()
+            }
+
+            appendLine("💡 *Используйте getMembers для получения полного списка*")
+        }
 
     private fun formatSingleObject(obj: Any): String =
-            when (obj) {
-                is MethodDefinition -> formatMethodDefinition(obj)
-                is PropertyDefinition -> formatPropertyDefinition(obj)
-                is PlatformTypeDefinition -> formatPlatformTypeDefinition(obj)
-                else -> "❌ **Неподдерживаемый тип объекта:** ${obj::class.simpleName}"
-            }
+        when (obj) {
+            is MethodDefinition -> formatMethodDefinition(obj)
+            is PropertyDefinition -> formatPropertyDefinition(obj)
+            is PlatformTypeDefinition -> formatPlatformTypeDefinition(obj)
+            else -> "❌ **Неподдерживаемый тип объекта:** ${obj::class.simpleName}"
+        }
 
     private fun formatCompactObject(
-            obj: Any,
-            isFirst: Boolean,
+        obj: Any,
+        isFirst: Boolean,
     ): String =
-            buildString {
-                val prefix = if (isFirst) "⭐" else "•"
+        buildString {
+            val prefix = if (isFirst) "⭐" else "•"
 
-                when (obj) {
-                    is MethodDefinition -> {
-                        appendLine("$prefix **${obj.name}** (Метод)")
-                        appendLine("   - Сигнатура: `${obj.buildMethodSignature()}`")
-                        obj.description.takeIf { it.isNotBlank() }?.let {
-                            appendLine("   - Описание: $it")
-                        }
+            when (obj) {
+                is MethodDefinition -> {
+                    appendLine("$prefix **${obj.name}** (Метод)")
+                    appendLine("   - Сигнатура: `${obj.buildMethodSignature()}`")
+                    obj.description.takeIf { it.isNotBlank() }?.let {
+                        appendLine("   - Описание: $it")
                     }
+                }
 
-                    is PropertyDefinition -> {
-                        appendLine("$prefix **${obj.name}** (Свойство)")
-                        appendLine("   - Тип: `${obj.type}`")
-                        appendLine("   - Доступность: ${if (obj.readonly) "Только чтение" else "Чтение/запись"}")
-                        obj.description.takeIf { it.isNotBlank() }?.let {
-                            appendLine("   - Описание: $it")
-                        }
+                is PropertyDefinition -> {
+                    appendLine("$prefix **${obj.name}** (Свойство)")
+                    appendLine("   - Тип: `${obj.type}`")
+                    appendLine("   - Доступность: ${if (obj.readonly) "Только чтение" else "Чтение/запись"}")
+                    obj.description.takeIf { it.isNotBlank() }?.let {
+                        appendLine("   - Описание: $it")
                     }
+                }
 
-                    is PlatformTypeDefinition -> {
-                        appendLine("$prefix **${obj.name}** (Тип)")
-                        appendLine("   - Методы: ${obj.methods.size}, Свойства: ${obj.properties.size}")
-                        obj.description.takeIf { it.isNotBlank() }?.let {
-                            appendLine("   - Описание: $it")
-                        }
+                is PlatformTypeDefinition -> {
+                    appendLine("$prefix **${obj.name}** (Тип)")
+                    appendLine("   - Методы: ${obj.methods.size}, Свойства: ${obj.properties.size}")
+                    obj.description.takeIf { it.isNotBlank() }?.let {
+                        appendLine("   - Описание: $it")
                     }
                 }
             }
+        }
 
     // Extension functions для удобства
 
@@ -344,13 +344,9 @@ class MarkdownFormatterService {
 
     private fun MethodDefinition.buildMethodSignature(signature: Signature): String {
         val params =
-                signature.params.joinToString(", ") { param ->
-                    "${param.name}: ${param.type}"
-                }
-        return if (returnType != null) {
-            "$name($params): $returnType"
-        } else {
-            "$name($params)"
-        }
+            signature.params.joinToString(", ") { param ->
+                "${param.name}: ${param.type}"
+            }
+        return "$name($params): $returnType"
     }
 }

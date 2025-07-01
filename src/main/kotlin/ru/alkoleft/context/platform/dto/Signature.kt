@@ -13,7 +13,7 @@ package ru.alkoleft.context.platform.dto
  * Заменяет Java record Signature с реализацией интерфейса ISignature
  */
 data class Signature(
-        override val name: String,
-        override val description: String,
-        override val params: List<ParameterDefinition>,
+    override val name: String,
+    override val description: String,
+    override val params: List<ParameterDefinition>,
 ) : ISignature

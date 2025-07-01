@@ -28,8 +28,8 @@ class SearchContext {
      * Создание поискового запроса с типобезопасным DSL
      */
     fun query(
-            text: String,
-            block: QueryBuilder.() -> Unit,
+        text: String,
+        block: QueryBuilder.() -> Unit,
     ): SearchQuery = QueryBuilder(text).apply(block).build()
 }
 
@@ -38,7 +38,7 @@ class SearchContext {
  */
 @SearchDsl
 class QueryBuilder(
-        private val text: String,
+    private val text: String,
 ) {
     private var type: ApiType? = null
     private var limit: Int = 10

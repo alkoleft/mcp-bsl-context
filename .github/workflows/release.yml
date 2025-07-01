@@ -18,6 +18,18 @@ jobs:
       id-token: write
 
     steps:
+      - name: Checkout bsl-context
+        uses: actions/checkout@v4
+        with:
+          repository: 1c-syntax/bsl-context
+          path: bsl-context
+          ref: rnd
+
+      - name: Build and publish bsl-context to mavenLocal
+        run: |
+          cd bsl-context
+          ./gradlew publishToMavenLocal
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:

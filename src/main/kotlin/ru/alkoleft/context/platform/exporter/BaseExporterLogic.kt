@@ -36,99 +36,99 @@ class BaseExporterLogic : ExporterLogic {
         Objects.requireNonNull(context, "PlatformGlobalContext cannot be null")
 
         return Optional
-                .ofNullable(context.properties())
-                .map { it.stream() }
-                .orElse(Stream.empty())
-                .map { property ->
-                    val type =
-                            Optional
-                                    .ofNullable(property.types())
-                                    .filter { types -> types.isNotEmpty() }
-                                    .map { types -> types[0].name().name }
-                                    .orElse(null)
+            .ofNullable(context.properties())
+            .map { it.stream() }
+            .orElse(Stream.empty())
+            .map { property ->
+                val type =
+                    Optional
+                        .ofNullable(property.types())
+                        .filter { types -> types.isNotEmpty() }
+                        .map { types -> types[0].name().name }
+                        .orElse(null)
 
-                    PropertyDefinition(
-                            name = property.name().name,
-                            nameEn = property.name().alias ?: "",
-                            description = property.description() ?: "",
-                            readonly = AccessMode.READ == property.accessMode(),
-                            type = type ?: "",
-                    )
-                }
+                PropertyDefinition(
+                    name = property.name().name,
+                    nameEn = property.name().alias ?: "",
+                    description = property.description() ?: "",
+                    readonly = AccessMode.READ == property.accessMode(),
+                    type = type ?: "",
+                )
+            }
     }
 
     override fun extractMethods(context: PlatformGlobalContext): Stream<MethodDefinition> {
         Objects.requireNonNull(context, "PlatformGlobalContext cannot be null")
 
         return Optional
-                .ofNullable(context.methods())
-                .stream()
-                .flatMap { it.stream() }
-                .map { method ->
-                    val signatures =
-                            Optional
-                                    .ofNullable(method.signatures())
-                                    .map { sigs ->
-                                        sigs.map { toSignature(it) }
-                                    }.orElse(emptyList())
+            .ofNullable(context.methods())
+            .stream()
+            .flatMap { it.stream() }
+            .map { method ->
+                val signatures =
+                    Optional
+                        .ofNullable(method.signatures())
+                        .map { sigs ->
+                            sigs.map { toSignature(it) }
+                        }.orElse(emptyList())
 
-                    val returnValue =
-                            if (method.hasReturnValue() &&
-                                    method.returnValues() != null &&
-                                    method.returnValues().isNotEmpty()
-                            ) {
-                                method.returnValues()[0].name().name
-                            } else {
-                                null
-                            }
+                val returnValue =
+                    if (method.hasReturnValue() &&
+                        method.returnValues() != null &&
+                        method.returnValues().isNotEmpty()
+                    ) {
+                        method.returnValues()[0].name().name
+                    } else {
+                        null
+                    }
 
-                    MethodDefinition(
-                            name = method.name().name,
-                            description = method.description() ?: "",
-                            signature = signatures,
-                            returnType = returnValue ?: "",
-                    )
-                }
+                MethodDefinition(
+                    name = method.name().name,
+                    description = method.description() ?: "",
+                    signature = signatures,
+                    returnType = returnValue ?: "",
+                )
+            }
     }
 
     private fun toSignature(sig: ContextMethodSignature): Signature {
         val sigDescription =
-                if (PRIMARY_SIGNATURE_NAME == sig.name().name) {
-                    sig.description()
-                } else {
-                    "${sig.name().name}. ${sig.description()}"
-                }
+            if (PRIMARY_SIGNATURE_NAME == sig.name().name) {
+                sig.description()
+            } else {
+                "${sig.name().name}. ${sig.description()}"
+            }
 
         val paramsList =
-                Optional
-                        .ofNullable(sig.parameters())
-                        .filter { params -> params.isNotEmpty() }
-                        .map { params ->
-                            params.map { Factory.parameter(it) }
-                        }.orElse(emptyList())
+            Optional
+                .ofNullable(sig.parameters())
+                .filter { params -> params.isNotEmpty() }
+                .map { params ->
+                    params.map { Factory.parameter(it) }
+                }.orElse(emptyList())
 
         return Signature(
-                name = sig.name().alias,
-                description = sigDescription,
-                params = paramsList,
+            name = sig.name().alias,
+            description = sigDescription,
+            params = paramsList,
         )
     }
 
     override fun extractTypes(contexts: List<Context>): Stream<PlatformTypeDefinition> =
-            Optional
-                    .ofNullable(contexts)
-                    .stream()
-                    .flatMap { it.stream() }
-                    .filter { it is PlatformContextType }
-                    .map { it as PlatformContextType }
-                    .map { createTypeDefinition(it) }
+        Optional
+            .ofNullable(contexts)
+            .stream()
+            .flatMap { it.stream() }
+            .filter { it is PlatformContextType }
+            .map { it as PlatformContextType }
+            .map { createTypeDefinition(it) }
 
     private fun createTypeDefinition(context: PlatformContextType): PlatformTypeDefinition =
-            PlatformTypeDefinition(
-                    name = context.name().name,
-                    description = "",
-                    methods = Factory.methods(context),
-                    properties = Factory.properties(context),
-                    constructors = Factory.constructors(context),
-            )
+        PlatformTypeDefinition(
+            name = context.name().name,
+            description = "",
+            methods = Factory.methods(context),
+            properties = Factory.properties(context),
+            constructors = Factory.constructors(context),
+        )
 }

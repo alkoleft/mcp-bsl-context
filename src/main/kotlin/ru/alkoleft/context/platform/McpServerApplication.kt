@@ -26,10 +26,10 @@ import ru.alkoleft.context.platform.mcp.PlatformApiSearchService
 class McpServerApplication {
     @Bean
     fun platformTools(platformApiSearchService: PlatformApiSearchService): ToolCallbackProvider =
-            MethodToolCallbackProvider
-                    .builder()
-                    .toolObjects(platformApiSearchService)
-                    .build()
+        MethodToolCallbackProvider
+            .builder()
+            .toolObjects(platformApiSearchService)
+            .build()
 
     fun main(args: Array<String>) {
         runApplication<McpServerApplication>(*args)

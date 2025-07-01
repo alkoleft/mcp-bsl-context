@@ -1,16 +1,15 @@
 plugins {
-    kotlin("jvm") version "2.1.20"
-    kotlin("kapt") version "2.1.20"
-    kotlin("plugin.spring") version "2.1.20"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.spring)
     application
-    id("me.qoomon.git-versioning") version "6.4.4"
-    id("com.gorylenko.gradle-git-properties") version "2.4.2"
-    id("io.freefair.lombok") version "8.11"
-    id("org.springframework.boot") version "3.5.0"
-    id("io.spring.dependency-management") version "1.1.7"
+    alias(libs.plugins.git.versioning)
+    alias(libs.plugins.gradle.git.properties)
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
     id("maven-publish")
     id("jacoco")
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    alias(libs.plugins.ktlint)
 }
 
 group = "io.github.alkoleft"
@@ -38,76 +37,48 @@ kotlin {
     }
 }
 
-ktlint {
-    version.set("1.4.1")
-}
-
 repositories {
     mavenCentral()
     mavenLocal()
     maven(url = "https://jitpack.io")
 }
 
-extra["springAiVersion"] = "1.0.0"
-
-val jackson = "2.15.2"
-
 dependencies {
     // Kotlin Standard Library
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-    // Kotlin Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation(libs.bundles.kotlin)
 
     // Spring Boot with Kotlin
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation(libs.bundles.spring.boot)
 
     // Spring AI MCP Server
-    implementation("org.springframework.ai:spring-ai-starter-mcp-server")
+    implementation(libs.spring.ai.starter.mcp.server)
 
     // HBK
-    implementation("com.github._1c_syntax.bsl:bsl-context:1.0-SNAPSHOT")
+    implementation(libs.bsl.context)
 
     // JSON/XML with Kotlin support
-    implementation("com.fasterxml.jackson.core:jackson-core:$jackson")
-    implementation("com.fasterxml.jackson.core:jackson-databind:$jackson")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:$jackson")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson")
+    implementation(libs.bundles.jackson)
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.5.18")
-    implementation("org.codehaus.janino:janino:3.1.12")
+    implementation(libs.bundles.logging)
 
     // Reactor Core для Spring AI MCP
-    implementation("io.projectreactor:reactor-core:3.6.11")
+    implementation(libs.reactor.core)
 
     // ANTLR - принудительное управление версиями для исправления несоответствия
-    implementation("org.antlr:antlr4-runtime:4.9.3")
-    implementation("org.antlr:antlr4:4.9.3")
-
-    // Lombok for Kotlin
-    kapt("org.projectlombok:lombok:1.18.30")
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    implementation(libs.bundles.antlr)
 
     // Tests
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.slf4j", "slf4j-log4j12", "1.7.30")
-    testImplementation(platform("org.junit:junit-bom:5.11.4"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.assertj:assertj-core:3.8.0")
+    testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.bundles.junit)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.slf4j.log4j12)
 }
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.ai:spring-ai-bom:${property("springAiVersion")}")
+        mavenBom("org.springframework.ai:spring-ai-bom:${libs.versions.springAi.get()}")
     }
 }
 
@@ -167,7 +138,11 @@ publishing {
 
 // Настройка JaCoCo для генерации отчёта покрытия тестов
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = libs.versions.jacoco.get()
+}
+
+ktlint {
+    version = libs.versions.ktlint.get()
 }
 
 tasks.jacocoTestReport {

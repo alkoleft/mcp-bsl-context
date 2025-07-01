@@ -8,8 +8,6 @@
 package ru.alkoleft.context.platform.mcp
 
 import com.github._1c_syntax.bsl.context.api.ContextProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -30,7 +28,7 @@ import kotlin.concurrent.write
  */
 @Service
 class PlatformContextService(
-        private val contextLoader: PlatformContextLoader,
+    private val contextLoader: PlatformContextLoader,
 ) {
     companion object {
         private val log = LoggerFactory.getLogger(PlatformContextService::class.java)
@@ -72,19 +70,6 @@ class PlatformContextService(
     }
 
     /**
-     * Асинхронное получение провайдера контекста
-     */
-    suspend fun getContextProviderAsync(): ContextProvider =
-            withContext(Dispatchers.IO) {
-                getContextProvider()
-            }
-
-    /**
-     * Проверяет, инициализирован ли контекст
-     */
-    fun isContextLoaded(): Boolean = isLoaded.get()
-
-    /**
      * Принудительная перезагрузка контекста
      */
     fun reloadContext() {
@@ -121,7 +106,7 @@ class PlatformContextService(
     private fun validateConfigurationPath() {
         if (!::platformContextPath.isInitialized || platformContextPath.isBlank()) {
             throw IllegalStateException(
-                    """
+                """
                 Путь к контексту платформы не настроен.
                 Установите свойство platform.context.path в application.yml:
                 
@@ -132,37 +117,4 @@ class PlatformContextService(
             )
         }
     }
-
-    /**
-     * Устанавливает путь к контексту программно (для тестирования)
-     */
-    fun setPlatformContextPath(path: String) {
-        lock.write {
-            platformContextPath = path
-            if (isLoaded.get()) {
-                reloadContext()
-            }
-        }
-    }
-
-    /**
-     * Получение статистики кэша
-     */
-    fun getCacheStats(): CacheStats =
-            lock.read {
-                CacheStats(
-                        isLoaded = isLoaded.get(),
-                        configPath = if (::platformContextPath.isInitialized) platformContextPath else "Не настроен",
-                        hasProvider = cachedProvider != null,
-                )
-            }
-
-    /**
-     * Статистика кэша
-     */
-    data class CacheStats(
-            val isLoaded: Boolean,
-            val configPath: String,
-            val hasProvider: Boolean,
-    )
 }

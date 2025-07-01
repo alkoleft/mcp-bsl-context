@@ -16,9 +16,9 @@ import com.fasterxml.jackson.annotation.JsonInclude
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class PropertyDefinition(
-        val name: String,
-        val nameEn: String,
-        val description: String,
-        val readonly: Boolean,
-        val type: String,
+    val name: String,
+    val nameEn: String,
+    val description: String,
+    val readonly: Boolean,
+    val type: String,
 )
