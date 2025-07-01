@@ -14,13 +14,22 @@ import java.nio.file.Path
 
 interface Exporter {
     @Throws(IOException::class)
-    fun writeProperties(context: PlatformGlobalContext, output: Path)
+    fun writeProperties(
+            context: PlatformGlobalContext,
+            output: Path,
+    )
 
     @Throws(IOException::class)
-    fun writeMethods(context: PlatformGlobalContext, output: Path)
+    fun writeMethods(
+            context: PlatformGlobalContext,
+            output: Path,
+    )
 
     @Throws(IOException::class)
-    fun writeTypes(contexts: List<Context>, output: Path)
+    fun writeTypes(
+            contexts: List<Context>,
+            output: Path,
+    )
 
     fun getExtension(): String
-} 
+}

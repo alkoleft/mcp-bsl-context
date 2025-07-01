@@ -24,20 +24,22 @@ annotation class SearchDsl
  */
 @SearchDsl
 class SearchContext {
-
     /**
      * Создание поискового запроса с типобезопасным DSL
      */
-    fun query(text: String, block: QueryBuilder.() -> Unit): SearchQuery {
-        return QueryBuilder(text).apply(block).build()
-    }
+    fun query(
+            text: String,
+            block: QueryBuilder.() -> Unit,
+    ): SearchQuery = QueryBuilder(text).apply(block).build()
 }
 
 /**
  * Builder для построения поискового запроса
  */
 @SearchDsl
-class QueryBuilder(private val text: String) {
+class QueryBuilder(
+        private val text: String,
+) {
     private var type: ApiType? = null
     private var limit: Int = 10
     private var options: SearchOptions = SearchOptions()
@@ -86,6 +88,4 @@ class QueryBuilder(private val text: String) {
  * }
  * ```
  */
-fun search(block: SearchContext.() -> SearchQuery): SearchQuery {
-    return SearchContext().block()
-} 
+fun search(block: SearchContext.() -> SearchQuery): SearchQuery = SearchContext().block()

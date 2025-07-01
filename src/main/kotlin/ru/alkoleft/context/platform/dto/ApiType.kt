@@ -5,7 +5,6 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-
 package ru.alkoleft.context.platform.dto
 
 /**
@@ -17,28 +16,31 @@ enum class ApiType {
     METHOD,
     PROPERTY,
     TYPE,
-    CONSTRUCTOR;
+    CONSTRUCTOR,
+    ;
 
     /**
      * Преобразование в строковое представление для совместимости с Java API
      */
-    fun toStringType(): String = when (this) {
-        METHOD -> "method"
-        PROPERTY -> "property"
-        TYPE -> "type"
-        CONSTRUCTOR -> "constructor"
-    }
+    fun toStringType(): String =
+            when (this) {
+                METHOD -> "method"
+                PROPERTY -> "property"
+                TYPE -> "type"
+                CONSTRUCTOR -> "constructor"
+            }
 
     companion object {
         /**
          * Создание ApiType из строки для обратной совместимости
          */
-        fun fromString(type: String?): ApiType? = when (type?.lowercase()) {
-            "method" -> METHOD
-            "property" -> PROPERTY
-            "type" -> TYPE
-            "constructor" -> CONSTRUCTOR
-            else -> null
-        }
+        fun fromString(type: String?): ApiType? =
+                when (type?.lowercase()) {
+                    "method" -> METHOD
+                    "property" -> PROPERTY
+                    "type" -> TYPE
+                    "constructor" -> CONSTRUCTOR
+                    else -> null
+                }
     }
-} 
+}

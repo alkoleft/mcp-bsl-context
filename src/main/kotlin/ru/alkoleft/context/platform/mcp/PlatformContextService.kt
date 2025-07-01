@@ -30,7 +30,7 @@ import kotlin.concurrent.write
  */
 @Service
 class PlatformContextService(
-    private val contextLoader: PlatformContextLoader
+        private val contextLoader: PlatformContextLoader,
 ) {
     companion object {
         private val log = LoggerFactory.getLogger(PlatformContextService::class.java)
@@ -74,9 +74,10 @@ class PlatformContextService(
     /**
      * Асинхронное получение провайдера контекста
      */
-    suspend fun getContextProviderAsync(): ContextProvider = withContext(Dispatchers.IO) {
-        getContextProvider()
-    }
+    suspend fun getContextProviderAsync(): ContextProvider =
+            withContext(Dispatchers.IO) {
+                getContextProvider()
+            }
 
     /**
      * Проверяет, инициализирован ли контекст
@@ -108,7 +109,6 @@ class PlatformContextService(
             isLoaded.set(true)
 
             log.info("Контекст платформы успешно загружен и кэширован")
-
         } catch (e: Exception) {
             log.error("Ошибка при загрузке контекста платформы", e)
             throw RuntimeException("Не удалось загрузить контекст платформы: ${e.message}", e)
@@ -121,14 +121,14 @@ class PlatformContextService(
     private fun validateConfigurationPath() {
         if (!::platformContextPath.isInitialized || platformContextPath.isBlank()) {
             throw IllegalStateException(
-                """
+                    """
                 Путь к контексту платформы не настроен.
                 Установите свойство platform.context.path в application.yml:
                 
                 platform:
                   context:
                     path: /path/to/your/platform/context
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
@@ -148,20 +148,21 @@ class PlatformContextService(
     /**
      * Получение статистики кэша
      */
-    fun getCacheStats(): CacheStats = lock.read {
-        CacheStats(
-            isLoaded = isLoaded.get(),
-            configPath = if (::platformContextPath.isInitialized) platformContextPath else "Не настроен",
-            hasProvider = cachedProvider != null
-        )
-    }
+    fun getCacheStats(): CacheStats =
+            lock.read {
+                CacheStats(
+                        isLoaded = isLoaded.get(),
+                        configPath = if (::platformContextPath.isInitialized) platformContextPath else "Не настроен",
+                        hasProvider = cachedProvider != null,
+                )
+            }
 
     /**
      * Статистика кэша
      */
     data class CacheStats(
-        val isLoaded: Boolean,
-        val configPath: String,
-        val hasProvider: Boolean
+            val isLoaded: Boolean,
+            val configPath: String,
+            val hasProvider: Boolean,
     )
-} 
+}

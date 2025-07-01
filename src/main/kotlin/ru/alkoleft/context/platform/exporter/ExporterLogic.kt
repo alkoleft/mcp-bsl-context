@@ -20,4 +20,4 @@ interface ExporterLogic {
     fun extractMethods(context: PlatformGlobalContext): Stream<MethodDefinition>
 
     fun extractTypes(contexts: List<Context>): Stream<PlatformTypeDefinition>
-} 
+}

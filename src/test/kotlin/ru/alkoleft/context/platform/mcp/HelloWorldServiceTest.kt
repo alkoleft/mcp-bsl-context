@@ -21,7 +21,6 @@ import kotlin.test.assertTrue
  * - Kotlin features demonstration
  */
 class HelloWorldServiceTest {
-
     private val service = HelloWorldService()
 
     @Test
@@ -60,7 +59,7 @@ class HelloWorldServiceTest {
             { assertTrue(result.contains("MCP Server")) },
             { assertTrue(result.contains("Operational")) },
             { assertTrue(result.contains("DTO Migration")) },
-            { assertTrue(result.contains("Kotlin DSL")) }
+            { assertTrue(result.contains("Kotlin DSL")) },
         )
     }
 
@@ -79,7 +78,7 @@ class HelloWorldServiceTest {
             { assertTrue(result.contains("custom: Unknown")) },
             { assertTrue(result.contains("Data Classes")) },
             { assertTrue(result.contains("Extension Functions")) },
-            { assertTrue(result.contains("Lambda Expressions")) }
+            { assertTrue(result.contains("Lambda Expressions")) },
         )
     }
 
@@ -102,7 +101,7 @@ class HelloWorldServiceTest {
         assertAll(
             { assertTrue(result.contains("Kotlin: Configured")) },
             { assertTrue(result.contains("Spring Boot: Running")) },
-            { assertTrue(result.contains("MCP Server: Active")) }
+            { assertTrue(result.contains("MCP Server: Active")) },
         )
     }
 
@@ -126,4 +125,4 @@ class HelloWorldServiceTest {
         // Should complete 300 operations in under 1 second
         assertTrue(duration < 1000, "Service should be performant: ${duration}ms for $iterations iterations")
     }
-} 
+}

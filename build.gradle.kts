@@ -38,6 +38,10 @@ kotlin {
     }
 }
 
+ktlint {
+    version.set("1.4.1")
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -46,13 +50,13 @@ repositories {
 
 extra["springAiVersion"] = "1.0.0"
 
-val JACKSON_VERSION = "2.15.2"
+val jackson = "2.15.2"
 
 dependencies {
     // Kotlin Standard Library
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    
+
     // Kotlin Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -60,24 +64,24 @@ dependencies {
     // Spring Boot with Kotlin
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    
+
     // Spring AI MCP Server
     implementation("org.springframework.ai:spring-ai-starter-mcp-server")
 
-    // HBK  
+    // HBK
     implementation("com.github._1c_syntax.bsl:bsl-context:1.0-SNAPSHOT")
 
     // JSON/XML with Kotlin support
-    implementation("com.fasterxml.jackson.core:jackson-core:$JACKSON_VERSION")
-    implementation("com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:$JACKSON_VERSION")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$JACKSON_VERSION")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$JACKSON_VERSION")
+    implementation("com.fasterxml.jackson.core:jackson-core:$jackson")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jackson")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:$jackson")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.18")
     implementation("org.codehaus.janino:janino:3.1.12")
-    
+
     // Reactor Core для Spring AI MCP
     implementation("io.projectreactor:reactor-core:3.6.11")
 
