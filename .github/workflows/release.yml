@@ -57,6 +57,12 @@ jobs:
           echo "VERSION=${TAG}" >> $GITHUB_OUTPUT
           echo "VERSION_NUMBER=${TAG#v}" >> $GITHUB_OUTPUT
 
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-bsl-context-jar
+          path: ./build/libs/mcp-bsl-context-${{ steps.tag_version.outputs.VERSION_NUMBER }}.jar
+          
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -110,6 +116,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mcp-bsl-context-jar
       - name: Extract tag version
         id: tag_version
         run: |
