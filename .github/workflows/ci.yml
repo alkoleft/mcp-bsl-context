@@ -57,6 +57,9 @@ jobs:
       - name: Verify build
         run: ./gradlew bootJar --no-daemon
 
+      - name: Copy JAR to project root for Docker
+        run: cp build/libs/mcp-bsl-context-*.jar mcp-bsl-context.jar
+
       - name: Check code style
         run: ./gradlew ktlintCheck --no-daemon
         continue-on-error: true

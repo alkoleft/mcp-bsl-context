@@ -10,6 +10,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("maven-publish")
     id("jacoco")
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
 group = "io.github.alkoleft"

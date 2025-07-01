@@ -126,7 +126,7 @@ docker run -d \
         }
 }
 ```
-Актуальную версию (APP_VERSION) смотрите в [релизах](https://github.com/alkoleft/platform-context-exporter/releases)
+Актуальную версию (APP_VERSION) смотрите в [релизах](https://github.com/alkoleft/mcp-bsl-context/releases)
 
 ## Интеграция с AI клиентами
 
