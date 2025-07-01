@@ -128,6 +128,72 @@ docker run -d \
 ```
 Актуальную версию (APP_VERSION) смотрите в [релизах](https://github.com/alkoleft/mcp-bsl-context/releases)
 
+### Быстрый старт с опубликованными Docker-образами
+
+Сервер MCP теперь доступен как готовый Docker-образ на GitHub Container Registry: [ghcr.io/alkoleft/mcp-bsl-context](https://github.com/alkoleft/mcp-bsl-context/pkgs/container/mcp-bsl-context)
+
+#### Получение образа
+
+```bash
+docker pull ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-sse
+# или для stdio:
+docker pull ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-stdio
+```
+
+#### Запуск STDIO-версии
+
+```bash
+docker run --rm -i \
+  -v /path/to/1c/platform:/app/1c-platform:ro \
+  ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-stdio \
+  --platform-path /app/1c-platform
+```
+
+#### Запуск SSE-версии (с сетевым доступом)
+
+```bash
+docker run -d \
+  -v /path/to/1c/platform:/app/1c-platform:ro \
+  -p 8001:8000 \
+  ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-sse \
+  --platform-path /app/1c-platform
+```
+
+- Замените `/path/to/1c/platform` на путь к вашей установленной платформе 1С (только для чтения).
+- Для актуальных тегов и digest-версий смотрите [страницу пакета](https://github.com/alkoleft/mcp-bsl-context/pkgs/container/mcp-bsl-context).
+
+#### Примеры интеграции с IDE
+
+##### STDIO (локальный запуск через docker)
+```json
+{
+  "mcpServers": {
+    "1c-platform-stdio": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-v", "/opt/1cv8/x86_64/8.3.25.1257:/app/1c-platform:ro",
+        "ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-stdio",
+        "--platform-path", "/app/1c-platform"
+      ]
+    }
+  }
+}
+```
+
+##### SSE (сетевой режим)
+```json
+{
+  "mcpServers": {
+    "1c-platform-sse": {
+      "url": "http://localhost:8001/sse"
+    }
+  }
+}
+```
+
+---
+
 ## Интеграция с AI клиентами
 
 ### Claude Desktop
