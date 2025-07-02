@@ -16,8 +16,7 @@ import ru.alkoleft.context.core.ports.outgoing.ApiRepository
 import ru.alkoleft.context.core.ports.outgoing.RepositoryStatistics
 import ru.alkoleft.context.infrastructure.adapters.outgoing.repositories.mappers.DomainModelMapper
 import ru.alkoleft.context.platform.exporter.ExporterLogic
-import ru.alkoleft.context.platform.mcp.PlatformContextLoader
-import ru.alkoleft.context.platform.mcp.PlatformContextService
+import ru.alkoleft.context.platform.legacy.PlatformContextService
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -25,14 +24,13 @@ import java.util.concurrent.ConcurrentHashMap
  * Преобразует старые DTO в новые доменные модели
  */
 @Repository
-class BslApiRepository(
-    private val contextLoader: PlatformContextLoader,
+class PlatformApiRepository(
     private val contextService: PlatformContextService,
     private val exporterLogic: ExporterLogic,
     private val domainMapper: DomainModelMapper,
 ) : ApiRepository {
     companion object {
-        private val log = LoggerFactory.getLogger(BslApiRepository::class.java)
+        private val log = LoggerFactory.getLogger(PlatformApiRepository::class.java)
     }
 
     // Кэш для быстрого доступа к элементам

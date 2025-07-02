@@ -7,6 +7,7 @@
 
 package ru.alkoleft.context.infrastructure.adapters.incoming.mcp
 
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
@@ -60,7 +61,7 @@ class McpSearchController(
         description = "Поиск по API платформы 1С Предприятие. Используйте конкретные термины 1С для получения точных результатов.",
     )
     @Cacheable("mcp-search")
-    suspend fun search(
+    fun search(
         @ToolParam(
             description =
                 "Поисковый запрос. Используйте конкретные термины из 1С: " +
@@ -82,7 +83,7 @@ class McpSearchController(
 
         try {
             val searchRequest = createSearchRequest(query, type, limit)
-            val response = searchApplicationService.performSearch(searchRequest)
+            val response = runBlocking { searchApplicationService.performSearch(searchRequest) }
 
             log.info(
                 "Search completed: query='{}', type='{}', results={}, time={}ms",
@@ -107,7 +108,7 @@ class McpSearchController(
         description = "Получение детальной информации об элементе API платформы 1С. Требует точное имя элемента.",
     )
     @Cacheable("mcp-info")
-    suspend fun getInfo(
+    fun getInfo(
         @ToolParam(description = "Точное имя элемента API в 1С. Примеры: 'НайтиПоСсылке', 'СправочникСсылка', 'Ссылка', 'Код'")
         name: String,
         @ToolParam(
@@ -135,7 +136,7 @@ class McpSearchController(
                     limit = 1,
                 )
 
-            val response = searchApplicationService.performSearch(searchRequest)
+            val response = runBlocking { searchApplicationService.performSearch(searchRequest) }
 
             return if (response.hasResults) {
                 response.result
@@ -156,7 +157,7 @@ class McpSearchController(
         description = "Получение информации о методе или свойстве конкретного типа 1С. Используйте точные имена типов и элементов.",
     )
     @Cacheable("mcp-member")
-    suspend fun getMember(
+    fun getMember(
         @ToolParam(description = "Имя типа 1С. Примеры: 'СправочникСсылка', 'ДокументОбъект', 'Строка', 'Число', 'Дата'")
         typeName: String,
         @ToolParam(description = "Имя метода или свойства типа. Примеры: 'НайтиПоКоду', 'Записать', 'Код', 'Наименование', 'Длина'")
@@ -168,10 +169,12 @@ class McpSearchController(
 
         try {
             val result =
-                searchApplicationService.getMemberInfo(
-                    typeName = typeName,
-                    memberName = memberName,
-                )
+                runBlocking {
+                    searchApplicationService.getMemberInfo(
+                        typeName = typeName,
+                        memberName = memberName,
+                    )
+                }
 
             return result ?: "❌ **Не найдено:** элемент '$memberName' в типе '$typeName'"
         } catch (e: Exception) {
@@ -188,7 +191,7 @@ class McpSearchController(
         description = "Получение всех методов и свойств указанного типа 1С. Полезно для изучения API типа.",
     )
     @Cacheable("mcp-members")
-    suspend fun getMembers(
+    fun getMembers(
         @ToolParam(description = "Имя типа 1С. Примеры: 'СправочникСсылка', 'ДокументОбъект', 'Строка', 'Число'")
         typeName: String,
     ): String {
@@ -197,7 +200,7 @@ class McpSearchController(
         }
 
         try {
-            val result = searchApplicationService.getTypeMembers(typeName)
+            val result = runBlocking { searchApplicationService.getTypeMembers(typeName) }
             return result
         } catch (e: Exception) {
             log.error("Members retrieval error for '$typeName'", e)
@@ -213,7 +216,7 @@ class McpSearchController(
         description = "Получение всех конструкторов указанного типа 1С. Показывает способы создания объектов типа.",
     )
     @Cacheable("mcp-constructors")
-    suspend fun getConstructors(
+    fun getConstructors(
         @ToolParam(description = "Имя типа 1С. Примеры: 'Массив', 'Структура', 'СписокЗначений'")
         typeName: String,
     ): String {
@@ -222,7 +225,7 @@ class McpSearchController(
         }
 
         try {
-            val result = searchApplicationService.getConstructors(typeName)
+            val result = runBlocking { searchApplicationService.getConstructors(typeName) }
             return result
         } catch (e: Exception) {
             log.error("Constructors retrieval error for '$typeName'", e)

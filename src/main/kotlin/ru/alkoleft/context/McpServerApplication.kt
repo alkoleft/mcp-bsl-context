@@ -5,7 +5,7 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.platform
+package ru.alkoleft.context
 
 import org.springframework.ai.tool.ToolCallbackProvider
 import org.springframework.ai.tool.method.MethodToolCallbackProvider
@@ -14,7 +14,6 @@ import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
-import ru.alkoleft.context.infrastructure.adapters.incoming.mcp.McpContextController
 import ru.alkoleft.context.infrastructure.adapters.incoming.mcp.McpSearchController
 
 /**
@@ -32,13 +31,10 @@ class McpServerApplication {
      * Используем тонкие контроллеры вместо толстого сервиса
      */
     @Bean
-    fun mcpTools(
-        mcpSearchController: McpSearchController,
-        mcpContextController: McpContextController,
-    ): ToolCallbackProvider =
+    fun mcpTools(mcpSearchController: McpSearchController): ToolCallbackProvider =
         MethodToolCallbackProvider
             .builder()
-            .toolObjects(mcpSearchController, mcpContextController)
+            .toolObjects(mcpSearchController)
             .build()
 }
 

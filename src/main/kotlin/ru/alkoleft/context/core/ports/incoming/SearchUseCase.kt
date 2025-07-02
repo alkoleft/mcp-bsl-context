@@ -12,7 +12,7 @@ import ru.alkoleft.context.core.domain.search.SearchQuery
 import ru.alkoleft.context.core.domain.search.SearchResult
 
 /**
- * Входящий порт для поисковых операций
+ * Входящий порт для поисковых операций.
  * Определяет основные use cases для поиска по API платформы
  */
 interface SearchUseCase {

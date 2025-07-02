@@ -5,12 +5,13 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.platform.mcp
+package ru.alkoleft.context.platform.legacy
 
 import com.github._1c_syntax.bsl.context.api.ContextProvider
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import ru.alkoleft.context.platform.mcp.PlatformContextLoader
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -66,17 +67,6 @@ class PlatformContextService(
                 loadPlatformContext()
                 cachedProvider!!
             }
-        }
-    }
-
-    /**
-     * Принудительная перезагрузка контекста
-     */
-    fun reloadContext() {
-        lock.write {
-            isLoaded.set(false)
-            cachedProvider = null
-            loadPlatformContext()
         }
     }
 

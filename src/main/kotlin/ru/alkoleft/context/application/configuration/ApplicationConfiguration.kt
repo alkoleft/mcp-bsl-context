@@ -11,12 +11,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.alkoleft.context.application.services.FormatterRegistryService
 import ru.alkoleft.context.application.services.SearchApplicationService
-import ru.alkoleft.context.application.usecases.ContextUseCaseImpl
 import ru.alkoleft.context.application.usecases.SearchUseCaseImpl
-import ru.alkoleft.context.core.ports.incoming.ContextUseCase
 import ru.alkoleft.context.core.ports.incoming.SearchUseCase
 import ru.alkoleft.context.core.ports.outgoing.ResultFormatter
-import ru.alkoleft.context.core.services.ContextService
 import ru.alkoleft.context.core.services.SearchService
 
 /**
@@ -30,12 +27,6 @@ class ApplicationConfiguration {
      */
     @Bean
     fun searchUseCase(searchService: SearchService): SearchUseCase = SearchUseCaseImpl(searchService)
-
-    /**
-     * Use Case для работы с контекстом
-     */
-    @Bean
-    fun contextUseCase(contextService: ContextService): ContextUseCase = ContextUseCaseImpl(contextService)
 
     /**
      * Application Service для поисковых операций

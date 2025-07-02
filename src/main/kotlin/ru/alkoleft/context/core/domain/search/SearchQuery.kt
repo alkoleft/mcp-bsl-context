@@ -10,7 +10,7 @@ package ru.alkoleft.context.core.domain.search
 import ru.alkoleft.context.core.domain.api.DataSource
 
 /**
- * Доменная модель поискового запроса
+ * Доменная модель поискового запроса.
  * Поддерживает различные алгоритмы поиска и источники данных
  */
 data class SearchQuery(
@@ -21,16 +21,6 @@ data class SearchQuery(
     init {
         require(text.isNotBlank()) { "Search text cannot be blank" }
     }
-
-    /**
-     * Ключ для кэширования с учетом всех параметров
-     */
-    fun cacheKey(): String =
-        buildString {
-            append(text.lowercase())
-            append("_${options.hashCode()}")
-            append("_${context.hashCode()}")
-        }
 }
 
 /**
@@ -38,7 +28,7 @@ data class SearchQuery(
  */
 data class SearchOptions(
     val algorithm: SearchAlgorithm = SearchAlgorithm.INTELLIGENT,
-    val elementTypes: Set<ApiElementType> = ApiElementType.values().toSet(),
+    val elementTypes: Set<ApiElementType> = ApiElementType.entries.toSet(),
     val dataSources: Set<DataSource> = setOf(DataSource.BSL_CONTEXT),
     val limit: Int = 10,
     val includeInherited: Boolean = false,

@@ -14,7 +14,7 @@ import ru.alkoleft.context.core.ports.outgoing.ApiRepository
 import java.time.Instant
 
 /**
- * Доменный сервис для управления контекстом платформы
+ * Доменный сервис для управления контекстом платформы.
  * Координирует загрузку и обновление данных из различных источников
  */
 class ContextService(

@@ -24,7 +24,7 @@ import ru.alkoleft.context.platform.dto.PropertyDefinition
 import ru.alkoleft.context.platform.dto.Signature
 
 /**
- * Маппер для преобразования старых DTO в новые доменные модели
+ * Маппер для преобразования старых DTO в новые доменные модели.
  * Обеспечивает совместимость с существующим кодом
  */
 @Component

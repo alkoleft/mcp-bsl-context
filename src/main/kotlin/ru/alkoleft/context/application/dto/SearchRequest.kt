@@ -10,7 +10,7 @@ package ru.alkoleft.context.application.dto
 import ru.alkoleft.context.core.ports.outgoing.FormatType
 
 /**
- * DTO для поискового запроса на уровне приложения
+ * DTO для поискового запроса на уровне приложения.
  * Используется для передачи данных между контроллерами и application services
  */
 data class SearchRequest(

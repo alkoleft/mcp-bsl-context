@@ -11,7 +11,7 @@ import ru.alkoleft.context.core.domain.api.ApiElement
 import ru.alkoleft.context.core.domain.search.SearchResult
 
 /**
- * Исходящий порт для форматирования результатов
+ * Исходящий порт для форматирования результатов.
  * Реализует Strategy pattern для различных форматов вывода
  */
 interface ResultFormatter {

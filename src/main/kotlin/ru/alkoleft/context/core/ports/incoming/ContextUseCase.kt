@@ -10,32 +10,6 @@ package ru.alkoleft.context.core.ports.incoming
 import ru.alkoleft.context.core.domain.api.DataSource
 
 /**
- * Входящий порт для работы с контекстом платформы
- * Управляет загрузкой и обновлением данных платформы
- */
-interface ContextUseCase {
-    /**
-     * Загрузка контекста платформы из указанного пути
-     */
-    suspend fun loadContext(path: String): PlatformContext
-
-    /**
-     * Обновление текущего контекста платформы
-     */
-    suspend fun refreshContext(): PlatformContext
-
-    /**
-     * Получение статуса текущего контекста
-     */
-    suspend fun getContextStatus(): ContextStatus
-
-    /**
-     * Получение списка доступных источников данных
-     */
-    suspend fun getAvailableDataSources(): List<DataSource>
-}
-
-/**
  * Контекст платформы с метаинформацией
  */
 data class PlatformContext(

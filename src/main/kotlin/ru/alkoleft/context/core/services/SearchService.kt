@@ -17,7 +17,7 @@ import ru.alkoleft.context.core.ports.outgoing.ApiRepository
 import ru.alkoleft.context.core.ports.outgoing.SearchEngine
 
 /**
- * Доменный сервис для поисковых операций
+ * Доменный сервис для поисковых операций.
  * Координирует работу между репозиторием, поисковыми движками и ранжированием
  */
 class SearchService(
@@ -115,7 +115,7 @@ class SearchService(
         }
 
         // Фильтрация по типам элементов
-        return if (query.options.elementTypes.size == ApiElementType.values().size) {
+        return if (query.options.elementTypes.size == ApiElementType.entries.size) {
             allCandidates
         } else {
             allCandidates.filter { element ->

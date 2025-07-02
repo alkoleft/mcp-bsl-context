@@ -14,7 +14,7 @@ import ru.alkoleft.context.core.domain.search.SearchResultItem
 import kotlin.math.max
 
 /**
- * Доменный сервис для ранжирования результатов поиска
+ * Доменный сервис для ранжирования результатов поиска.
  * Применяет различные стратегии ранжирования для повышения релевантности
  */
 class RankingService {

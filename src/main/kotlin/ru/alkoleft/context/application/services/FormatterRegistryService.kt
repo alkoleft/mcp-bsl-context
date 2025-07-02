@@ -69,25 +69,9 @@ class FormatterRegistryService(
     }
 
     /**
-     * Получение MIME-type для указанного формата
-     */
-    fun getMimeType(formatType: FormatType): String {
-        val formatter =
-            getFormatter(formatType)
-                ?: throw IllegalArgumentException("Formatter for type $formatType not found")
-
-        return formatter.getMimeType()
-    }
-
-    /**
      * Получение списка поддерживаемых форматов
      */
     fun getSupportedFormats(): List<FormatType> = formatters.map { it.formatType }.distinct()
-
-    /**
-     * Проверка поддержки указанного формата
-     */
-    fun isFormatSupported(formatType: FormatType): Boolean = formatters.any { it.supports(formatType) }
 
     /**
      * Получение форматтера для указанного типа

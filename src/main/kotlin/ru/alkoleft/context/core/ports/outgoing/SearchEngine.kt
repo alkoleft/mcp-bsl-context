@@ -13,7 +13,7 @@ import ru.alkoleft.context.core.domain.search.SearchQuery
 import ru.alkoleft.context.core.domain.search.SearchResultItem
 
 /**
- * Исходящий порт для поисковых движков
+ * Исходящий порт для поисковых движков.
  * Реализует Strategy pattern для различных алгоритмов поиска
  */
 interface SearchEngine {

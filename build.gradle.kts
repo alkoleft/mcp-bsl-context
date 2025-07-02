@@ -37,6 +37,12 @@ kotlin {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -64,6 +70,9 @@ dependencies {
 
     // Reactor Core для Spring AI MCP
     implementation(libs.reactor.core)
+
+    // Kotlin Coroutines для runBlocking в MCP controllers
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // ANTLR - принудительное управление версиями для исправления несоответствия
     implementation(libs.bundles.antlr)
@@ -98,7 +107,7 @@ tasks.jar {
 tasks.bootJar {
     enabled = true
     archiveClassifier.set("")
-    mainClass.set("ru.alkoleft.context.platform.McpServerApplicationKt")
+    mainClass.set("ru.alkoleft.context.McpServerApplicationKt")
 }
 
 // Исправление зависимостей для задач распространения

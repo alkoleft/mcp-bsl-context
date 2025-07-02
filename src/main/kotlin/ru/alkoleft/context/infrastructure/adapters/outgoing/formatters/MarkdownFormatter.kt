@@ -9,6 +9,10 @@ package ru.alkoleft.context.infrastructure.adapters.outgoing.formatters
 
 import org.springframework.stereotype.Component
 import ru.alkoleft.context.core.domain.api.ApiElement
+import ru.alkoleft.context.core.domain.api.Constructor
+import ru.alkoleft.context.core.domain.api.Method
+import ru.alkoleft.context.core.domain.api.Property
+import ru.alkoleft.context.core.domain.api.Type
 import ru.alkoleft.context.core.domain.search.SearchResult
 import ru.alkoleft.context.core.ports.outgoing.FormatType
 import ru.alkoleft.context.core.ports.outgoing.ResultFormatter
@@ -18,7 +22,7 @@ import ru.alkoleft.context.core.ports.outgoing.ResultFormatter
  * Самостоятельная реализация без зависимостей
  */
 @Component
-class McpMarkdownFormatter : ResultFormatter {
+class MarkdownFormatter : ResultFormatter {
     override val formatType = FormatType.MARKDOWN
 
     override fun getMimeType(): String = "text/markdown"
@@ -41,30 +45,14 @@ class McpMarkdownFormatter : ResultFormatter {
                 return@buildString
             }
 
-            appendLine("📊 **Статистика поиска:**")
-            appendLine("- Найдено результатов: **${result.items.size}**")
-            appendLine("- Время выполнения: **${result.executionTimeMs}мс**")
-            appendLine("- Алгоритм: **${result.algorithm.name}**")
-            appendLine()
-
             result.items.forEachIndexed { index, item ->
                 val element = item.element
                 appendLine("## ${index + 1}. ${formatElementHeader(element)}")
-
-                // Показываем релевантность
-                val relevancePercent = (item.relevanceScore * 100).toInt()
-                appendLine("**Релевантность:** $relevancePercent% | **Причина:** ${formatMatchReason(item.matchReason)}")
 
                 // Показываем описание если есть
                 if (element.description.isNotBlank()) {
                     appendLine()
                     appendLine("📝 ${element.description}")
-                }
-
-                // Показываем подсвеченный текст если есть
-                item.highlightedText?.let { highlighted ->
-                    appendLine()
-                    appendLine("🔍 **Совпадение:** $highlighted")
                 }
 
                 appendLine()
@@ -92,7 +80,7 @@ class McpMarkdownFormatter : ResultFormatter {
             }
 
             when (element) {
-                is ru.alkoleft.context.core.domain.api.Method -> {
+                is Method -> {
                     appendLine("## 🔧 Детали метода")
                     appendLine("- **Глобальный:** ${if (element.isGlobal) "Да" else "Нет"}")
                     element.parentType?.let {
@@ -124,7 +112,7 @@ class McpMarkdownFormatter : ResultFormatter {
                     }
                 }
 
-                is ru.alkoleft.context.core.domain.api.Property -> {
+                is Property -> {
                     appendLine("## 📋 Детали свойства")
                     appendLine("- **Тип данных:** ${element.dataType.name}")
                     appendLine("- **Только чтение:** ${if (element.isReadonly) "Да" else "Нет"}")
@@ -133,14 +121,14 @@ class McpMarkdownFormatter : ResultFormatter {
                     }
                 }
 
-                is ru.alkoleft.context.core.domain.api.Type -> {
+                is Type -> {
                     appendLine("## 🏷️ Детали типа")
                     appendLine("- **Методов:** ${element.methods.size}")
                     appendLine("- **Свойств:** ${element.properties.size}")
                     appendLine("- **Конструкторов:** ${element.constructors.size}")
                 }
 
-                is ru.alkoleft.context.core.domain.api.Constructor -> {
+                is Constructor -> {
                     appendLine("## 🏗️ Детали конструктора")
                     appendLine("- **Родительский тип:** ${element.parentType.name}")
                     if (element.parameters.isNotEmpty()) {
@@ -182,10 +170,10 @@ class McpMarkdownFormatter : ResultFormatter {
             val groupedElements =
                 elements.groupBy { element ->
                     when (element) {
-                        is ru.alkoleft.context.core.domain.api.Method -> "🔧 Методы"
-                        is ru.alkoleft.context.core.domain.api.Property -> "📋 Свойства"
-                        is ru.alkoleft.context.core.domain.api.Type -> "🏷️ Типы"
-                        is ru.alkoleft.context.core.domain.api.Constructor -> "🏗️ Конструкторы"
+                        is Method -> "🔧 Методы"
+                        is Property -> "📋 Свойства"
+                        is Type -> "🏷️ Типы"
+                        is Constructor -> "🏗️ Конструкторы"
                     }
                 }
 
@@ -214,29 +202,9 @@ class McpMarkdownFormatter : ResultFormatter {
      */
     private fun formatElementHeader(element: ApiElement): String =
         when (element) {
-            is ru.alkoleft.context.core.domain.api.Method -> "🔧 ${element.name}()"
-            is ru.alkoleft.context.core.domain.api.Property -> "📋 ${element.name}"
-            is ru.alkoleft.context.core.domain.api.Type -> "🏷️ ${element.name}"
-            is ru.alkoleft.context.core.domain.api.Constructor -> "🏗️ ${element.name}"
-        }
-
-    /**
-     * Форматирование причины совпадения
-     */
-    private fun formatMatchReason(matchReason: ru.alkoleft.context.core.domain.search.MatchReason): String =
-        when (matchReason) {
-            is ru.alkoleft.context.core.domain.search.MatchReason.ExactMatch ->
-                "Точное совпадение в ${matchReason.field}"
-            is ru.alkoleft.context.core.domain.search.MatchReason.PrefixMatch ->
-                "Совпадение префикса в ${matchReason.field}"
-            is ru.alkoleft.context.core.domain.search.MatchReason.ContainsMatch ->
-                "Содержит текст в ${matchReason.field}"
-            is ru.alkoleft.context.core.domain.search.MatchReason.FuzzyMatch ->
-                "Нечеткое совпадение в ${matchReason.field} (${(matchReason.similarity * 100).toInt()}%)"
-            is ru.alkoleft.context.core.domain.search.MatchReason.SemanticMatch ->
-                "Семантическое совпадение (${(matchReason.similarity * 100).toInt()}%)"
-            is ru.alkoleft.context.core.domain.search.MatchReason.MultipleMatches -> {
-                "Множественные совпадения (${matchReason.reasons.size})"
-            }
+            is Method -> "🔧 ${element.name}()"
+            is Property -> "📋 ${element.name}"
+            is Type -> "🏷️ ${element.name}"
+            is Constructor -> "🏗️ ${element.name}"
         }
 }

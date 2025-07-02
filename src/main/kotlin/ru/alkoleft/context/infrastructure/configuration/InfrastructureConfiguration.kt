@@ -12,12 +12,14 @@ import org.springframework.context.annotation.Configuration
 import ru.alkoleft.context.core.domain.search.SearchAlgorithm
 import ru.alkoleft.context.core.ports.outgoing.ApiRepository
 import ru.alkoleft.context.core.ports.outgoing.SearchEngine
-import ru.alkoleft.context.infrastructure.adapters.outgoing.repositories.BslApiRepository
+import ru.alkoleft.context.infrastructure.adapters.outgoing.repositories.PlatformApiRepository
+import ru.alkoleft.context.infrastructure.adapters.outgoing.repositories.mappers.DomainModelMapper
 import ru.alkoleft.context.infrastructure.adapters.outgoing.search.CompositeSearchEngine
-import ru.alkoleft.context.platform.mcp.PlatformContextLoader
+import ru.alkoleft.context.platform.exporter.ExporterLogic
+import ru.alkoleft.context.platform.legacy.PlatformContextService
 
 /**
- * Конфигурация инфраструктурного слоя
+ * Конфигурация инфраструктурного слоя.
  * Настраивает адаптеры, реализации портов и Strategy pattern компоненты
  */
 @Configuration
@@ -26,22 +28,18 @@ class InfrastructureConfiguration {
      * Конфигурация Domain Model Mapper
      */
     @Bean
-    fun domainModelMapper(): ru.alkoleft.context.infrastructure.adapters.outgoing.repositories.mappers.DomainModelMapper =
-        ru.alkoleft.context.infrastructure.adapters.outgoing.repositories.mappers
-            .DomainModelMapper()
+    fun domainModelMapper(): DomainModelMapper = DomainModelMapper()
 
     /**
      * Конфигурация API Repository
      */
     @Bean
     fun apiRepository(
-        platformContextLoader: PlatformContextLoader,
-        platformContextService: ru.alkoleft.context.platform.mcp.PlatformContextService,
-        exporterLogic: ru.alkoleft.context.platform.exporter.ExporterLogic,
-        domainMapper: ru.alkoleft.context.infrastructure.adapters.outgoing.repositories.mappers.DomainModelMapper,
+        platformContextService: PlatformContextService,
+        exporterLogic: ExporterLogic,
+        domainMapper: DomainModelMapper,
     ): ApiRepository =
-        BslApiRepository(
-            platformContextLoader,
+        PlatformApiRepository(
             platformContextService,
             exporterLogic,
             domainMapper,
