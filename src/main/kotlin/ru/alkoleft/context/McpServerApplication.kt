@@ -24,7 +24,6 @@ import ru.alkoleft.context.infrastructure.adapters.incoming.mcp.McpSearchControl
  */
 @SpringBootApplication
 @EnableCaching
-@ComponentScan("ru.alkoleft.context")
 class McpServerApplication {
     /**
      * Регистрация MCP tools для новой Clean Architecture
