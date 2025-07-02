@@ -5,7 +5,7 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.platform
+package ru.alkoleft.context
 
 import org.springframework.ai.tool.ToolCallbackProvider
 import org.springframework.ai.tool.method.MethodToolCallbackProvider
@@ -30,8 +30,8 @@ class McpServerApplication {
             .builder()
             .toolObjects(platformApiSearchService)
             .build()
+}
 
-    fun main(args: Array<String>) {
-        runApplication<McpServerApplication>(*args)
-    }
+fun main(args: Array<String>) {
+    runApplication<McpServerApplication>(*args)
 }
