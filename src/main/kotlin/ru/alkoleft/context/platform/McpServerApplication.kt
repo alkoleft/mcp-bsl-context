@@ -13,25 +13,35 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
-import ru.alkoleft.context.platform.mcp.PlatformApiSearchService
+import org.springframework.context.annotation.ComponentScan
+import ru.alkoleft.context.infrastructure.adapters.incoming.mcp.McpContextController
+import ru.alkoleft.context.infrastructure.adapters.incoming.mcp.McpSearchController
 
 /**
  * Spring Boot приложение для MCP сервера платформы 1С Предприятие
  *
- * Обновленная Kotlin версия с MCP-only архитектурой.
- * Удален CLI интерфейс, остался только MCP сервер.
+ * Обновленная версия с Clean Architecture.
+ * Использует Hexagonal Architecture + DDD + Strategy Pattern.
  */
 @SpringBootApplication
 @EnableCaching
+@ComponentScan("ru.alkoleft.context")
 class McpServerApplication {
+    /**
+     * Регистрация MCP tools для новой Clean Architecture
+     * Используем тонкие контроллеры вместо толстого сервиса
+     */
     @Bean
-    fun platformTools(platformApiSearchService: PlatformApiSearchService): ToolCallbackProvider =
+    fun mcpTools(
+        mcpSearchController: McpSearchController,
+        mcpContextController: McpContextController,
+    ): ToolCallbackProvider =
         MethodToolCallbackProvider
             .builder()
-            .toolObjects(platformApiSearchService)
+            .toolObjects(mcpSearchController, mcpContextController)
             .build()
+}
 
-    fun main(args: Array<String>) {
-        runApplication<McpServerApplication>(*args)
-    }
+fun main(args: Array<String>) {
+    runApplication<McpServerApplication>(*args)
 }

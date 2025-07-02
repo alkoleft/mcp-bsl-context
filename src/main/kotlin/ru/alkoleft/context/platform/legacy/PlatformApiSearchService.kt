@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.stereotype.Service
 import ru.alkoleft.context.platform.dto.MethodDefinition
 import ru.alkoleft.context.platform.dto.PlatformTypeDefinition
 import ru.alkoleft.context.platform.dto.PropertyDefinition
@@ -53,8 +52,10 @@ private val TYPE_ALIASES =
  * - Функциональное программирование
  * - Immutable data structures
  * - Null safety
+ *
+ * @deprecated Используйте новую Clean Architecture с McpSearchController
  */
-@Service
+// @Service // Отключен для миграции на Clean Architecture
 class PlatformApiSearchService(
     private val contextService: PlatformContextService,
     private val formatter: MarkdownFormatterService,

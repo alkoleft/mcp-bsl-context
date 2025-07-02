@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: mcp-bsl-context-test
+  cache:
+    type: simple
+  main:
+    banner-mode: off
+    web-application-type: none
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
+
+# Настройки платформы для тестов - минимальная конфигурация
+platform:
+  context:
+    path: ""
+
+# Отключаем веб-сервер
+server:
+  port: -1
+
+# Минимальное логирование
+logging:
+  level:
+    root: WARN
+    ru.alkoleft.context: DEBUG 

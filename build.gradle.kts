@@ -98,7 +98,7 @@ tasks.jar {
 tasks.bootJar {
     enabled = true
     archiveClassifier.set("")
-    mainClass.set("ru.alkoleft.context.platform.McpServerApplication")
+    mainClass.set("ru.alkoleft.context.platform.McpServerApplicationKt")
 }
 
 // Исправление зависимостей для задач распространения
