@@ -11,17 +11,20 @@ import org.springframework.stereotype.Service
 import ru.alkoleft.context.business.entities.Definition
 import ru.alkoleft.context.business.entities.Signature
 import ru.alkoleft.context.business.persistent.PlatformContextRepository
+import ru.alkoleft.context.business.valueobjects.ApiType
 import ru.alkoleft.context.exceptions.InvalidSearchQueryException
 import ru.alkoleft.context.exceptions.PlatformTypeNotFoundException
 import ru.alkoleft.context.exceptions.TypeMemberNotFoundException
-import ru.alkoleft.context.business.valueobjects.ApiType
 
 @Service
 class ContextSearchService(
-    private val repository: PlatformContextRepository
+    private val repository: PlatformContextRepository,
 ) {
-    suspend fun searchAll(query: String, type: String? = null, limit: Int? = null): List<Definition> {
-
+    fun searchAll(
+        query: String,
+        type: String? = null,
+        limit: Int? = null,
+    ): List<Definition> {
         if (query.isBlank()) {
             throw InvalidSearchQueryException("Запрос не может быть пустым")
         }
@@ -29,7 +32,10 @@ class ContextSearchService(
         return repository.search(query, effectiveLimit, getApiType(type))
     }
 
-    fun getInfo(name: String, type: String?): Definition? {
+    fun getInfo(
+        name: String,
+        type: String?,
+    ): Definition? {
         if (name.isBlank() || type.isNullOrBlank()) {
             throw InvalidSearchQueryException("Имя элемента и тип элемента не могут быть пустыми")
         }
@@ -43,14 +49,18 @@ class ContextSearchService(
         }
     }
 
-    fun findMemberByTypeAndName(typeName: String, memberName: String): Definition {
+    fun findMemberByTypeAndName(
+        typeName: String,
+        memberName: String,
+    ): Definition {
         if (typeName.isBlank() || memberName.isBlank()) {
             throw InvalidSearchQueryException("Имя типа и имя элемента не могут быть пустыми")
         }
 
         val type = repository.findType(typeName)
-        if (type == null)
+        if (type == null) {
             throw PlatformTypeNotFoundException(typeName)
+        }
 
         return repository.findTypeMember(type, memberName)
             ?: throw TypeMemberNotFoundException(memberName, typeName)
@@ -62,8 +72,11 @@ class ContextSearchService(
         }
         val type = repository.findType(typeName)
 
-        return if (type != null) type.methods + type.properties
-        else throw PlatformTypeNotFoundException(typeName)
+        return if (type != null) {
+            type.methods + type.properties
+        } else {
+            throw PlatformTypeNotFoundException(typeName)
+        }
     }
 
     fun findConstructors(typeName: String): List<Signature> {

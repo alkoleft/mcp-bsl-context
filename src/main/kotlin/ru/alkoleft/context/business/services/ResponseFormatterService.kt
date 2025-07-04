@@ -12,9 +12,14 @@ import ru.alkoleft.context.business.entities.Signature
 
 interface ResponseFormatterService {
     fun formatError(e: Throwable): String
+
     fun formatQuery(query: String): String
+
     fun formatSearchResults(result: List<Definition>): String
+
     fun formatInfo(definition: Definition?): String
+
     fun formatDefinitions(definitions: List<Definition>): String
+
     fun formatConstructors(result: List<Signature>): String
 }

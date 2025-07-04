@@ -18,8 +18,15 @@ interface SearchEngine {
     fun initialize(context: PlatformContextStorage)
 
     fun search(searchQuery: SearchQuery): List<Definition>
+
     fun findType(name: String): PlatformTypeDefinition?
+
     fun findProperty(name: String): PropertyDefinition?
+
     fun findMethod(name: String): MethodDefinition?
-    fun findTypeMember(type: PlatformTypeDefinition, memberName: String): Definition?
+
+    fun findTypeMember(
+        type: PlatformTypeDefinition,
+        memberName: String,
+    ): Definition?
 }

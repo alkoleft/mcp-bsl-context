@@ -64,6 +64,7 @@ import org.springframework.context.annotation.ComponentScan
     basePackages = [
         "ru.alkoleft.context.presentation",
         "ru.alkoleft.context.application",
+        "ru.alkoleft.context.business",
         "ru.alkoleft.context.domain",
         "ru.alkoleft.context.infrastructure",
     ],

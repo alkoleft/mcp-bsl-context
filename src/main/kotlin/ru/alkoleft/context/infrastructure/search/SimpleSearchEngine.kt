@@ -79,7 +79,7 @@ class SimpleSearchEngine(
 
     override fun findTypeMember(
         type: PlatformTypeDefinition,
-        memberName: String
+        memberName: String,
     ): Definition? {
         val memberName = memberName.lowercase()
         // Поиск среди методов
@@ -87,7 +87,6 @@ class SimpleSearchEngine(
             .find { it.name.lowercase() == memberName }
             ?: type.properties
                 .find { it.name.lowercase() == memberName }
-
     }
 
     fun search(

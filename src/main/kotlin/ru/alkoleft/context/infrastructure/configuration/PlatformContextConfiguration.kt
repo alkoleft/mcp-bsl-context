@@ -10,17 +10,20 @@ package ru.alkoleft.context.infrastructure.configuration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.alkoleft.context.business.persistent.PlatformContextRepository
+import ru.alkoleft.context.business.services.ResponseFormatterService
+import ru.alkoleft.context.infrastructure.formatters.MarkdownFormatterService
+import ru.alkoleft.context.infrastructure.persistent.repositories.PlatformRepository
 import ru.alkoleft.context.infrastructure.persistent.storage.PlatformContextLoader
 import ru.alkoleft.context.infrastructure.persistent.storage.PlatformContextStorage
-import ru.alkoleft.context.infrastructure.persistent.repositories.PlatformRepository
 import ru.alkoleft.context.infrastructure.search.SearchEngine
 import ru.alkoleft.context.infrastructure.search.SimpleSearchEngine
 
 @Configuration
 class PlatformContextConfiguration {
     @Bean
-    fun repository(
-        searchEngine: SearchEngine, storage: PlatformContextStorage,
+    fun platformContextRepository(
+        searchEngine: SearchEngine,
+        storage: PlatformContextStorage,
     ): PlatformContextRepository = PlatformRepository(searchEngine, storage)
 
     @Bean
@@ -31,4 +34,7 @@ class PlatformContextConfiguration {
 
     @Bean
     fun contextLoader(): PlatformContextLoader = PlatformContextLoader()
+
+    @Bean
+    fun formatter(): ResponseFormatterService = MarkdownFormatterService()
 }

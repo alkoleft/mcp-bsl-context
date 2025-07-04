@@ -10,7 +10,7 @@ package ru.alkoleft.context.presentation.mcp
 import org.slf4j.LoggerFactory
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
-import org.springframework.cache.annotation.Cacheable
+import org.springframework.stereotype.Service
 import ru.alkoleft.context.business.services.ContextSearchService
 import ru.alkoleft.context.business.services.ResponseFormatterService
 
@@ -21,6 +21,7 @@ private val log = LoggerFactory.getLogger(PlatformContextMcpController::class.ja
  *
  * Presentation Layer компонент, предоставляющий MCP интерфейс для поиска API
  */
+@Service
 class PlatformContextMcpController(
     private val searchService: ContextSearchService,
     private val formatter: ResponseFormatterService,
@@ -32,8 +33,7 @@ class PlatformContextMcpController(
         name = "search",
         description = "Поиск по API платформы 1С Предприятие. Используйте конкретные термины 1С для получения точных результатов.",
     )
-    @Cacheable("api-search")
-    suspend fun search(
+    fun search(
         @ToolParam(
             description =
                 "Поисковый запрос. Используйте конкретные термины из 1С: " +
@@ -66,8 +66,7 @@ class PlatformContextMcpController(
         name = "info",
         description = "Получение детальной информации об элементе API платформы 1С. Требует точное имя элемента.",
     )
-    @Cacheable("api-info")
-    suspend fun getInfo(
+    fun getInfo(
         @ToolParam(description = "Точное имя элемента API в 1С. Примеры: 'НайтиПоСсылке', 'СправочникСсылка', 'Ссылка', 'Код'")
         name: String,
         @ToolParam(
@@ -95,8 +94,7 @@ class PlatformContextMcpController(
         name = "getMember",
         description = "Получение информации о методе или свойстве конкретного типа 1С. Используйте точные имена типов и элементов.",
     )
-    @Cacheable("api-member")
-    suspend fun getMember(
+    fun getMember(
         @ToolParam(description = "Имя типа 1С. Примеры: 'СправочникСсылка', 'ДокументОбъект', 'Строка', 'Число', 'Дата'")
         typeName: String,
         @ToolParam(description = "Имя метода или свойства типа. Примеры: 'НайтиПоКоду', 'Записать', 'Код', 'Наименование', 'Длина'")
@@ -118,7 +116,6 @@ class PlatformContextMcpController(
         name = "getMembers",
         description = "Получение полного списка всех методов и свойств для указанного типа 1С. Полный справочник API типа.",
     )
-    @Cacheable("api-members")
     fun getMembers(
         @ToolParam(
             description =
@@ -143,7 +140,6 @@ class PlatformContextMcpController(
         name = "getConstructors",
         description = "Получение списка конструкторов для указанного типа 1С. Показывает способы создания объектов данного типа.",
     )
-    @Cacheable("api-constructors")
     fun getConstructors(
         @ToolParam(
             description =

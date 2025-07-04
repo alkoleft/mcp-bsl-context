@@ -23,10 +23,9 @@ import ru.alkoleft.context.exceptions.DomainException
  */
 @Service
 class MarkdownFormatterService : ResponseFormatterService {
-    override fun formatError(e: Throwable) =
-        if (e is DomainException) "❌ ${e.message}" else "❌ **Ошибка:** ${e.message}"
+    override fun formatError(e: Throwable) = if (e is DomainException) "❌ ${e.message}" else "❌ **Ошибка:** ${e.message}"
 
-    override fun formatQuery(query: String) = "# Результаты поиска: '${query}'\n\n"
+    override fun formatQuery(query: String) = "# Результаты поиска: '$query'\n\n"
 
     /**
      * Форматирует результаты поиска в Markdown
@@ -45,7 +44,6 @@ class MarkdownFormatterService : ResponseFormatterService {
         val builder = StringBuilder()
         formatSearchResults(builder, definitions)
         return builder.toString()
-
     }
 
     override fun formatConstructors(result: List<Signature>): String {

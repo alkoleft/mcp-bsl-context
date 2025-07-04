@@ -15,14 +15,22 @@ import ru.alkoleft.context.business.valueobjects.SearchQuery
 import ru.alkoleft.context.infrastructure.persistent.storage.PlatformContextStorage
 import ru.alkoleft.context.infrastructure.search.SearchEngine
 
-class PlatformRepository(val searchEngine: SearchEngine, val context: PlatformContextStorage): PlatformContextRepository {
-    override fun search(query: String, limit: Int, type: ApiType?): List<Definition> = search(
-        SearchQuery(
-            query = query,
-            apiType = type,
-            maxResults = limit,
+class PlatformRepository(
+    val searchEngine: SearchEngine,
+    val context: PlatformContextStorage,
+) : PlatformContextRepository {
+    override fun search(
+        query: String,
+        limit: Int,
+        type: ApiType?,
+    ): List<Definition> =
+        search(
+            SearchQuery(
+                query = query,
+                apiType = type,
+                maxResults = limit,
+            ),
         )
-    )
 
     override fun search(searchQuery: SearchQuery) = searchEngine.search(searchQuery)
 
@@ -32,5 +40,8 @@ class PlatformRepository(val searchEngine: SearchEngine, val context: PlatformCo
 
     override fun findMethod(name: String) = searchEngine.findMethod(name)
 
-    override fun findTypeMember(type: PlatformTypeDefinition, memberName: String) = searchEngine.findTypeMember(type, memberName)
+    override fun findTypeMember(
+        type: PlatformTypeDefinition,
+        memberName: String,
+    ) = searchEngine.findTypeMember(type, memberName)
 }

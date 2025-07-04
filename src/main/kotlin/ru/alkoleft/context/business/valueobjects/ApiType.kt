@@ -40,28 +40,33 @@ enum class ApiType {
         }
 
     companion object {
-        fun getType(type: String) = when (type.lowercase()) {
-            "object",
-            "class",
-            "datatype",
-            "объект",
-            "класс",
-            "тип",
-            "структура",
-            "данные" -> TYPE
+        fun getType(type: String) =
+            when (type.lowercase()) {
+                "object",
+                "class",
+                "datatype",
+                "объект",
+                "класс",
+                "тип",
+                "структура",
+                "данные",
+                "type",
+                -> TYPE
 
-            "метод",
-            "функция",
-            "процедура",
-            "method" -> METHOD
+                "метод",
+                "функция",
+                "процедура",
+                "method",
+                -> METHOD
 
-            "свойство",
-            "реквизит",
-            "поле",
-            "атрибут",
-            "property" -> PROPERTY
+                "свойство",
+                "реквизит",
+                "поле",
+                "атрибут",
+                "property",
+                -> PROPERTY
 
-            else -> null
-        }
+                else -> null
+            }
     }
 }

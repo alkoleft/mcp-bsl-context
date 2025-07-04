@@ -15,10 +15,22 @@ import ru.alkoleft.context.business.valueobjects.ApiType
 import ru.alkoleft.context.business.valueobjects.SearchQuery
 
 interface PlatformContextRepository {
-    fun search(query: String, limit: Int, type: ApiType? = null): List<Definition>
+    fun search(
+        query: String,
+        limit: Int,
+        type: ApiType? = null,
+    ): List<Definition>
+
     fun search(searchQuery: SearchQuery): List<Definition>
+
     fun findType(name: String): PlatformTypeDefinition?
+
     fun findProperty(name: String): PropertyDefinition?
+
     fun findMethod(name: String): MethodDefinition?
-    fun findTypeMember(type: PlatformTypeDefinition, memberName: String): Definition?
+
+    fun findTypeMember(
+        type: PlatformTypeDefinition,
+        memberName: String,
+    ): Definition?
 }

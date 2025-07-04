@@ -11,8 +11,8 @@ import com.github._1c_syntax.bsl.context.PlatformContextGrabber
 import com.github._1c_syntax.bsl.context.api.ContextProvider
 import org.slf4j.LoggerFactory
 import ru.alkoleft.context.business.entities.PlatformTypeDefinition
-import ru.alkoleft.context.exceptions.PlatformContextLoadException
 import ru.alkoleft.context.business.valueobjects.ApiType
+import ru.alkoleft.context.exceptions.PlatformContextLoadException
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Path
