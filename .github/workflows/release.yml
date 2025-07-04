@@ -83,31 +83,10 @@ jobs:
           body: |
             ## 🚀 MCP BSL Context Server ${{ steps.tag_version.outputs.VERSION }}
             
-            ### 📦 Artifacts
-            - JAR artifact published to GitHub Packages
-            - Docker images available for both SSE and STDIO modes
-            
             ### 🔄 Changes
             - Automatic release from tag ${{ steps.tag_version.outputs.VERSION }}
             
-            ### 📥 Installation
-            ```bash
-            # Using GitHub Packages
-            gradle dependency: 'ru.alkoleft:mcp-bsl-context:${{ steps.tag_version.outputs.VERSION_NUMBER }}'
-            
-            # Using Docker
-            docker pull ghcr.io/${{ github.repository }}:${{ steps.tag_version.outputs.VERSION_NUMBER }}
-            ```
-            
-            ### 🏃‍♂️ Usage
-            ```bash
-            # SSE Mode
-            java -jar mcp-bsl-context-${{ steps.tag_version.outputs.VERSION_NUMBER }}.jar --server.port=3000
-            
-            # STDIO Mode  
-            java -jar mcp-bsl-context-${{ steps.tag_version.outputs.VERSION_NUMBER }}.jar --mcp.transport=stdio
-            ```
-          draft: false
+          draft: true
           prerelease: false
           files: |
             ./build/libs/mcp-bsl-context-${{ steps.tag_version.outputs.VERSION_NUMBER }}.jar
