@@ -37,13 +37,13 @@ class PlatformContextMcpController(
         @ToolParam(
             description =
                 "Поисковый запрос. Используйте конкретные термины из 1С: " +
-                    "методы ('НайтиПоСсылке', 'ВыполнитьОбработку'), " +
+                    "методы ('СтрНайти', 'ВыполнитьПроверкуПравДоступа'), " +
                     "типы ('Справочник', 'Документ'), " +
-                    "свойства ('Ссылка', 'Код', 'Наименование')",
+                    "свойства ('БезопасноеХранилище', 'ПланыСчетов', 'СредстваМультимедиа')",
         )
         query: String,
         @ToolParam(
-            description = "Тип искомого элемента API: 'method' - методы, 'property' - свойства, 'type' - типы данных, null - все типы",
+            description = "Тип искомого элемента API: 'method' - глобальные методы, 'property' - глобальные свойства, 'type' - типы данных, null - все типы",
         )
         type: String? = null,
         @ToolParam(description = "Максимальное количество результатов (по умолчанию 10, максимум 50)")
@@ -84,7 +84,7 @@ class PlatformContextMcpController(
         try {
             val definition = searchService.getInfo(name, type)
             logger.debug { "getInfo result: $definition" }
-            return formatter.formatInfo(definition)
+            return formatter.formatMember(definition)
         } catch (e: Exception) {
             logger.error(e) { "Ошибка при получении информации об элементе" }
             return "❌ **Ошибка:** ${e.message}"
@@ -108,7 +108,7 @@ class PlatformContextMcpController(
         try {
             val definition = searchService.findMemberByTypeAndName(typeName, memberName)
             logger.debug { "getMember result: $definition" }
-            return formatter.formatInfo(definition)
+            return formatter.formatMember(definition)
         } catch (e: Exception) {
             logger.error(e) { "Ошибка при получении информации об элементе типа" }
             return formatter.formatError(e)
@@ -134,7 +134,7 @@ class PlatformContextMcpController(
         try {
             val definition = searchService.findTypeMembers(typeName)
             logger.debug { "getMembers result size: ${definition.size}" }
-            return formatter.formatDefinitions(definition)
+            return formatter.formatTypeMembers(definition)
         } catch (e: Exception) {
             logger.error(e) { "Ошибка при получении информации об элементе типа" }
             return formatter.formatError(e)
@@ -160,7 +160,7 @@ class PlatformContextMcpController(
         try {
             val result = searchService.findConstructors(typeName)
             logger.debug { "getConstructors result size: ${result.size}" }
-            return formatter.formatConstructors(result)
+            return formatter.formatConstructors(result, typeName)
         } catch (e: Exception) {
             logger.error(e) { "Ошибка при получении информации об элементе типа" }
             return formatter.formatError(e)

@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.alkoleft.context.business.persistent.PlatformContextRepository
 import ru.alkoleft.context.business.services.ResponseFormatterService
-import ru.alkoleft.context.infrastructure.formatters.MarkdownFormatterService
 import ru.alkoleft.context.infrastructure.persistent.repositories.PlatformRepository
 import ru.alkoleft.context.infrastructure.persistent.storage.PlatformContextLoader
 import ru.alkoleft.context.infrastructure.persistent.storage.PlatformContextStorage
 import ru.alkoleft.context.infrastructure.search.SearchEngine
 import ru.alkoleft.context.infrastructure.search.SimpleSearchEngine
+import ru.alkoleft.context.presentation.formatters.MarkdownFormatterService
 import java.nio.file.Path
 
 @Configuration
