@@ -43,7 +43,12 @@ class PlatformContextMcpController(
         )
         query: String,
         @ToolParam(
-            description = "Тип искомого элемента API: 'method' - глобальные методы, 'property' - глобальные свойства, 'type' - типы данных, null - все типы",
+            description =
+                "Тип искомого элемента API: " +
+                    "'method' - глобальные методы, " +
+                    "'property' - глобальные свойства, " +
+                    "'type' - типы данных, " +
+                    "null - все типы",
         )
         type: String? = null,
         @ToolParam(description = "Максимальное количество результатов (по умолчанию 10, максимум 50)")

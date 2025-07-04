@@ -52,18 +52,29 @@
 ### Запуск MCP сервера
 
 ```bash
-java -jar mcp-bsl-context-<версия>.jar --platform-path <путь_к_платформе_1С>
+java -jar mcp-bsl-context-<версия>.jar [опции]
 ```
 
-**Параметры:**
+**Опции:**
 
-- `--platform-path` (обязательный) - путь к каталогу установки 1С Предприятия
+- `--platform-path`, `-p` - путь к каталогу установки 1С Предприятия
+- `--help`, `-h` - показать справку по использованию
 - `--verbose` - включить отладочное логирование
 
-**Пример:**
+**Примеры:**
 
 ```bash
+# Основной способ запуска
 java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+
+# Сокращенная форма
+java -jar mcp-bsl-context-0.2.0.jar -p "/opt/1cv8/x86_64/8.3.25.1257"
+
+# Показать справку
+java -jar mcp-bsl-context-0.2.0.jar --help
+
+# С дополнительными Spring Boot параметрами
+java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257" --server.port=8080
 ```
 
 ### Возможности MCP сервера
