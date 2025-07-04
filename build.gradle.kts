@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.alkoleft"
-version = "0.2.0-SNAPSHOT"
+version = "0.2.2-SNAPSHOT"
 
 gitVersioning.apply {
     refs {
@@ -34,6 +34,12 @@ gitVersioning.apply {
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict", "-java-parameters", "-Xemit-jvm-type-annotations")
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -98,7 +104,7 @@ tasks.jar {
 tasks.bootJar {
     enabled = true
     archiveClassifier.set("")
-    mainClass.set("ru.alkoleft.context.platform.McpServerApplication")
+    mainClass.set("ru.alkoleft.context.McpServerApplicationKt")
 }
 
 // Исправление зависимостей для задач распространения
