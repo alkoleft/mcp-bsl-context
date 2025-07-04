@@ -1,5 +1,6 @@
 [versions]
 kotlin = "2.1.20"
+kotlin-logging = "7.0.3"
 springBoot = "3.5.0"
 springDependencyManagement = "1.1.7"
 gitVersioning = "6.4.4"
@@ -23,6 +24,7 @@ jacoco = "0.8.11"
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8" }
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
+kotlin-logging-jvm = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
 # Spring Boot
 spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter" }
@@ -62,7 +64,8 @@ assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "as
 # Kotlin bundle
 kotlin = [
     "kotlin-reflect",
-    "kotlin-stdlib-jdk8"
+    "kotlin-stdlib-jdk8",
+    "kotlin-logging-jvm"
 ]
 
 # Jackson bundle

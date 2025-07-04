@@ -5,31 +5,51 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.platform.mcp
+package ru.alkoleft.context.infrastructure.persistent.storage
 
 import com.github._1c_syntax.bsl.context.PlatformContextGrabber
 import com.github._1c_syntax.bsl.context.api.ContextProvider
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
+import ru.alkoleft.context.business.entities.PlatformTypeDefinition
+import ru.alkoleft.context.exceptions.PlatformContextLoadException
+import ru.alkoleft.context.business.valueobjects.ApiType
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Path
 
 /**
- * Kotlin реализация компонента для загрузки контекста платформы 1С из файлов справочной системы
+ * Infrastructure External Service: Загрузчик контекста платформы 1С
  *
- * Основные улучшения:
- * - Kotlin coroutines для асинхронной обработки
- * - Use expressions и scope functions
- * - Null safety и улучшенная обработка ошибок
- * - Extension functions для работы с Path
- * - Автоматическое управление ресурсами
+ * Адаптер для работы с HBK библиотекой для загрузки контекста платформы
  */
-@Component
 class PlatformContextLoader {
     companion object {
         private val log = LoggerFactory.getLogger(PlatformContextLoader::class.java)
         private const val CONTEXT_FILE_NAME = "shcntx_ru.hbk"
+    }
+
+    /**
+     * Загружает все типы платформы
+     */
+    suspend fun loadAllTypes(): List<PlatformTypeDefinition> {
+        // TODO: Реализовать загрузку из HBK
+        return emptyList()
+    }
+
+    /**
+     * Загружает тип по имени
+     */
+    suspend fun loadTypeByName(name: String): PlatformTypeDefinition? {
+        // TODO: Реализовать загрузку из HBK
+        return null
+    }
+
+    /**
+     * Загружает типы по типу API
+     */
+    suspend fun loadTypesByApiType(apiType: ApiType): List<PlatformTypeDefinition> {
+        // TODO: Реализовать загрузку из HBK
+        return emptyList()
     }
 
     /**
@@ -59,7 +79,7 @@ class PlatformContextLoader {
                 }
             } catch (e: Exception) {
                 log.error("Ошибка при загрузке контекста платформы", e)
-                throw RuntimeException("Не удалось загрузить контекст платформы: ${e.message}", e)
+                throw PlatformContextLoadException("Не удалось загрузить контекст платформы: ${e.message}", e)
             }
         }
     }

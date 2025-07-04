@@ -7,30 +7,68 @@
 
 package ru.alkoleft.context
 
-import org.springframework.ai.tool.ToolCallbackProvider
-import org.springframework.ai.tool.method.MethodToolCallbackProvider
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.Bean
-import ru.alkoleft.context.platform.mcp.PlatformApiSearchService
+import org.springframework.context.annotation.ComponentScan
 
 /**
- * Spring Boot приложение для MCP сервера платформы 1С Предприятие
+ * Главный класс приложения MCP Server
  *
- * Обновленная Kotlin версия с MCP-only архитектурой.
- * Удален CLI интерфейс, остался только MCP сервер.
+ * Архитектура приложения (Clean Architecture + SOLID + DDD):
+ *
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │                    PRESENTATION LAYER                       │
+ * │  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+ * │  │   MCP Server    │  │   REST API      │  │   STDIO      │ │
+ * │  │   Components    │  │   Controllers   │  │   Handlers   │ │
+ * │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+ * └─────────────────────────────────────────────────────────────┘
+ *                              │
+ *                              ▼
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │                   APPLICATION LAYER                         │
+ * │  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+ * │  │  Use Cases      │  │  Application    │  │  DTOs        │ │
+ * │  │  Services       │  │  Services       │  │  Mappers     │ │
+ * │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+ * └─────────────────────────────────────────────────────────────┘
+ *                              │
+ *                              ▼
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │                     DOMAIN LAYER                            │
+ * │  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+ * │  │   Entities      │  │  Value Objects  │  │  Aggregates  │ │
+ * │  │   Repositories  │  │  Domain         │  │  Services    │ │
+ * │  │   Interfaces    │  │  Events         │  │  Exceptions  │ │
+ * │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+ * └─────────────────────────────────────────────────────────────┘
+ *                              │
+ *                              ▼
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │                  INFRASTRUCTURE LAYER                       │
+ * │  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
+ * │  │  Repository     │  │  External       │  │  Persistence │ │
+ * │  │  Implementations│  │  Services       │  │  & Caching   │ │
+ * │  │  Formatters     │  │  Integrations   │  │  & Export    │ │
+ * │  └─────────────────┘  └─────────────────┘  └──────────────┘ │
+ * └─────────────────────────────────────────────────────────────┘
+ *
+ * Принципы:
+ * - SOLID: Single Responsibility, Open/Closed, Liskov Substitution,
+ *          Interface Segregation, Dependency Inversion
+ * - DDD: Domain-Driven Design с Entities, Value Objects, Aggregates
+ * - Clean Architecture: Dependency Rule, слоистая архитектура
  */
 @SpringBootApplication
-@EnableCaching
-class McpServerApplication {
-    @Bean
-    fun platformTools(platformApiSearchService: PlatformApiSearchService): ToolCallbackProvider =
-        MethodToolCallbackProvider
-            .builder()
-            .toolObjects(platformApiSearchService)
-            .build()
-}
+@ComponentScan(
+    basePackages = [
+        "ru.alkoleft.context.presentation",
+        "ru.alkoleft.context.application",
+        "ru.alkoleft.context.domain",
+        "ru.alkoleft.context.infrastructure",
+    ],
+)
+class McpServerApplication
 
 fun main(args: Array<String>) {
     runApplication<McpServerApplication>(*args)
