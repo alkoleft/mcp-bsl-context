@@ -26,7 +26,7 @@ fun ContextProperty.toEntity() =
     PropertyDefinition(
         name = name().name,
         description = description(),
-        propertyType = types()[0].name().name,
+        propertyType = typePresentation(types()),
     )
 
 fun ContextMethod.toEntity() =
@@ -85,4 +85,4 @@ fun signatureDescription(sig: ContextMethodSignature): String =
         "${sig.name().name}. ${sig.description()}"
     }
 
-fun typePresentation(types: List<Context>): String = if (types.isEmpty()) "" else types[0].name().name
+fun typePresentation(types: List<Context>?): String = if (types == null || types.isEmpty()) "" else types[0].name().name

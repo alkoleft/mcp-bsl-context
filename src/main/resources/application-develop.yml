@@ -3,4 +3,4 @@ logging:
   config:
   level:
     root: INFO
-    ru.alkoleft.context.platform: DEBUG
+    ru.alkoleft.context: DEBUG

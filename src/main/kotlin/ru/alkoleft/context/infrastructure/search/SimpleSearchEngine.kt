@@ -46,6 +46,7 @@ class SimpleSearchEngine(
         logger.info { "Инициализация поисковых индексов..." }
 
         try {
+            context.load()
             hashIndexes.load(context)
             startWithIndexes.load(context)
 

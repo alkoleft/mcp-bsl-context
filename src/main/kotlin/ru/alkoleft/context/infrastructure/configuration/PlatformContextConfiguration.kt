@@ -7,6 +7,7 @@
 
 package ru.alkoleft.context.infrastructure.configuration
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.alkoleft.context.business.persistent.PlatformContextRepository
@@ -17,6 +18,7 @@ import ru.alkoleft.context.infrastructure.persistent.storage.PlatformContextLoad
 import ru.alkoleft.context.infrastructure.persistent.storage.PlatformContextStorage
 import ru.alkoleft.context.infrastructure.search.SearchEngine
 import ru.alkoleft.context.infrastructure.search.SimpleSearchEngine
+import java.nio.file.Path
 
 @Configuration
 class PlatformContextConfiguration {
@@ -30,7 +32,10 @@ class PlatformContextConfiguration {
     fun searchEngine(storage: PlatformContextStorage): SearchEngine = SimpleSearchEngine(storage)
 
     @Bean
-    fun contextStorage(loader: PlatformContextLoader): PlatformContextStorage = PlatformContextStorage(loader)
+    fun contextStorage(
+        loader: PlatformContextLoader,
+        @Value("\${platform.context.path}") platformPath: Path,
+    ): PlatformContextStorage = PlatformContextStorage(loader, platformPath)
 
     @Bean
     fun contextLoader(): PlatformContextLoader = PlatformContextLoader()

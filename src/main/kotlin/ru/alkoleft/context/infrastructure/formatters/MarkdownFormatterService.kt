@@ -7,6 +7,7 @@
 
 package ru.alkoleft.context.infrastructure.formatters
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import ru.alkoleft.context.business.entities.Definition
 import ru.alkoleft.context.business.entities.MethodDefinition
@@ -23,6 +24,8 @@ import ru.alkoleft.context.exceptions.DomainException
  */
 @Service
 class MarkdownFormatterService : ResponseFormatterService {
+    private val logger = KotlinLogging.logger {}
+
     override fun formatError(e: Throwable) = if (e is DomainException) "❌ ${e.message}" else "❌ **Ошибка:** ${e.message}"
 
     override fun formatQuery(query: String) = "# Результаты поиска: '$query'\n\n"
@@ -32,21 +35,25 @@ class MarkdownFormatterService : ResponseFormatterService {
      */
     override fun formatSearchResults(result: List<Definition>) = formatDefinitions(result)
 
-    override fun formatInfo(definition: Definition?) =
-        when (definition) {
+    override fun formatInfo(definition: Definition?): String {
+        logger.debug { "formatInfo called with definition=$definition" }
+        return when (definition) {
             is PlatformTypeDefinition -> formatPlatformType(definition)
             is PropertyDefinition -> formatProperty(definition)
             is MethodDefinition -> formatMethod(definition)
             null -> "❌ **Не найдено:** Ничего не найдено для запроса\n"
         }
+    }
 
     override fun formatDefinitions(definitions: List<Definition>): String {
+        logger.debug { "formatDefinitions called with definitions.size=${definitions.size}" }
         val builder = StringBuilder()
         formatSearchResults(builder, definitions)
         return builder.toString()
     }
 
     override fun formatConstructors(result: List<Signature>): String {
+        logger.debug { "formatConstructors called with result.size=${result.size}" }
         TODO("Not yet implemented")
     }
 

@@ -9,9 +9,7 @@ package ru.alkoleft.context.infrastructure.persistent.storage
 
 import com.github._1c_syntax.bsl.context.PlatformContextGrabber
 import com.github._1c_syntax.bsl.context.api.ContextProvider
-import org.slf4j.LoggerFactory
-import ru.alkoleft.context.business.entities.PlatformTypeDefinition
-import ru.alkoleft.context.business.valueobjects.ApiType
+import io.github.oshai.kotlinlogging.KotlinLogging
 import ru.alkoleft.context.exceptions.PlatformContextLoadException
 import java.io.FileNotFoundException
 import java.nio.file.Files
@@ -22,34 +20,11 @@ import java.nio.file.Path
  *
  * Адаптер для работы с HBK библиотекой для загрузки контекста платформы
  */
+private val log = KotlinLogging.logger { }
+
 class PlatformContextLoader {
     companion object {
-        private val log = LoggerFactory.getLogger(PlatformContextLoader::class.java)
         private const val CONTEXT_FILE_NAME = "shcntx_ru.hbk"
-    }
-
-    /**
-     * Загружает все типы платформы
-     */
-    suspend fun loadAllTypes(): List<PlatformTypeDefinition> {
-        // TODO: Реализовать загрузку из HBK
-        return emptyList()
-    }
-
-    /**
-     * Загружает тип по имени
-     */
-    suspend fun loadTypeByName(name: String): PlatformTypeDefinition? {
-        // TODO: Реализовать загрузку из HBK
-        return null
-    }
-
-    /**
-     * Загружает типы по типу API
-     */
-    suspend fun loadTypesByApiType(apiType: ApiType): List<PlatformTypeDefinition> {
-        // TODO: Реализовать загрузку из HBK
-        return emptyList()
     }
 
     /**
@@ -61,13 +36,13 @@ class PlatformContextLoader {
      * @throws RuntimeException если не удалось загрузить контекст
      */
     fun loadPlatformContext(platformPath: Path): ContextProvider {
-        log.info("Загрузка контекста платформы из {}", platformPath)
+        log.info { "${"Загрузка контекста платформы из каталога '{}'"} $platformPath" }
 
         val syntaxContextFile =
             findContextFile(platformPath)
                 ?: throw FileNotFoundException("Не удалось найти файл $CONTEXT_FILE_NAME в каталоге $platformPath")
 
-        log.info("Найден файл контекста: {}", syntaxContextFile)
+        log.info { "Найден файл контекста: $syntaxContextFile" }
 
         return Files.createTempDirectory("platform-context").use { tmpDir ->
             try {
@@ -75,10 +50,10 @@ class PlatformContextLoader {
                 grabber.parse()
 
                 grabber.provider.also {
-                    log.info("Контекст платформы успешно загружен")
+                    log.info { "Контекст платформы успешно загружен" }
                 }
             } catch (e: Exception) {
-                log.error("Ошибка при загрузке контекста платформы", e)
+                log.error(e) { "Ошибка при загрузке контекста платформы" }
                 throw PlatformContextLoadException("Не удалось загрузить контекст платформы: ${e.message}", e)
             }
         }
@@ -97,7 +72,7 @@ class PlatformContextLoader {
                     .orElse(null)
             }
         }.getOrElse { e ->
-            log.warn("Ошибка при поиске файла контекста в $path", e)
+            log.warn(e) { "Ошибка при поиске файла контекста в $path" }
             null
         }
 
@@ -124,13 +99,13 @@ class PlatformContextLoader {
                             runCatching {
                                 Files.deleteIfExists(path)
                             }.onFailure { e ->
-                                log.warn("Не удалось удалить временный файл: {}", path, e)
+                                log.warn { "Не удалось удалить временный файл: $path\n${e.message}" }
                             }
                         }
                 }
             }
         }.onFailure { e ->
-            log.warn("Ошибка при очистке временного каталога: {}", tmpDir, e)
+            log.warn { "${"Ошибка при очистке временного каталога: {}"} $tmpDir $e" }
         }
     }
 }

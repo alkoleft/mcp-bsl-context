@@ -7,14 +7,14 @@
 
 package ru.alkoleft.context.presentation.mcp
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
 import org.springframework.stereotype.Service
 import ru.alkoleft.context.business.services.ContextSearchService
 import ru.alkoleft.context.business.services.ResponseFormatterService
 
-private val log = LoggerFactory.getLogger(PlatformContextMcpController::class.java)
+private val logger = KotlinLogging.logger {}
 
 /**
  * MCP Service для поиска API платформы 1С
@@ -49,12 +49,14 @@ class PlatformContextMcpController(
         @ToolParam(description = "Максимальное количество результатов (по умолчанию 10, максимум 50)")
         limit: Int? = null,
     ): String {
+        logger.debug { "search called with query='$query', type='$type', limit='$limit'" }
         try {
             val result = searchService.searchAll(query, type, limit)
+            logger.debug { "search result size: ${result.size}" }
             return formatter.formatQuery(query) +
                 formatter.formatSearchResults(result)
         } catch (e: Exception) {
-            log.error("Ошибка при выполнении поиска", e)
+            logger.error(e) { "Ошибка при выполнении поиска" }
             return formatter.formatError(e)
         }
     }
@@ -78,11 +80,13 @@ class PlatformContextMcpController(
         )
         type: String? = null,
     ): String {
+        logger.debug { "getInfo called with name='$name', type='$type'" }
         try {
             val definition = searchService.getInfo(name, type)
+            logger.debug { "getInfo result: $definition" }
             return formatter.formatInfo(definition)
         } catch (e: Exception) {
-            log.error("Ошибка при получении информации об элементе", e)
+            logger.error(e) { "Ошибка при получении информации об элементе" }
             return "❌ **Ошибка:** ${e.message}"
         }
     }
@@ -100,11 +104,13 @@ class PlatformContextMcpController(
         @ToolParam(description = "Имя метода или свойства типа. Примеры: 'НайтиПоКоду', 'Записать', 'Код', 'Наименование', 'Длина'")
         memberName: String,
     ): String {
+        logger.debug { "getMember called with typeName='$typeName', memberName='$memberName'" }
         try {
             val definition = searchService.findMemberByTypeAndName(typeName, memberName)
+            logger.debug { "getMember result: $definition" }
             return formatter.formatInfo(definition)
         } catch (e: Exception) {
-            log.error("Ошибка при получении информации об элементе типа", e)
+            logger.error(e) { "Ошибка при получении информации об элементе типа" }
             return formatter.formatError(e)
         }
     }
@@ -124,11 +130,13 @@ class PlatformContextMcpController(
         )
         typeName: String,
     ): String {
+        logger.debug { "getMembers called with typeName='$typeName'" }
         try {
             val definition = searchService.findTypeMembers(typeName)
+            logger.debug { "getMembers result size: ${definition.size}" }
             return formatter.formatDefinitions(definition)
         } catch (e: Exception) {
-            log.error("Ошибка при получении информации об элементе типа", e)
+            logger.error(e) { "Ошибка при получении информации об элементе типа" }
             return formatter.formatError(e)
         }
     }
@@ -148,11 +156,13 @@ class PlatformContextMcpController(
         )
         typeName: String,
     ): String {
+        logger.debug { "getConstructors called with typeName='$typeName'" }
         try {
             val result = searchService.findConstructors(typeName)
+            logger.debug { "getConstructors result size: ${result.size}" }
             return formatter.formatConstructors(result)
         } catch (e: Exception) {
-            log.error("Ошибка при получении информации об элементе типа", e)
+            logger.error(e) { "Ошибка при получении информации об элементе типа" }
             return formatter.formatError(e)
         }
     }
