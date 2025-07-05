@@ -52,6 +52,8 @@ repositories {
 dependencies {
     // Kotlin Standard Library
     implementation(libs.bundles.kotlin)
+    implementation("org.apache.commons", "commons-compress", "1.27.1")
+    implementation("com.mohamedrejeb.ksoup:ksoup-html:0.6.0")
 
     // Spring Boot with Kotlin
     implementation(libs.bundles.spring.boot)
