@@ -8,18 +8,18 @@
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 
 class MarkdownHtmlHandlerTest {
 
-    private fun parseHtmlToMarkdown(html: String, enableMarkdown: Boolean = true): String {
-        val markdownHandler = MarkdownHtmlHandler.builder()
-            .enableMarkdown(enableMarkdown)
-            .build()
-        val parser = KsoupHtmlParser(markdownHandler.createKsoupHandler())
+    private fun parseHtmlToMarkdown(html: String): String {
+        val markdownHandler = object : MarkdownHtmlHandler<String>() {
+            override fun getResult() = getMarkdown()
+        }
+        val parser = KsoupHtmlParser(markdownHandler)
         parser.write(html)
-        return markdownHandler.getMarkdown()
+        return markdownHandler.getResult()
     }
 
     @Test
@@ -91,18 +91,6 @@ class MarkdownHtmlHandlerTest {
         """.trimIndent()
         
         assertEquals(expected, result)
-    }
-
-    @Test
-    fun `test disabled markdown`() {
-        val html = """
-            <h1>Заголовок</h1>
-            <p>Текст</p>
-        """.trimIndent()
-
-        val result = parseHtmlToMarkdown(html, enableMarkdown = false)
-        
-        assertEquals("", result)
     }
 
     @Test

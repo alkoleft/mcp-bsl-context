@@ -7,25 +7,13 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
-
-typealias OpenTagHandler = (String, Map<String, String>, Boolean, MarkdownHtmlHandler) -> Unit
-typealias CloseTagHandler = (String, Boolean, MarkdownHtmlHandler) -> Unit
-typealias TextHandler = (String, MarkdownHtmlHandler) -> Unit
-
 /**
  * Базовый обработчик HTML для конвертации в Markdown
  * Поддерживает расширение через кастомные обработчики
  */
-class MarkdownHtmlHandler private constructor(
-    private var isMarkdownEnabled: Boolean,
-    private val customOpenTagHandler: OpenTagHandler? = null,
-    private val customCloseTagHandler: CloseTagHandler? = null,
-    private val customTextHandler: TextHandler? = null
-) {
-    private val markdownBuilder = StringBuilder()
+abstract class MarkdownHtmlHandler<R> : BlockHandler<R> {
+    protected val markdownBuilder = StringBuilder()
     private val tagStack = mutableListOf<String>()
-    private val tagAttributes = mutableMapOf<String, Map<String, String>>()
     private var isInList = false
     private var listLevel = 0
     private var isInCode = false
@@ -34,73 +22,8 @@ class MarkdownHtmlHandler private constructor(
     private var linkHref: String? = null
     private var linkText = StringBuilder()
 
-    /**
-     * Строитель для создания MarkdownHtmlHandler
-     */
-    class Builder {
-        private var isMarkdownEnabled: Boolean = false
-        private var onOpenTagHandler: OpenTagHandler? = null
-        private var onCloseTagHandler: CloseTagHandler? = null
-        private var onTextHandler: TextHandler? = null
-
-        fun enableMarkdown(enable: Boolean): Builder {
-            this.isMarkdownEnabled = enable
-            return this
-        }
-
-        fun onOpenTag(handler: OpenTagHandler): Builder {
-            this.onOpenTagHandler = handler
-            return this
-        }
-
-        fun onCloseTag(handler: CloseTagHandler): Builder {
-            this.onCloseTagHandler = handler
-            return this
-        }
-
-        fun onText(handler: TextHandler): Builder {
-            this.onTextHandler = handler
-            return this
-        }
-
-        fun build(): MarkdownHtmlHandler {
-            return MarkdownHtmlHandler(
-                isMarkdownEnabled,
-                onOpenTagHandler,
-                onCloseTagHandler,
-                onTextHandler
-            )
-        }
-    }
-
-    fun setMarkdownEnabled(enabled: Boolean) {
-        isMarkdownEnabled = enabled
-    }
-
-    fun isMarkdownEnabled(): Boolean {
-        return isMarkdownEnabled
-    }
-
-    val currentTagName: String
-        get() = tagStack.last()
-
-    val currentTagAttributes: Map<String, String>?
-        get() = tagAttributes[currentTagName]
-
-    private fun handleOpenTag(name: String, attributes: Map<String, String>, isImplied: Boolean) {
+    override fun onOpenTag(name: String, attributes: Map<String, String>, isImplied: Boolean) {
         tagStack.add(name)
-        tagAttributes[name] = attributes
-
-        if (isMarkdownEnabled && name == "p" && attributes["class"] == "V8SH_chapter") {
-            isMarkdownEnabled = false
-        }
-
-        if (!isMarkdownEnabled) {
-            customOpenTagHandler?.invoke(name, attributes, isImplied, this)
-            return
-        }
-        // Если выключен режим Markdown, не выполняем стандартную обработку
-
         when (name.lowercase()) {
             "h1", "h2", "h3", "h4", "h5", "h6" -> {
                 val level = name[1].digitToInt()
@@ -166,15 +89,7 @@ class MarkdownHtmlHandler private constructor(
         }
     }
 
-    private fun handleCloseTag(name: String, isImplied: Boolean) {
-        // Если выключен режим Markdown, не выполняем стандартную обработку
-        if (!isMarkdownEnabled) {
-            // Выполняем кастомный обработчик если установлен
-            customCloseTagHandler?.invoke(name, isImplied, this)
-            afterCloseTag(name)
-            return
-        }
-
+    override fun onCloseTag(name: String, isImplied: Boolean) {
         when (name.lowercase()) {
             "h1", "h2", "h3", "h4", "h5", "h6" -> {
                 markdownBuilder.append("\n")
@@ -225,9 +140,9 @@ class MarkdownHtmlHandler private constructor(
                 val href = linkHref ?: ""
                 if (text.isNotEmpty()) {
                     if(href.startsWith("v8help://")){
-                        markdownBuilder.append(" `$text`")
+                        markdownBuilder.append("`$text`")
                     }else {
-                        markdownBuilder.append(" [$text]($href)")
+                        markdownBuilder.append("[$text]($href)")
                     }
                 }
                 linkHref = null
@@ -237,22 +152,13 @@ class MarkdownHtmlHandler private constructor(
         afterCloseTag(name)
     }
 
-    private fun afterCloseTag(name: String) {
+    fun afterCloseTag(name: String) {
         if (tagStack.isNotEmpty() && tagStack.last() == name) {
             tagStack.removeLast()
-            tagAttributes.remove(name)
         }
     }
 
-    private fun handleText(text: String) {
-
-        // Если выключен режим Markdown, не выполняем стандартную обработку
-        if (!isMarkdownEnabled) {
-            // Выполняем кастомный обработчик если установлен
-            customTextHandler?.invoke(text, this)
-            return
-        }
-
+    override fun onText(text: String) {
         val trimmedText = text.trim()
         if (trimmedText.isNotEmpty()) {
             if (isInBlockquote) {
@@ -267,28 +173,5 @@ class MarkdownHtmlHandler private constructor(
         }
     }
 
-    fun getMarkdown(): String {
-        return markdownBuilder.toString().trim()
-    }
-
-    /**
-     * Создает KsoupHtmlHandler для использования с парсером
-     */
-    fun createKsoupHandler(): KsoupHtmlHandler {
-        return KsoupHtmlHandler.Builder()
-            .onOpenTag { name, attributes, isImplied ->
-                handleOpenTag(name, attributes, isImplied)
-            }
-            .onCloseTag { name, isImplied ->
-                handleCloseTag(name, isImplied)
-            }
-            .onText { text ->
-                handleText(text)
-            }
-            .build()
-    }
-
-    companion object {
-        fun builder(): Builder = Builder()
-    }
+    fun getMarkdown() = markdownBuilder.toString().trim()
 }

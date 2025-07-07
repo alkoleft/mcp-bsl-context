@@ -7,11 +7,23 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
+import ru.alkoleft.context.exceptions.PlatformContextLoadException
 import ru.alkoleft.context.infrastructure.hbk.HbkContentReader
 import ru.alkoleft.context.infrastructure.hbk.Page
+import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
 
 class PlatformContextPagesParser(private val context: HbkContentReader.Context) {
-    val parser: PropertyPageParser = PropertyPageParser()
-    fun parsePropertyPage(page: Page) =
-        context.getEntryStream(page)?.use { parser.parse(it) }
+    val propertyPageParser: PropertyPageParser = PropertyPageParser()
+    val methodPageParser: MethodPageParser = MethodPageParser()
+
+    fun parsePropertyPage(page: Page) = parsePage(page, propertyPageParser)
+    fun parseMethodPage(page: Page) = parsePage(page, methodPageParser)
+
+    private fun <T> parsePage(page: Page, parser: PageParser<T>): T? {
+        try {
+            return context.getEntryStream(page)?.use { parser.parse(it) }
+        } catch (ex: Exception) {
+            throw PlatformContextLoadException("Не удалось разобрать страницу документации $page", ex)
+        }
+    }
 }

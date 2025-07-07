@@ -13,6 +13,7 @@ import com.github._1c_syntax.bsl.context.api.ContextMethod
 import io.github.oshai.kotlinlogging.KotlinLogging
 import ru.alkoleft.context.infrastructure.hbk.HbkContentReader.Context
 import ru.alkoleft.context.infrastructure.hbk.pages.GlobalContextPage
+import ru.alkoleft.context.infrastructure.hbk.parsers.MethodInfo
 import ru.alkoleft.context.infrastructure.hbk.parsers.PlatformContextPagesParser
 import ru.alkoleft.context.infrastructure.hbk.parsers.PropertyInfo
 import java.nio.file.Path
@@ -48,9 +49,14 @@ class PlatformContextReader() {
 
     fun visitGlobalContextPage(page: Page, parser: PlatformContextPagesParser): GlobalContextPage {
         logger.info { "Анализ описания глобального контекста: ${page.title.ru}" }
+        var properties:List<PropertyInfo> = emptyList()
+        var methods = mutableListOf<MethodInfo>()
         page.children.forEach {
             when {
-                it.title.en == "Свойства" -> getPropertiesFromPage(page, parser)
+                it.title.en == "Свойства" ->
+                    properties = getPropertiesFromPage(it, parser)
+                it.htmlPath.contains("/methods/") ->
+                    methods.addAll(getMethodsFromPage(it, parser))
             }
         }
         return GlobalContextPage(emptyList(), emptyList())
@@ -78,6 +84,10 @@ class PlatformContextReader() {
             .filter { it.htmlPath.contains("/properties/") }  // TODO проверить на обязательность
             .filter { !it.title.ru.startsWith("<") }
             .mapNotNull { parser.parsePropertyPage(it) }
+
+    private fun getMethodsFromPage(page: Page, parser: PlatformContextPagesParser) =
+        page.children
+            .mapNotNull { parser.parseMethodPage(it) }
 
 
     private fun isGlobalContextPage(page: Page): Boolean {

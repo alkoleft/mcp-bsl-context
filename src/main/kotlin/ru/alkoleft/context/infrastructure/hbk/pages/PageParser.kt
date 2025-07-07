@@ -9,10 +9,14 @@ package ru.alkoleft.context.infrastructure.hbk.pages
 
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.PageProxyHandler
 import java.io.InputStream
 
-abstract class PageParser<T>() {
-    abstract fun parse(inputStream: InputStream): T
+abstract class PageParser<T>(protected val handler: PageProxyHandler<T>) {
+    fun parse(inputStream: InputStream): T {
+        parsePage(inputStream, handler)
+        return handler.getResult()
+    }
 
     protected fun parsePage(inputStream: InputStream, handler: KsoupHtmlHandler) {
         val parser = KsoupHtmlParser(handler = handler)
