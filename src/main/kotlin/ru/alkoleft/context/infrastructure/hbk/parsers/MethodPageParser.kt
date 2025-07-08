@@ -33,9 +33,8 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
                 "Описание:", "Описание варианта метода:" -> DescriptionBlockHandler()
                 "Пример:" -> ExampleBlockHandler() // Placeholder, can be a specific handler
                 "См. также:" -> RelatedObjectsBlockHandler() // Placeholder, can be a specific handler
-                "Доступность:" -> null
                 "Примечание:"->NoteBlockHandler()
-                "Использование в версии:" -> null
+                "Доступность:", "Использование в версии:" -> null
                 else -> throw UnexpectedException("Неизвестный тип блока страницы описания `$blockTitle`")
             }
         }

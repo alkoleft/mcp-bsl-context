@@ -10,6 +10,7 @@ package ru.alkoleft.context.infrastructure.hbk
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.commons.compress.archivers.zip.ZipFile
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel
+import ru.alkoleft.context.exceptions.PlatformContextLoadException
 import ru.alkoleft.context.infrastructure.hbk.toc.Toc
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -45,9 +46,9 @@ class HbkContentReader {
 
     class Context(val toc: Toc, val zipFile: ZipFile) {
         fun getEntryStream(page: Page) = getEntryStream(page.htmlPath)
-        fun getEntryStream(name: String): InputStream? {
+        fun getEntryStream(name: String): InputStream {
             if (name.isEmpty()) {
-                return null
+                throw PlatformContextLoadException("Не указано имя файла для поиска в архиве")
             }
             val validName =
                 if (name.startsWith("/")) name.substring(1)
@@ -56,11 +57,9 @@ class HbkContentReader {
             return if (entry != null) {
                 zipFile.getInputStream(entry)
             } else {
-                null
+                throw PlatformContextLoadException("Не найден файл в архиве $name")
             }
         }
-
-        fun getEntryData(name: String) = getEntryStream(name)?.use { it.readAllBytes() }
     }
 
     private fun walk(zip: ZipFile, pages: List<Page>) {

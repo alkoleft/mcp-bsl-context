@@ -32,6 +32,21 @@ data class MethodParameterInfo(
     val description: String,
 )
 
+data class EnumInfo(
+    val nameRu: String,
+    val nameEn: String,
+    val description: String,
+    val relatedObjects: List<RelatedObject>?,
+    val values: MutableList<EnumValueInfo> = mutableListOf(),
+    var example: String?
+)
+
+data class EnumValueInfo(
+    val nameRu: String,
+    val nameEn: String,
+    val description: String,
+    val relatedObjects: List<RelatedObject>?,
+)
 
 /**
  * Информация о глобальном свойстве

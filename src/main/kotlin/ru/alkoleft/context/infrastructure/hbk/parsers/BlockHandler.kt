@@ -32,7 +32,7 @@ class NameBlockHandler : BlockHandler<Pair<String, String>> {
     private var inHeading = false
 
     override fun onOpenTag(name: String, attributes: Map<String, String>, isImplied: Boolean) {
-        if (name == "p" && attributes["class"] == "V8SH_heading") {
+        if (name == "p" && (attributes["class"] == "V8SH_heading"||attributes["class"] == "V8SH_title")) {
             inHeading = true
         }
     }

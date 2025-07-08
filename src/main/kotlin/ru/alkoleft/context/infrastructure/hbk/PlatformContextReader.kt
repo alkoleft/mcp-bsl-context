@@ -13,6 +13,7 @@ import com.github._1c_syntax.bsl.context.api.ContextMethod
 import io.github.oshai.kotlinlogging.KotlinLogging
 import ru.alkoleft.context.infrastructure.hbk.HbkContentReader.Context
 import ru.alkoleft.context.infrastructure.hbk.pages.GlobalContextPage
+import ru.alkoleft.context.infrastructure.hbk.parsers.EnumInfo
 import ru.alkoleft.context.infrastructure.hbk.parsers.MethodInfo
 import ru.alkoleft.context.infrastructure.hbk.parsers.PlatformContextPagesParser
 import ru.alkoleft.context.infrastructure.hbk.parsers.PropertyInfo
@@ -20,7 +21,11 @@ import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
+private val CATALOG_PAGE_PATTERN = """/catalog\d+\.html""".toRegex()
 class PlatformContextReader() {
+
+    private val enums = mutableListOf<EnumInfo>()
+
     fun read(path: Path) {
 
         val reader = HbkContentReader()
@@ -36,13 +41,13 @@ class PlatformContextReader() {
             .filter { it.htmlPath.isNotEmpty() }
             .forEach { page ->
                 if (isGlobalContextPage(page)) {
-                    visitGlobalContextPage(page, parser)
+                    // visitGlobalContextPage(page, parser)
                 } else if (isCatalogPage(page)) {
                     visitPages(context, page.children)
                 } else if (isEnumPage(page)) {
-                    context.getEntryStream(page)?.readAllBytes()
+                    visitEnumPage(page, parser)
                 } else {
-                    visitTypePage(page, parser)
+                    // visitTypePage(page, parser)
                 }
             }
     }
@@ -60,6 +65,14 @@ class PlatformContextReader() {
             }
         }
         return GlobalContextPage(emptyList(), emptyList())
+    }
+
+    fun visitEnumPage(page: Page, parser: PlatformContextPagesParser) {
+        val values =
+            page.children
+                .filter { it.htmlPath.contains("/properties/") }
+                .map { parser.parseEnumValuePage(it) }
+        enums += parser.parseEnumPage(page).apply { this.values.addAll(values) }
     }
 
     fun visitTypePage(page: Page, parser: PlatformContextPagesParser) {
@@ -83,32 +96,22 @@ class PlatformContextReader() {
         page.children
             .filter { it.htmlPath.contains("/properties/") }  // TODO проверить на обязательность
             .filter { !it.title.ru.startsWith("<") }
-            .mapNotNull { parser.parsePropertyPage(it) }
+            .map { parser.parsePropertyPage(it) }
 
     private fun getMethodsFromPage(page: Page, parser: PlatformContextPagesParser) =
         page.children
-            .mapNotNull { parser.parseMethodPage(it) }
+            .map { parser.parseMethodPage(it) }
 
 
     private fun isGlobalContextPage(page: Page): Boolean {
         return page.htmlPath.contains("Global context.html")
     }
 
-    private fun isCatalogPage(page: Page): Boolean {
-        val elements: Array<String?> = page.htmlPath.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val endElement: String = if (elements.size > 1) {
-            elements[elements.size - 1]!!
-        } else {
-            elements[0]!!
-        }
-
-        return endElement.contains("catalog")
-    }
+    private fun isCatalogPage(page: Page) = CATALOG_PAGE_PATTERN.find(page.htmlPath) != null
 
     private fun isEnumPage(page: Page): Boolean {
         // FIXME нужна проверка более точная
-        return page.children.stream()
-            .anyMatch { it.htmlPath.contains("/properties/") }
+        return page.children.any { it.htmlPath.contains("/properties/") }
     }
 
 }
