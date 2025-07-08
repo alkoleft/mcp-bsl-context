@@ -10,66 +10,62 @@ package ru.alkoleft.context.infrastructure.hbk.parsers
 import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
 import java.rmi.UnexpectedException
 
-class PropertyPageProxyHandler : PageProxyHandler<PropertyInfo>() {
-    private var nameRu = ""
-    private var nameEn = ""
+class ConstructorPageProxyHandler : PageProxyHandler<ConstructorInfo>() {
+    private var name = ""
+    private var syntax = ""
+    private var parameters = listOf<MethodParameterInfo>()
     private var description = ""
-    private var readonly = false
-    private var typeNames = ""
+    private var example: String? = null
     private var relatedObjects: List<RelatedObject>? = null
     private var note: String? = null
 
     override fun createHandler(blockTitle: String): BlockHandler<*>? =
         when (blockTitle) {
-            "Описание:" -> ValueInfoBlockHandler()
-            "Использование:" -> ReadOnlyBlockHandler()
+            "Синтаксис:" -> SyntaxBlockHandler()
+            "Параметры:" -> ParametersBlockHandler()
+            "Описание:" -> DescriptionBlockHandler()
+            "Пример:" -> ExampleBlockHandler()
             "См. также:" -> RelatedObjectsBlockHandler()
             "Примечание:" -> NoteBlockHandler()
             "Доступность:", "Использование в версии:" -> null
-            else -> throw UnexpectedException("Неизвестный тип блока страницы описания `$blockTitle`")
+            else -> throw UnexpectedException("Неизвестный тип блока страницы описания конструктора `$blockTitle`")
         }
 
     override fun onBlockFinished(handler: BlockHandler<*>) {
         when (handler) {
             is NameBlockHandler ->
-                handler.getResult().apply {
-                    nameRu = first
-                    nameEn = second
-                }
+                name = handler.getResult().first
 
-            is ValueInfoBlockHandler ->
-                handler.getResult()?.let { info ->
-                    typeNames = info.type
-                    description = info.description
-                }
-
-            is ReadOnlyBlockHandler -> readonly = handler.getResult()
+            is SyntaxBlockHandler -> syntax = handler.getResult()
+            is ParametersBlockHandler -> parameters = handler.getResult()
+            is DescriptionBlockHandler -> description = handler.getResult()
+            is ExampleBlockHandler -> example = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
             is NoteBlockHandler -> note = handler.getResult()
             else -> throw UnexpectedException("Не реализована обработка парсера `$handler`")
         }
     }
 
-    override fun getResult(): PropertyInfo =
-        PropertyInfo(
-            nameRu = nameRu,
-            nameEn = nameEn,
+    override fun getResult(): ConstructorInfo =
+        ConstructorInfo(
+            name = name,
+            syntax = syntax,
+            parameters = parameters,
             description = description.trim(),
-            readonly = readonly,
-            typeName = typeNames,
-            relatedObjects = relatedObjects,
+            example = example,
             note = note,
+            relatedObjects = relatedObjects,
         )
 
     override fun clean() {
-        nameRu = ""
-        nameEn = ""
+        name = ""
+        syntax = ""
+        parameters = listOf()
         description = ""
-        readonly = false
-        typeNames = ""
+        example = null
         relatedObjects = null
         note = null
     }
 }
 
-class PropertyPageParser : PageParser<PropertyInfo>(PropertyPageProxyHandler())
+class ConstructorPageParser : PageParser<ConstructorInfo>(ConstructorPageProxyHandler())

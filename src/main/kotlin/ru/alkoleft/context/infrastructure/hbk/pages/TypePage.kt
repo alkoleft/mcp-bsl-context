@@ -7,5 +7,4 @@
 
 package ru.alkoleft.context.infrastructure.hbk.pages
 
-class TypePage {
-}
+class TypePage

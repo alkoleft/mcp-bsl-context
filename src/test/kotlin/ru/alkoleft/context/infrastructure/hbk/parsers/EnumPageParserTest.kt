@@ -14,7 +14,10 @@ import java.nio.file.Paths
 import kotlin.test.Test
 
 class EnumPageParserTest {
-    private fun <R> parseFile(fileName: String, parser: PageParser<R>): R {
+    private fun <R> parseFile(
+        fileName: String,
+        parser: PageParser<R>,
+    ): R {
         FileInputStream(Paths.get("src/test/resources/enums/$fileName").toFile()).use { inputStream ->
             return parser.parse(inputStream)
         }
@@ -36,7 +39,10 @@ class EnumPageParserTest {
 
         Assertions.assertThat(info.nameRu).isEqualTo("ОбычнаяГруппа")
         Assertions.assertThat(info.nameEn).isEqualTo("UsualGroup")
-        Assertions.assertThat(info.description)
-            .isEqualTo("Обычная группа. Группа данного вида может содержать поля, таблицы, кнопки и группы видов `ОбычнаяГруппа`, `КоманднаяПанель`, `Страницы`.")
+        Assertions
+            .assertThat(info.description)
+            .isEqualTo(
+                "Обычная группа. Группа данного вида может содержать поля, таблицы, кнопки и группы видов `ОбычнаяГруппа`, `КоманднаяПанель`, `Страницы`.",
+            )
     }
 }

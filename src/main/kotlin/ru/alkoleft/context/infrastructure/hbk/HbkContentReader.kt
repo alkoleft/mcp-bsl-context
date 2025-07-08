@@ -24,7 +24,10 @@ private const val FILE_STORAGE_NAME = "FileStorage"
 private val logger = KotlinLogging.logger { }
 
 class HbkContentReader {
-    fun read(path: Path, block: Context.() -> Unit) {
+    fun read(
+        path: Path,
+        block: Context.() -> Unit,
+    ) {
         val extractor = HbkContainerExtractor()
 
         extractor.readHbk(path) {
@@ -32,10 +35,11 @@ class HbkContentReader {
             val fileStorage = getEntity(FILE_STORAGE_NAME)
 
             SeekableInMemoryByteChannel(fileStorage).use {
-                val zip = ZipFile
-                    .builder()
-                    .setSeekableByteChannel(it)
-                    .get()
+                val zip =
+                    ZipFile
+                        .builder()
+                        .setSeekableByteChannel(it)
+                        .get()
                 zip.use { file ->
                     val context = Context(toc, file)
                     context.apply(block)
@@ -44,15 +48,22 @@ class HbkContentReader {
         }
     }
 
-    class Context(val toc: Toc, val zipFile: ZipFile) {
+    class Context(
+        val toc: Toc,
+        val zipFile: ZipFile,
+    ) {
         fun getEntryStream(page: Page) = getEntryStream(page.htmlPath)
+
         fun getEntryStream(name: String): InputStream {
             if (name.isEmpty()) {
                 throw PlatformContextLoadException("Не указано имя файла для поиска в архиве")
             }
             val validName =
-                if (name.startsWith("/")) name.substring(1)
-                else name
+                if (name.startsWith("/")) {
+                    name.substring(1)
+                } else {
+                    name
+                }
             val entry = zipFile.getEntry(validName)
             return if (entry != null) {
                 zipFile.getInputStream(entry)
@@ -62,13 +73,15 @@ class HbkContentReader {
         }
     }
 
-    private fun walk(zip: ZipFile, pages: List<Page>) {
+    private fun walk(
+        zip: ZipFile,
+        pages: List<Page>,
+    ) {
         pages.forEach { page ->
             if (page.htmlPath.isNotBlank()) {
                 zip.getEntries(page.htmlPath).forEach {
                     logger.info { "${page.title} - ${it.name}" }
                 }
-
             }
             if (page.children.isNotEmpty()) {
                 walk(zip, page.children)

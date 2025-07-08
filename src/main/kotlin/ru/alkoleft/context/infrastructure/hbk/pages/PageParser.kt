@@ -12,13 +12,20 @@ import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
 import ru.alkoleft.context.infrastructure.hbk.parsers.PageProxyHandler
 import java.io.InputStream
 
-abstract class PageParser<T>(protected val handler: PageProxyHandler<T>) {
+abstract class PageParser<T>(
+    protected val handler: PageProxyHandler<T>,
+) {
     fun parse(inputStream: InputStream): T {
+        handler.cleanState()
         parsePage(inputStream, handler)
+        handler.onParsingFinished()
         return handler.getResult()
     }
 
-    protected fun parsePage(inputStream: InputStream, handler: KsoupHtmlHandler) {
+    protected fun parsePage(
+        inputStream: InputStream,
+        handler: KsoupHtmlHandler,
+    ) {
         val parser = KsoupHtmlParser(handler = handler)
         inputStream.use { stream ->
             stream.bufferedReader().use {

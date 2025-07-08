@@ -9,21 +9,48 @@ package ru.alkoleft.context.infrastructure.hbk.parsers
 
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 
+private const val DEFAULT_HANDLER_KEY = "DEFAULT"
+
 /**
  * Прокси-обработчик для переключения между блоками
  */
 abstract class PageProxyHandler<R>(
-    private var currentHandler: BlockHandler<*>? = NameBlockHandler()
+    private var defaultHandler: BlockHandler<*>? = NameBlockHandler(),
 ) : KsoupHtmlHandler {
+    private var currentHandler: BlockHandler<*>? = null
+    private val handlers = mutableMapOf(DEFAULT_HANDLER_KEY to defaultHandler)
     private var isChapter = false
 
-    abstract fun clean()
+    fun cleanState() {
+        currentHandler = getHandler(DEFAULT_HANDLER_KEY)
+        handlers.values.forEach { it?.cleanState() }
+        clean()
+    }
 
-    abstract fun createHandler(blockTitle: String): BlockHandler<*>?
+    fun onParsingFinished() {
+        if (currentHandler != null) {
+            onBlockFinished(currentHandler!!)
+        }
+    }
 
-    override fun onOpenTag(name: String, attributes: Map<String, String>, isImplied: Boolean) {
+    protected abstract fun clean()
+
+    private fun getHandler(blockTitle: String) =
+        if (handlers.containsKey(blockTitle)) {
+            handlers[blockTitle]
+        } else {
+            createHandler(blockTitle)?.also { handlers[blockTitle] = it }
+        }
+
+    protected abstract fun createHandler(blockTitle: String): BlockHandler<*>?
+
+    override fun onOpenTag(
+        name: String,
+        attributes: Map<String, String>,
+        isImplied: Boolean,
+    ) {
         // Проверяем, не является ли это новым блоком
-        if (name == "p" && attributes["class"] == "V8SH_chapter") {
+        if ((name == "p" && attributes["class"] == "V8SH_chapter") || name == "hr") {
             currentHandler?.apply(::onBlockFinished)
             currentHandler = null
             isChapter = true
@@ -32,7 +59,10 @@ abstract class PageProxyHandler<R>(
         }
     }
 
-    override fun onCloseTag(name: String, isImplied: Boolean) {
+    override fun onCloseTag(
+        name: String,
+        isImplied: Boolean,
+    ) {
         if (!isChapter) {
             currentHandler?.onCloseTag(name, isImplied)
         } else {
@@ -42,12 +72,13 @@ abstract class PageProxyHandler<R>(
 
     override fun onText(text: String) {
         if (isChapter) {
-            currentHandler = createHandler(text.trim())
+            currentHandler = getHandler(text.trim())
         } else {
             currentHandler?.onText(text)
         }
     }
 
     abstract fun onBlockFinished(handler: BlockHandler<*>)
+
     abstract fun getResult(): R
 }

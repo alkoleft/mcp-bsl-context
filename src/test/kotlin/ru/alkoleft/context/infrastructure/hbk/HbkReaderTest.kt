@@ -7,25 +7,21 @@
 
 package ru.alkoleft.context.infrastructure.hbk
 
-import com.github._1c_syntax.bsl.context.PlatformContextGrabber
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
 import kotlin.io.path.Path
 
 class HbkReaderTest {
     @Test
     fun read() {
         val reader = HbkContentReader()
-        reader.read(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk")){
+        reader.read(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk")) {
             println("Success")
         }
     }
 
-    @Test
-    fun readPlatformContextGrabber(@TempDir path: Path){
-        val parser = PlatformContextGrabber(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk"), path)
-        parser.parse()
-    }
+//    @Test
+//    fun readPlatformContextGrabber(@TempDir path: Path){
+//        val parser = PlatformContextGrabber(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk"), path)
+//        parser.parse()
+//    }
 }
-

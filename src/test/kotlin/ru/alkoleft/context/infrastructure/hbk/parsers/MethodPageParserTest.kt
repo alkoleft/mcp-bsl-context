@@ -46,7 +46,7 @@ class MethodPageParserTest {
         assertTrue(signature1.syntax.contains("<Адрес>"))
         assertTrue(signature1.syntax.contains("<ИмяФайла>"))
         assertTrue(signature1.syntax.contains("<ПараметрыДиалогаПолученияФайлов>"))
-        
+
         assertTrue(signature2.syntax.contains("<ОписаниеОповещенияОЗавершении>"))
         assertTrue(signature2.syntax.contains("<Адрес>"))
         assertTrue(signature2.syntax.contains("<ПутьКФайлу>"))
@@ -57,7 +57,7 @@ class MethodPageParserTest {
 
         assertNull(result.example)
     }
-    
+
     @Test
     fun `test parse GetCommonTemplate376`() {
         val parser = MethodPageParser()
@@ -73,37 +73,40 @@ class MethodPageParserTest {
             }
             println("  Return value: ${signature.returnValue?.type}")
         }
-        
+
         assertEquals("ПолучитьОбщийМакет", result.nameRu)
         assertEquals("GetCommonTemplate", result.nameEn)
-        
+
         // Проверяем, что описание метода было добавлено
         assertNotNull(result.example)
-        assertEquals("""
+        assertEquals(
+            """
             // Получение общего макета по имени
 
             МакетСтруктурыКонфигураци = ПолучитьОбщийМакет("СтруктураКонфигурации");
             // Получение общего макета по объекту описания метаданного
 
             МакетСтруктурыКонфигураци = ПолучитьОбщийМакет(Метаданные.ОбщиеМакеты.СтруктураКонфигурации);
-        """.trimIndent(), result.example)
+            """.trimIndent(),
+            result.example,
+        )
 
         // Проверяем, что есть хотя бы одна сигнатура
         assertTrue(result.signatures.size >= 1)
-        
+
         // Если есть сигнатуры, проверяем первую
         if (result.signatures.isNotEmpty()) {
             val signature = result.signatures[0]
-            
+
             // Проверка возвращаемого значения
             assertNotNull(signature.returnValue)
             val returnValue = signature.returnValue!!
             println("Return value type: ${returnValue.type}")
             println("Return value description: ${returnValue.description}")
-            
+
             // Проверяем, что тип возвращаемого значения содержит нужные части
             val returnValueType = returnValue.type.lowercase()
             assertTrue(returnValueType.contains("табличныйдокумент") || returnValueType.contains("текстовыйдокумент"))
         }
     }
-} 
+}

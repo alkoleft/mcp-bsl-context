@@ -10,10 +10,10 @@ package ru.alkoleft.context.infrastructure.hbk
 data class Page(
     val title: DoubleLanguageString,
     val htmlPath: String,
-    val children: MutableList<Page> = mutableListOf()
+    val children: MutableList<Page> = mutableListOf(),
 )
 
 data class DoubleLanguageString(
     val en: String,
-    val ru: String
+    val ru: String,
 )

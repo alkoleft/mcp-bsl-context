@@ -7,11 +7,19 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
+private val NAMES_PATTERN = """([^(]+)\s*\(([^)]+)\)""".toRegex()
+
 object Helper {
-    fun readName(text: String): Pair<String, String>? {
-        val regex = Regex("([^(]+)\\s*\\(([^)]+)\\)")
-        return regex.find(text)?.let {
-            return  Pair(it.groupValues[1].trim(), it.groupValues[2].trim())
+    fun readName(text: CharSequence): Pair<String, String> {
+        if (text.isBlank()) {
+            throw IllegalArgumentException("Имя страницы должно быть заполнено")
+        }
+        val match = NAMES_PATTERN.find(text)
+
+        return if (match != null) {
+            Pair(match.groupValues[1].trim(), match.groupValues[2].trim())
+        } else {
+            Pair(text.toString(), "")
         }
     }
 }

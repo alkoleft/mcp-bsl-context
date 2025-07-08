@@ -12,10 +12,13 @@ import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
 import java.io.InputStream
 import java.util.regex.Pattern
 
-class HtmlParser() {
+class HtmlParser {
     private val parameterNamePattern: Pattern = Pattern.compile("<(.*)>.*\\((.*)\\)")
 
-    private fun parsePage(stream: InputStream, handler: KsoupHtmlHandler) {
+    private fun parsePage(
+        stream: InputStream,
+        handler: KsoupHtmlHandler,
+    ) {
         val parser = KsoupHtmlParser(handler = handler)
         stream.bufferedReader().use {
             it.forEachLine { line -> parser.write(line) }
@@ -23,11 +26,18 @@ class HtmlParser() {
     }
 
     fun parsePropertyPage(stream: InputStream) {
-        parsePage(stream, handler = {
-            fun onOpenTag(name: String, attributes: Map<String, String>, isImplied: Boolean) {
-                println("Open tag: $name")
-            }
-        } as KsoupHtmlHandler)
+        parsePage(
+            stream,
+            handler =
+                {
+                    fun onOpenTag(
+                        name: String,
+                        attributes: Map<String, String>,
+                        isImplied: Boolean,
+                    ) {
+                        println("Open tag: $name")
+                    }
+                } as KsoupHtmlHandler,
+        )
     }
-
 }

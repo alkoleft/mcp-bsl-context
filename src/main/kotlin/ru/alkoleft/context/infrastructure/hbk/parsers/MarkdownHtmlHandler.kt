@@ -22,7 +22,11 @@ abstract class MarkdownHtmlHandler<R> : BlockHandler<R> {
     private var linkHref: String? = null
     private var linkText = StringBuilder()
 
-    override fun onOpenTag(name: String, attributes: Map<String, String>, isImplied: Boolean) {
+    override fun onOpenTag(
+        name: String,
+        attributes: Map<String, String>,
+        isImplied: Boolean,
+    ) {
         tagStack.add(name)
         when (name.lowercase()) {
             "h1", "h2", "h3", "h4", "h5", "h6" -> {
@@ -89,7 +93,10 @@ abstract class MarkdownHtmlHandler<R> : BlockHandler<R> {
         }
     }
 
-    override fun onCloseTag(name: String, isImplied: Boolean) {
+    override fun onCloseTag(
+        name: String,
+        isImplied: Boolean,
+    ) {
         when (name.lowercase()) {
             "h1", "h2", "h3", "h4", "h5", "h6" -> {
                 markdownBuilder.append("\n")
@@ -139,9 +146,9 @@ abstract class MarkdownHtmlHandler<R> : BlockHandler<R> {
                 val text = linkText.toString().trim()
                 val href = linkHref ?: ""
                 if (text.isNotEmpty()) {
-                    if(href.startsWith("v8help://")){
+                    if (href.startsWith("v8help://")) {
                         markdownBuilder.append("`$text`")
-                    }else {
+                    } else {
                         markdownBuilder.append("[$text]($href)")
                     }
                 }
@@ -174,4 +181,16 @@ abstract class MarkdownHtmlHandler<R> : BlockHandler<R> {
     }
 
     fun getMarkdown() = markdownBuilder.toString().trim()
+
+    override fun cleanState() {
+        markdownBuilder.clear()
+        tagStack.clear()
+        isInList = false
+        listLevel = 0
+        isInCode = false
+        isInPre = false
+        isInBlockquote = false
+        linkHref = null
+        linkText.clear()
+    }
 }

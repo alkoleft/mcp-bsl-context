@@ -28,7 +28,7 @@ class Toc {
                     Page(
                         title = chunk.title,
                         htmlPath = chunk.htmlPath,
-                        children = mutableListOf()
+                        children = mutableListOf(),
                     ).also { pagesById[chunk.parentId]?.children?.add(it) }
             }
             return Toc(toc.children.toList())
@@ -51,12 +51,9 @@ class Toc {
                 }
             }
 
-        private fun getName(nameContext: NameObject): String {
-            return nameContext.name.replace("\"", "")
-        }
+        private fun getName(nameContext: NameObject): String = nameContext.name.replace("\"", "")
 
         val Chunk.htmlPath: String
             get() = properties.htmlPath.replace("\"", "")
-
     }
 }

@@ -72,5 +72,4 @@ object Tokenizer {
         }
         return tokens.filter { it.isNotEmpty() && it != "," }
     }
-
 }

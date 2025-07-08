@@ -16,7 +16,7 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
     private val signatures = mutableListOf<MethodSignatureInfo>()
     private var example: String? = null
     private var relatedObjects: List<RelatedObject>? = null
-    private var note: String?=null
+    private var note: String? = null
 
     private val currentSignature: MethodSignatureInfo
         get() = signatures.last()
@@ -33,7 +33,7 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
                 "Описание:", "Описание варианта метода:" -> DescriptionBlockHandler()
                 "Пример:" -> ExampleBlockHandler() // Placeholder, can be a specific handler
                 "См. также:" -> RelatedObjectsBlockHandler() // Placeholder, can be a specific handler
-                "Примечание:"->NoteBlockHandler()
+                "Примечание:" -> NoteBlockHandler()
                 "Доступность:", "Использование в версии:" -> null
                 else -> throw UnexpectedException("Неизвестный тип блока страницы описания `$blockTitle`")
             }
@@ -64,16 +64,15 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
         }
     }
 
-    override fun getResult(): MethodInfo {
-        return MethodInfo(
+    override fun getResult(): MethodInfo =
+        MethodInfo(
             nameRu = nameRu as String,
             nameEn = nameEn as String,
             signatures = signatures,
             example = example,
             relatedObjects = relatedObjects,
-            note = note
+            note = note,
         )
-    }
 
     override fun clean() {
         nameRu = null

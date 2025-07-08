@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 class MethodPageParserProxyTest {
-
     @Test
     fun `test parsing method with proxy handlers`() {
         val file = File("src/test/resources/global-methods/GetCommonTemplate376.html")
@@ -29,11 +28,11 @@ class MethodPageParserProxyTest {
         assertEquals("Строка,ОбъектМетаданных: Макет", result.signatures[0].parameters[0].type)
         assertEquals(
             "Имя общего макета, как оно задано в конфигураторе, или объект описания метаданного общего макета.",
-            result.signatures[0].parameters[0].description
+            result.signatures[0].parameters[0].description,
         )
         assertEquals(
             "ТабличныйДокумент,ТекстовыйДокумент; другой объект, который может быть макетом.",
-            result.signatures[0].returnValue?.type
+            result.signatures[0].returnValue?.type,
         )
         assertEquals("", result.signatures[0].returnValue?.description)
         assertEquals("Получает один из общих макетов конфигурации.", result.signatures[0].description)
@@ -45,8 +44,8 @@ class MethodPageParserProxyTest {
             // Получение общего макета по объекту описания метаданного
             
             МакетСтруктурыКонфигураци = ПолучитьОбщийМакет(Метаданные.ОбщиеМакеты.СтруктураКонфигурации);
-            """.trimIndent(), result.example
+            """.trimIndent(),
+            result.example,
         )
-
     }
-} 
+}

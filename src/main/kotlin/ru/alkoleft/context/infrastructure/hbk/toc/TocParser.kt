@@ -1,6 +1,7 @@
 package ru.alkoleft.context.infrastructure.hbk
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import ru.alkoleft.context.infrastructure.hbk.exceptions.TocParsingError
 import ru.alkoleft.context.infrastructure.hbk.toc.Chunk
 import ru.alkoleft.context.infrastructure.hbk.toc.NameContainer
 import ru.alkoleft.context.infrastructure.hbk.toc.NameObject
@@ -10,11 +11,10 @@ import ru.alkoleft.context.infrastructure.hbk.toc.Tokenizer
 
 private val logger = KotlinLogging.logger {}
 
-
 /**
  * Парсер для HBK файлов на чистом Kotlin
  */
-class HbkParser {
+class TocParser {
     /**
      * Парсит ByteArray и возвращает структуру TableOfContent
      */
@@ -50,7 +50,6 @@ class HbkParser {
                 val chunk = parseChunk(iterator)
                 yield(chunk)
             }
-
         }
     }
 
@@ -134,8 +133,8 @@ class HbkParser {
         context: String,
     ): Int {
         val token =
-            if (iterator.hasNext()) iterator.next() else throw IllegalArgumentException("$context: не найден токен (конец данных)")
-        return token.toIntOrNull() ?: throw IllegalArgumentException("$context: ожидалось число, получено: '$token'")
+            if (iterator.hasNext()) iterator.next() else throw TocParsingError("$context: не найден токен (конец данных)")
+        return token.toIntOrNull() ?: throw TocParsingError("$context: ожидалось число, получено: '$token'")
     }
 
     /**
@@ -146,9 +145,9 @@ class HbkParser {
         context: String,
     ): String {
         val token =
-            if (iterator.hasNext()) iterator.next() else throw IllegalArgumentException("$context: не найден токен (конец данных)")
+            if (iterator.hasNext()) iterator.next() else throw TocParsingError("$context: не найден токен (конец данных)")
         if (!token.startsWith("\"") || !token.endsWith("\"")) {
-            throw IllegalArgumentException("$context: ожидалась строка в кавычках, получено: '$token'")
+            throw TocParsingError("$context: ожидалась строка в кавычках, получено: '$token'")
         }
         return token.substring(1, token.length - 1)
     }
@@ -162,9 +161,9 @@ class HbkParser {
         context: String,
     ) {
         val token =
-            if (iterator.hasNext()) iterator.next() else throw IllegalArgumentException("$context: не найден токен (конец данных)")
+            if (iterator.hasNext()) iterator.next() else throw TocParsingError("$context: не найден токен (конец данных)")
         if (token != expected) {
-            throw IllegalArgumentException("$context: ожидался '$expected', получен '$token'")
+            throw TocParsingError("$context: ожидался '$expected', получен '$token'")
         }
     }
-} 
+}

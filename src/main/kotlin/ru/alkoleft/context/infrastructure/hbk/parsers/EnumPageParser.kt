@@ -48,13 +48,14 @@ class EnumPageParseHandler : PageProxyHandler<EnumInfo>() {
         }
     }
 
-    override fun getResult() = EnumInfo(
-        nameRu = nameRu,
-        nameEn = nameEn,
-        description = description,
-        relatedObjects = relatedObjects,
-        example = example
-    )
+    override fun getResult() =
+        EnumInfo(
+            nameRu = nameRu,
+            nameEn = nameEn,
+            description = description,
+            relatedObjects = relatedObjects,
+            example = example,
+        )
 }
 
 class EnumPageParser : PageParser<EnumInfo>(EnumPageParseHandler())

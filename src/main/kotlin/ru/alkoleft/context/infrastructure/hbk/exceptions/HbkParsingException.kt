@@ -5,6 +5,7 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.infrastructure.hbk.pages
+package ru.alkoleft.context.infrastructure.hbk.exceptions
 
-class EnumPage
+class HbkParsingException {
+}

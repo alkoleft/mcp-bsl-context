@@ -10,4 +10,7 @@ package ru.alkoleft.context.infrastructure.hbk.pages
 import ru.alkoleft.context.business.entities.MethodDefinition
 import ru.alkoleft.context.business.entities.PropertyDefinition
 
-class GlobalContextPage(val properties: List<PropertyDefinition>, val methods: List<MethodDefinition>)
+class GlobalContextPage(
+    val properties: List<PropertyDefinition>,
+    val methods: List<MethodDefinition>,
+)

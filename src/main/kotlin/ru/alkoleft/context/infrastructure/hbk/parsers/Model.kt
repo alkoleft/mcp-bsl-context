@@ -8,13 +8,13 @@
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
 data class PropertyInfo(
-    val propertyNameRu: String,
-    val propertyNameEn: String,
+    val nameRu: String,
+    val nameEn: String,
     val description: String,
     val readonly: Boolean,
     val typeName: String,
     val note: String?,
-    val relatedObjects: List<RelatedObject>?
+    val relatedObjects: List<RelatedObject>?,
 )
 
 data class MethodInfo(
@@ -25,6 +25,7 @@ data class MethodInfo(
     val note: String?,
     val relatedObjects: List<RelatedObject>?,
 )
+
 data class MethodParameterInfo(
     val name: String,
     val type: String,
@@ -38,7 +39,7 @@ data class EnumInfo(
     val description: String,
     val relatedObjects: List<RelatedObject>?,
     val values: MutableList<EnumValueInfo> = mutableListOf(),
-    var example: String?
+    var example: String?,
 )
 
 data class EnumValueInfo(
@@ -53,7 +54,7 @@ data class EnumValueInfo(
  */
 data class RelatedObject(
     val name: String,
-    val href: String
+    val href: String,
 )
 
 data class ValueInfo(
@@ -67,4 +68,23 @@ data class MethodSignatureInfo(
     var parameters: List<MethodParameterInfo>,
     var returnValue: ValueInfo?,
     var description: String,
+)
+
+data class ObjectInfo(
+    val nameRu: String,
+    val nameEn: String,
+    val description: String,
+    val example: String?,
+    val note: String?,
+    val relatedObjects: List<RelatedObject>?,
+)
+
+data class ConstructorInfo(
+    val name: String,
+    val syntax: String,
+    val parameters: List<MethodParameterInfo>,
+    val description: String,
+    val example: String?,
+    val note: String?,
+    val relatedObjects: List<RelatedObject>?,
 )
