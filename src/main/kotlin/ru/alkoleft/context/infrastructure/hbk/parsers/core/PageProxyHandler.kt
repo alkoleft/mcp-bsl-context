@@ -69,7 +69,7 @@ abstract class PageProxyHandler<R>(
      */
     private fun getHandler(blockTitle: String) =
         if (handlers.containsKey(blockTitle)) {
-            handlers[blockTitle]
+            handlers[blockTitle]?.also { it.cleanState() }
         } else {
             createHandler(blockTitle)?.also { handlers[blockTitle] = it }
         }
@@ -111,11 +111,13 @@ abstract class PageProxyHandler<R>(
     override fun onText(text: String) {
         if (isChapter) {
             currentHandler = getHandler(text.trim())
+            onBlockStarted(text, currentHandler)
         } else {
             currentHandler?.onText(text)
         }
     }
 
+    open fun onBlockStarted(text: String, handler: BlockHandler<*>?) {}
     /**
      * Вызывается при завершении обработки блока.
      *

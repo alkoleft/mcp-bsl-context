@@ -203,15 +203,25 @@ class ParametersBlockHandler : MarkdownHtmlHandler<List<MethodParameterInfo>>() 
     }
 
     override fun onText(text: String) {
+        val trimmed = text.trim()
         when (blockType) {
             BlockType.NONE -> {
-                if (text.trim() == "Тип:") blockType = BlockType.TYPE
+                if (isTypeBlock(trimmed)) {
+                    blockType = BlockType.TYPE
+                } else if(isTextTypeBlock(trimmed)){
+                    if (trimmed.endsWith(".")) {
+                        currentParameterType.append(trimmed.substring(4, trimmed.length - 1).trim())
+                        blockType = BlockType.DESCRIPTION
+                    } else {
+                        currentParameterType.append(trimmed.substring(4).trim())
+                        blockType = BlockType.TYPE
+                    }
+                }
             }
 
-            BlockType.NAME -> currentParameterNameBufer.append(text.trim())
+            BlockType.NAME -> currentParameterNameBufer.append(trimmed)
 
             BlockType.TYPE -> {
-                val trimmed = text.trim()
                 if (trimmed != ".") {
                     currentParameterType.append(trimmed)
                 } else {
@@ -313,13 +323,22 @@ class ValueInfoBlockHandler : MarkdownHtmlHandler<ValueInfo?>() {
     }
 
     override fun onText(text: String) {
+        val trimmed = text.trim()
         when (blockType) {
             BlockType.NONE -> {
-                if (text.trim() == "Тип:") blockType = BlockType.TYPE
-            }
+                if (isTypeBlock(trimmed)) {
+                    blockType = BlockType.TYPE
+                } else if(isTextTypeBlock(trimmed)){
+                    if (trimmed.endsWith(".")) {
+                        currentValueType.append(trimmed.substring(4, trimmed.length - 1).trim())
+                        blockType = BlockType.DESCRIPTION
+                    } else {
+                        currentValueType.append(trimmed.substring(4).trim())
+                        blockType = BlockType.TYPE
+                    }
+                }            }
 
             BlockType.TYPE -> {
-                val trimmed = text.trim()
                 if (trimmed != ".") {
                     currentValueType.append(trimmed)
                 } else {
@@ -372,9 +391,11 @@ class ValueInfoBlockHandler : MarkdownHtmlHandler<ValueInfo?>() {
  *
  * @return Описание в формате Markdown
  */
-class DescriptionBlockHandler : MarkdownHtmlHandler<String>() {
+open class DescriptionBlockHandler : MarkdownHtmlHandler<String>() {
     override fun getResult() = getMarkdown()
 }
+
+class SignatureDescriptionBlockHandler : DescriptionBlockHandler()
 
 /**
  * Обработчик блока примечаний.
@@ -498,3 +519,6 @@ class ReadOnlyBlockHandler : BaseBlockHandler<Boolean>() {
         value = false
     }
 }
+
+fun isTextTypeBlock(text: String) = text != "Тип:" && text.startsWith("Тип:")
+fun isTypeBlock(text: String) = text == "Тип:"

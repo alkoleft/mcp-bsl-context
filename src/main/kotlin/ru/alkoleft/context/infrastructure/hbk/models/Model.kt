@@ -39,10 +39,12 @@ data class PropertyInfo(
  *
  * @property nameRu Русское название метода
  * @property nameEn Английское название метода
+ * @property description Описание метода
  * @property signatures Список сигнатур метода (перегрузок)
  * @property example Пример использования метода
  * @property note Дополнительная заметка о методе
  * @property relatedObjects Список связанных объектов
+ * @property returnValue Информация о возвращаемом значении
  */
 data class MethodInfo(
     val nameRu: String,
@@ -51,6 +53,8 @@ data class MethodInfo(
     val example: String?,
     val note: String?,
     val relatedObjects: List<RelatedObject>?,
+    var description: String,
+    var returnValue: ValueInfo?,
 )
 
 /**
@@ -137,14 +141,12 @@ data class ValueInfo(
  * @property name Название метода
  * @property syntax Синтаксис вызова метода
  * @property parameters Список параметров
- * @property returnValue Информация о возвращаемом значении
  * @property description Описание сигнатуры
  */
 data class MethodSignatureInfo(
     var name: String,
     var syntax: String,
     var parameters: List<MethodParameterInfo>,
-    var returnValue: ValueInfo?,
     var description: String,
 )
 

@@ -10,7 +10,6 @@ package ru.alkoleft.context.infrastructure.hbk.parsers
 import org.assertj.core.api.Assertions
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageParser
 import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.EnumPageParser
-import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.EnumValuePageParser
 import java.io.FileInputStream
 import java.nio.file.Paths
 import kotlin.test.Test
@@ -26,7 +25,7 @@ class EnumPageParserTest {
     }
 
     @Test
-    fun `test parse BeginGetFileFromServer5707`() {
+    fun `test parse FormGroupType`() {
         val info = parseFile("FormGroupType.html", EnumPageParser())
 
         Assertions.assertThat(info.nameRu).isEqualTo("ВидГруппыФормы")
@@ -36,15 +35,13 @@ class EnumPageParserTest {
     }
 
     @Test
-    fun `test parse UsualGroup7012`() {
-        val info = parseFile("UsualGroup7012.html", EnumValuePageParser())
+    fun `test parse PictureLib`() {
+        val info = parseFile("PictureLib.html", EnumPageParser())
 
-        Assertions.assertThat(info.nameRu).isEqualTo("ОбычнаяГруппа")
-        Assertions.assertThat(info.nameEn).isEqualTo("UsualGroup")
+        Assertions.assertThat(info.nameRu).isEqualTo("БиблиотекаКартинок")
+        Assertions.assertThat(info.nameEn).isEqualTo("PictureLib")
         Assertions
             .assertThat(info.description)
-            .isEqualTo(
-                "Обычная группа. Группа данного вида может содержать поля, таблицы, кнопки и группы видов `ОбычнаяГруппа`, `КоманднаяПанель`, `Страницы`.",
-            )
+            .isEqualTo("Определяет набор картинок, используемых в конфигурации. Значения этого набора имеют тип `Картинка`.")
     }
 }

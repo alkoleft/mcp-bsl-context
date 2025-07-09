@@ -12,6 +12,7 @@ import ru.alkoleft.context.infrastructure.hbk.exceptions.UnknownPageBlockType
 import ru.alkoleft.context.infrastructure.hbk.models.MethodInfo
 import ru.alkoleft.context.infrastructure.hbk.models.MethodSignatureInfo
 import ru.alkoleft.context.infrastructure.hbk.models.RelatedObject
+import ru.alkoleft.context.infrastructure.hbk.models.ValueInfo
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.BlockHandler
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.DescriptionBlockHandler
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.ExampleBlockHandler
@@ -21,6 +22,7 @@ import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageParser
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageProxyHandler
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.ParametersBlockHandler
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.RelatedObjectsBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.SignatureDescriptionBlockHandler
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.SyntaxBlockHandler
 import ru.alkoleft.context.infrastructure.hbk.parsers.core.ValueInfoBlockHandler
 
@@ -57,20 +59,23 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
     private var example: String? = null
     private var relatedObjects: List<RelatedObject>? = null
     private var note: String? = null
+    private var returnValue: ValueInfo? = null
+    private var description: String = ""
+
 
     private val currentSignature: MethodSignatureInfo
         get() = signatures.last()
 
     override fun createHandler(blockTitle: String): BlockHandler<*>? =
         if (blockTitle.startsWith("Вариант синтаксиса:")) {
-            handleNewSignature(blockTitle)
             null
         } else {
             when (blockTitle) {
                 "Синтаксис:", "Вариант синтаксиса:" -> SyntaxBlockHandler()
                 "Параметры:" -> ParametersBlockHandler()
                 "Возвращаемое значение:" -> ValueInfoBlockHandler()
-                "Описание:", "Описание варианта метода:" -> DescriptionBlockHandler()
+                "Описание:" -> DescriptionBlockHandler()
+                "Описание варианта метода:" -> SignatureDescriptionBlockHandler()
                 "Пример:" -> ExampleBlockHandler() // Placeholder, can be a specific handler
                 "См. также:" -> RelatedObjectsBlockHandler() // Placeholder, can be a specific handler
                 "Примечание:" -> NoteBlockHandler()
@@ -78,6 +83,12 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
                 else -> throw UnknownPageBlockType(blockTitle)
             }
         }
+
+    override fun onBlockStarted(text: String, handler: BlockHandler<*>?) {
+        if (text.startsWith("Вариант синтаксиса:")) {
+            appendNewSignature(text.substring(19).trim())
+        }
+    }
 
     override fun onBlockFinished(handler: BlockHandler<*>) {
         when (handler) {
@@ -89,14 +100,15 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
 
             is SyntaxBlockHandler -> {
                 if (signatures.isEmpty()) {
-                    signatures += MethodSignatureInfo("Основная", "", mutableListOf(), null, "")
+                    appendNewSignature("Основная")
                 }
                 currentSignature.syntax = handler.getResult()
             }
 
             is ParametersBlockHandler -> currentSignature.parameters = handler.getResult()
-            is ValueInfoBlockHandler -> currentSignature.returnValue = handler.getResult()
-            is DescriptionBlockHandler -> currentSignature.description = handler.getResult()
+            is ValueInfoBlockHandler -> returnValue = handler.getResult()
+            is SignatureDescriptionBlockHandler -> currentSignature.description = handler.getResult()
+            is DescriptionBlockHandler -> description = handler.getResult()
             is ExampleBlockHandler -> example = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
             is NoteBlockHandler -> note = handler.getResult()
@@ -112,6 +124,8 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
             example = example,
             relatedObjects = relatedObjects,
             note = note,
+            description = description,
+            returnValue = returnValue,
         )
 
     override fun clean() {
@@ -120,11 +134,13 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
         signatures.clear()
         example = null
         relatedObjects = null
-        note = note
+        note = null
+        description = ""
+        returnValue = null
     }
 
-    fun handleNewSignature(blockTitle: String) {
-        signatures += MethodSignatureInfo(blockTitle.substring(19).trim(), "", mutableListOf(), null, "")
+    fun appendNewSignature(blockTitle: String) {
+        signatures += MethodSignatureInfo(blockTitle, "", mutableListOf(), "")
     }
 }
 
