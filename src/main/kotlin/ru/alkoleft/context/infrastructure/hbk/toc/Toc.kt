@@ -8,9 +8,25 @@
 package ru.alkoleft.context.infrastructure.hbk.toc
 
 import ru.alkoleft.context.infrastructure.hbk.DoubleLanguageString
-import ru.alkoleft.context.infrastructure.hbk.HbkParser
 import ru.alkoleft.context.infrastructure.hbk.Page
 
+/**
+ * Представляет оглавление (Table of Contents) HBK файла.
+ *
+ * Класс содержит иерархическую структуру страниц документации,
+ * извлеченную из сжатого блока PackBlock HBK файла. Оглавление
+ * используется для навигации по документации и определения
+ * типов страниц.
+ *
+ * Основные возможности:
+ * - Парсинг структуры оглавления из бинарных данных
+ * - Предоставление доступа к иерархии страниц
+ * - Извлечение заголовков на двух языках
+ * - Получение путей к HTML файлам
+ *
+ * @see TocParser для парсинга бинарных данных оглавления
+ * @see Page для представления отдельных страниц
+ */
 class Toc {
     private constructor(pages: List<Page>) {
         this.pages = pages
@@ -19,9 +35,15 @@ class Toc {
     val pages: List<Page>
 
     companion object {
+        /**
+         * Парсит оглавление из сжатого блока данных.
+         *
+         * @param packBlock Сжатые данные оглавления
+         * @return Объект оглавления с иерархией страниц
+         */
         fun parse(packBlock: ByteArray): Toc {
-            val parser = HbkParser()
-            var toc = Page(DoubleLanguageString("TOC", "TOC"), "")
+            val parser = TocParser()
+            val toc = Page(DoubleLanguageString("TOC", "TOC"), "")
             val pagesById = mutableMapOf(0 to toc)
             parser.parseContent(packBlock).forEach { chunk ->
                 pagesById[chunk.id] =
@@ -34,6 +56,11 @@ class Toc {
             return Toc(toc.children.toList())
         }
 
+        private fun getName(nameContext: NameObject): String = nameContext.name.replace("\"", "")
+
+        /**
+         * Получает заголовок чанка на двух языках.
+         */
         val Chunk.title: DoubleLanguageString
             get() {
                 val nameContainer: NameContainer = properties.nameContainer
@@ -51,8 +78,9 @@ class Toc {
                 }
             }
 
-        private fun getName(nameContext: NameObject): String = nameContext.name.replace("\"", "")
-
+        /**
+         * Получает путь к HTML файлу чанка.
+         */
         val Chunk.htmlPath: String
             get() = properties.htmlPath.replace("\"", "")
     }

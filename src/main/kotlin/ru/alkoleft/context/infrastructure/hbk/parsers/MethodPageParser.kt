@@ -7,9 +7,36 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
-import java.rmi.UnexpectedException
+import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
+import ru.alkoleft.context.infrastructure.hbk.exceptions.UnknownPageBlockType
+import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
 
+/**
+ * Обработчик для парсинга страниц методов объектов платформы 1С:Предприятие.
+ *
+ * Этот класс отвечает за извлечение и структурирование информации о методах
+ * из HTML страниц документации HBK. Он поддерживает обработку множественных
+ * сигнатур (перегрузок) метода и извлекает информацию о параметрах,
+ * возвращаемых значениях, описании и примерах использования.
+ *
+ * Поддерживаемые блоки:
+ * - Синтаксис: синтаксис вызова метода
+ * - Параметры: список параметров метода
+ * - Возвращаемое значение: информация о типе и описании возвращаемого значения
+ * - Описание: подробное описание функциональности
+ * - Пример: примеры использования
+ * - См. также: связанные объекты
+ * - Примечание: дополнительные заметки
+ *
+ * Особенности:
+ * - Поддержка множественных сигнатур (перегрузок) метода
+ * - Обработка вариантов синтаксиса для разных перегрузок
+ * - Извлечение названий на русском и английском языках
+ *
+ * @see PageProxyHandler для базовой функциональности
+ * @see MethodInfo для структуры результата
+ * @see MethodSignatureInfo для информации о сигнатурах
+ */
 class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
     private var nameRu: String? = null
     private var nameEn: String? = null
@@ -35,7 +62,7 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
                 "См. также:" -> RelatedObjectsBlockHandler() // Placeholder, can be a specific handler
                 "Примечание:" -> NoteBlockHandler()
                 "Доступность:", "Использование в версии:" -> null
-                else -> throw UnexpectedException("Неизвестный тип блока страницы описания `$blockTitle`")
+                else -> throw UnknownPageBlockType(blockTitle)
             }
         }
 
@@ -60,7 +87,7 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
             is ExampleBlockHandler -> example = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
             is NoteBlockHandler -> note = handler.getResult()
-            else -> throw UnexpectedException("Не реализована обработка парсера `$handler`")
+            else -> throw HandlerProcessingNotImplemented(handler)
         }
     }
 
@@ -89,6 +116,24 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
 }
 
 /**
- * Новый парсер методов с архитектурой прокси-хэндлеров
+ * Парсер для страниц методов объектов платформы 1С:Предприятие.
+ *
+ * Этот класс специализируется на парсинге HTML страниц документации,
+ * содержащих информацию о методах объектов. Он извлекает структурированную
+ * информацию о синтаксисе, параметрах, возвращаемых значениях, описании
+ * и примерах использования методов, включая поддержку множественных сигнатур.
+ *
+ * Основные возможности:
+ * - Парсинг множественных сигнатур (перегрузок) метода
+ * - Извлечение списка параметров с типами и описаниями
+ * - Обработка информации о возвращаемых значениях
+ * - Извлечение описания функциональности
+ * - Обработка примеров использования
+ * - Поддержка связанных объектов и заметок
+ * - Извлечение названий на двух языках
+ *
+ * @see PageParser для базовой функциональности парсинга
+ * @see MethodInfo для структуры результата
+ * @see MethodPageProxyHandler для обработки конкретных блоков
  */
 class MethodPageParser : PageParser<MethodInfo>(MethodPageProxyHandler())

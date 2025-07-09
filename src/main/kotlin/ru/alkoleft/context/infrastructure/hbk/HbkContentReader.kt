@@ -23,7 +23,29 @@ private const val FILE_STORAGE_NAME = "FileStorage"
 
 private val logger = KotlinLogging.logger { }
 
+/**
+ * Читает содержимое HBK файлов и предоставляет доступ к их структуре.
+ *
+ * Этот класс является основным интерфейсом для работы с содержимым HBK файлов.
+ * Он извлекает оглавление (Table of Contents) и файловое хранилище из HBK контейнера,
+ * предоставляя доступ к HTML страницам документации через ZIP-архив.
+ *
+ * Основные возможности:
+ * - Извлечение оглавления (TOC) из сжатого блока PackBlock
+ * - Доступ к HTML файлам документации через ZIP-архив
+ * - Предоставление контекста для парсинга страниц
+ *
+ * @see HbkContainerExtractor для извлечения данных из HBK контейнера
+ * @see Toc для работы с оглавлением
+ * @see PlatformContextReader для полного процесса чтения контекста
+ */
 class HbkContentReader {
+    /**
+     * Читает HBK файл и выполняет блок кода с контекстом.
+     *
+     * @param path Путь к HBK файлу
+     * @param block Блок кода, выполняемый с контекстом доступа к содержимому
+     */
     fun read(
         path: Path,
         block: Context.() -> Unit,
@@ -48,12 +70,34 @@ class HbkContentReader {
         }
     }
 
+    /**
+     * Контекст для работы с содержимым HBK файла.
+     *
+     * Предоставляет доступ к оглавлению и ZIP-архиву с HTML файлами документации.
+     *
+     * @property toc Оглавление HBK файла
+     * @property zipFile ZIP-архив с HTML файлами документации
+     */
     class Context(
         val toc: Toc,
-        val zipFile: ZipFile,
+        private val zipFile: ZipFile,
     ) {
+        /**
+         * Получает поток для чтения HTML файла страницы.
+         *
+         * @param page Страница документации
+         * @return Поток для чтения HTML содержимого
+         * @throws PlatformContextLoadException если файл не найден или имя не указано
+         */
         fun getEntryStream(page: Page) = getEntryStream(page.htmlPath)
 
+        /**
+         * Получает поток для чтения HTML файла по имени.
+         *
+         * @param name Имя HTML файла в архиве
+         * @return Поток для чтения HTML содержимого
+         * @throws PlatformContextLoadException если файл не найден или имя не указано
+         */
         fun getEntryStream(name: String): InputStream {
             if (name.isEmpty()) {
                 throw PlatformContextLoadException("Не указано имя файла для поиска в архиве")
@@ -69,22 +113,6 @@ class HbkContentReader {
                 zipFile.getInputStream(entry)
             } else {
                 throw PlatformContextLoadException("Не найден файл в архиве $name")
-            }
-        }
-    }
-
-    private fun walk(
-        zip: ZipFile,
-        pages: List<Page>,
-    ) {
-        pages.forEach { page ->
-            if (page.htmlPath.isNotBlank()) {
-                zip.getEntries(page.htmlPath).forEach {
-                    logger.info { "${page.title} - ${it.name}" }
-                }
-            }
-            if (page.children.isNotEmpty()) {
-                walk(zip, page.children)
             }
         }
     }

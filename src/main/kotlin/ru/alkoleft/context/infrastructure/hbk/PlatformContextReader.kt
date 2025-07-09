@@ -22,10 +22,31 @@ private val logger = KotlinLogging.logger { }
 
 private val CATALOG_PAGE_PATTERN = """/catalog\d+\.html""".toRegex()
 
+/**
+ * Основной класс для чтения контекста платформы 1С:Предприятие из HBK файлов.
+ *
+ * Этот класс координирует весь процесс извлечения и парсинга документации
+ * из HBK файлов платформы 1С:Предприятие. Он обходит структуру страниц,
+ * определяет их типы и делегирует парсинг специализированным парсерам.
+ *
+ * Основные возможности:
+ * - Чтение и анализ структуры HBK файла
+ * - Определение типов страниц (перечисления, объекты, глобальный контекст)
+ * - Координация работы специализированных парсеров
+ * - Сбор информации о перечислениях, объектах, методах и свойствах
+ *
+ * @see HbkContentReader для доступа к содержимому HBK файла
+ * @see PlatformContextPagesParser для парсинга различных типов страниц
+ */
 class PlatformContextReader {
     private val enums = mutableListOf<EnumInfo>()
     private val objects = mutableListOf<ObjectInfo>()
 
+    /**
+     * Читает контекст платформы из HBK файла.
+     *
+     * @param path Путь к HBK файлу
+     */
     fun read(path: Path) {
         val reader = HbkContentReader()
         reader.read(path) {
@@ -43,7 +64,7 @@ class PlatformContextReader {
             .filter { it.htmlPath.isNotEmpty() }
             .forEach { page ->
                 if (isGlobalContextPage(page)) {
-                    // visitGlobalContextPage(page, parser)
+                    visitGlobalContextPage(page, parser)
                 } else if (isCatalogPage(page)) {
                     visitPages(context, page.children)
                 } else if (isEnumPage(page)) {
@@ -54,7 +75,14 @@ class PlatformContextReader {
             }
     }
 
-    fun visitGlobalContextPage(
+    /**
+     * Обрабатывает страницу глобального контекста платформы.
+     *
+     * @param page Страница глобального контекста
+     * @param parser Парсер для обработки страниц
+     * @return Информация о глобальном контексте
+     */
+    private fun visitGlobalContextPage(
         page: Page,
         parser: PlatformContextPagesParser,
     ): GlobalContextPage {
@@ -72,7 +100,13 @@ class PlatformContextReader {
         return GlobalContextPage(emptyList(), emptyList())
     }
 
-    fun visitEnumPage(
+    /**
+     * Обрабатывает страницу перечисления.
+     *
+     * @param page Страница перечисления
+     * @param parser Парсер для обработки страниц
+     */
+    private fun visitEnumPage(
         page: Page,
         parser: PlatformContextPagesParser,
     ) {
@@ -83,7 +117,13 @@ class PlatformContextReader {
         enums += parser.parseEnumPage(page).apply { this.values.addAll(values) }
     }
 
-    fun visitTypePage(
+    /**
+     * Обрабатывает страницу типа (объекта).
+     *
+     * @param page Страница типа
+     * @param parser Парсер для обработки страниц
+     */
+    private fun visitTypePage(
         page: Page,
         parser: PlatformContextPagesParser,
     ) {

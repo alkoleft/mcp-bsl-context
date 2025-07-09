@@ -7,9 +7,29 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
-import java.rmi.UnexpectedException
+import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
+import ru.alkoleft.context.infrastructure.hbk.exceptions.UnknownPageBlockType
+import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
 
+/**
+ * Обработчик для парсинга страниц значений перечислений платформы 1С:Предприятие.
+ *
+ * Этот класс отвечает за извлечение и структурирование информации о конкретных
+ * значениях перечислений из HTML страниц документации HBK. Он обрабатывает
+ * основные блоки страницы, такие как описание и связанные объекты.
+ *
+ * Поддерживаемые блоки:
+ * - Описание: подробное описание значения перечисления
+ * - См. также: связанные объекты
+ *
+ * Особенности:
+ * - Извлечение названий на русском и английском языках
+ * - Обработка описания функциональности значения
+ * - Поддержка связанных объектов
+ *
+ * @see PageProxyHandler для базовой функциональности
+ * @see EnumValueInfo для структуры результата
+ */
 class EnumValuePageParseHandler : PageProxyHandler<EnumValueInfo>() {
     private var nameRu = ""
     private var nameEn = ""
@@ -28,7 +48,7 @@ class EnumValuePageParseHandler : PageProxyHandler<EnumValueInfo>() {
             "Описание:" -> DescriptionBlockHandler()
             "См. также:" -> RelatedObjectsBlockHandler()
             "Доступность:", "Использование в версии:" -> null
-            else -> throw UnexpectedException("Неизвестный тип блока страницы описания `$blockTitle`")
+            else -> throw UnknownPageBlockType(blockTitle)
         }
 
     override fun onBlockFinished(handler: BlockHandler<*>) {
@@ -41,7 +61,7 @@ class EnumValuePageParseHandler : PageProxyHandler<EnumValueInfo>() {
 
             is DescriptionBlockHandler -> description = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
-            else -> throw UnexpectedException("Не реализована обработка парсера `$handler`")
+            else -> throw HandlerProcessingNotImplemented(handler)
         }
     }
 
@@ -54,4 +74,21 @@ class EnumValuePageParseHandler : PageProxyHandler<EnumValueInfo>() {
         )
 }
 
+/**
+ * Парсер для страниц значений перечислений платформы 1С:Предприятие.
+ *
+ * Этот класс специализируется на парсинге HTML страниц документации,
+ * содержащих информацию о конкретных значениях перечислений. Он извлекает
+ * структурированную информацию о названии, описании и связанных объектах.
+ *
+ * Основные возможности:
+ * - Извлечение названий на двух языках
+ * - Обработка описания функциональности значения
+ * - Поддержка связанных объектов
+ * - Структурированное представление информации о значении перечисления
+ *
+ * @see PageParser для базовой функциональности парсинга
+ * @see EnumValueInfo для структуры результата
+ * @see EnumValuePageParseHandler для обработки конкретных блоков
+ */
 class EnumValuePageParser : PageParser<EnumValueInfo>(EnumValuePageParseHandler())

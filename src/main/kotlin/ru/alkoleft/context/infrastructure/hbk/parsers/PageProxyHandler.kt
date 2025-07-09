@@ -12,7 +12,24 @@ import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 private const val DEFAULT_HANDLER_KEY = "DEFAULT"
 
 /**
- * Прокси-обработчик для переключения между блоками
+ * Прокси-обработчик для переключения между блоками HTML документации.
+ *
+ * Этот абстрактный класс предоставляет механизм для динамического переключения
+ * между различными обработчиками блоков в зависимости от содержимого HTML.
+ * Он анализирует структуру документа и делегирует обработку соответствующим
+ * специализированным обработчикам.
+ *
+ * Основные возможности:
+ * - Динамическое переключение между обработчиками блоков
+ * - Управление состоянием обработчиков
+ * - Обработка глав (chapters) в документации
+ * - Кэширование созданных обработчиков
+ *
+ * @param R Тип результата обработки страницы
+ * @param defaultHandler Обработчик по умолчанию
+ *
+ * @see BlockHandler для создания специализированных обработчиков
+ * @see KsoupHtmlHandler для базовой функциональности обработки HTML
  */
 abstract class PageProxyHandler<R>(
     private var defaultHandler: BlockHandler<*>? = NameBlockHandler(),
@@ -21,20 +38,35 @@ abstract class PageProxyHandler<R>(
     private val handlers = mutableMapOf(DEFAULT_HANDLER_KEY to defaultHandler)
     private var isChapter = false
 
+    /**
+     * Очищает состояние всех обработчиков.
+     */
     fun cleanState() {
         currentHandler = getHandler(DEFAULT_HANDLER_KEY)
         handlers.values.forEach { it?.cleanState() }
         clean()
     }
 
+    /**
+     * Вызывается по завершении парсинга страницы.
+     */
     fun onParsingFinished() {
         if (currentHandler != null) {
             onBlockFinished(currentHandler!!)
         }
     }
 
+    /**
+     * Очищает состояние прокси-обработчика.
+     */
     protected abstract fun clean()
 
+    /**
+     * Получает или создает обработчик для указанного блока.
+     *
+     * @param blockTitle Название блока
+     * @return Обработчик блока или null
+     */
     private fun getHandler(blockTitle: String) =
         if (handlers.containsKey(blockTitle)) {
             handlers[blockTitle]
@@ -42,6 +74,12 @@ abstract class PageProxyHandler<R>(
             createHandler(blockTitle)?.also { handlers[blockTitle] = it }
         }
 
+    /**
+     * Создает обработчик для указанного блока.
+     *
+     * @param blockTitle Название блока
+     * @return Новый обработчик или null, если обработчик не нужен
+     */
     protected abstract fun createHandler(blockTitle: String): BlockHandler<*>?
 
     override fun onOpenTag(
@@ -78,7 +116,17 @@ abstract class PageProxyHandler<R>(
         }
     }
 
+    /**
+     * Вызывается при завершении обработки блока.
+     *
+     * @param handler Завершивший работу обработчик
+     */
     abstract fun onBlockFinished(handler: BlockHandler<*>)
 
+    /**
+     * Получает результат обработки страницы.
+     *
+     * @return Результат обработки
+     */
     abstract fun getResult(): R
 }

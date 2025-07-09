@@ -8,7 +8,7 @@
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
 import org.assertj.core.api.Assertions
-import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
 import java.io.FileInputStream
 import java.nio.file.Paths
 import kotlin.test.Test

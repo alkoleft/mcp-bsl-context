@@ -7,9 +7,30 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
-import java.rmi.UnexpectedException
+import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
+import ru.alkoleft.context.infrastructure.hbk.exceptions.UnknownPageBlockType
 
+/**
+ * Обработчик для парсинга страниц перечислений платформы 1С:Предприятие.
+ *
+ * Этот класс отвечает за извлечение и структурирование информации о перечислениях
+ * из HTML страниц документации HBK. Он обрабатывает основные блоки страницы,
+ * такие как описание, связанные объекты и примеры использования.
+ *
+ * Поддерживаемые блоки:
+ * - Описание: подробное описание перечисления
+ * - См. также: связанные объекты
+ * - Пример: примеры использования перечисления
+ *
+ * Особенности:
+ * - Извлечение названий на русском и английском языках
+ * - Обработка описания функциональности
+ * - Поддержка связанных объектов
+ * - Обработка примеров использования
+ *
+ * @see PageProxyHandler для базовой функциональности
+ * @see EnumInfo для структуры результата
+ */
 class EnumPageParseHandler : PageProxyHandler<EnumInfo>() {
     private var nameRu = ""
     private var nameEn = ""
@@ -30,7 +51,7 @@ class EnumPageParseHandler : PageProxyHandler<EnumInfo>() {
             "См. также:" -> RelatedObjectsBlockHandler()
             "Пример:" -> ExampleBlockHandler() // Placeholder, can be a specific handler
             "Значения", "Доступность:", "Использование в версии:" -> null
-            else -> throw UnexpectedException("Неизвестный тип блока страницы описания `$blockTitle`")
+            else -> throw UnknownPageBlockType(blockTitle)
         }
 
     override fun onBlockFinished(handler: BlockHandler<*>) {
@@ -44,7 +65,7 @@ class EnumPageParseHandler : PageProxyHandler<EnumInfo>() {
             is DescriptionBlockHandler -> description = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
             is ExampleBlockHandler -> example = handler.getResult()
-            else -> throw UnexpectedException("Не реализована обработка парсера `$handler`")
+            else -> throw HandlerProcessingNotImplemented(handler)
         }
     }
 
@@ -58,4 +79,22 @@ class EnumPageParseHandler : PageProxyHandler<EnumInfo>() {
         )
 }
 
+/**
+ * Парсер для страниц перечислений платформы 1С:Предприятие.
+ *
+ * Этот класс специализируется на парсинге HTML страниц документации,
+ * содержащих информацию о перечислениях. Он извлекает структурированную
+ * информацию о названии, описании, связанных объектах и примерах использования.
+ *
+ * Основные возможности:
+ * - Извлечение названий на двух языках
+ * - Обработка описания функциональности
+ * - Поддержка связанных объектов
+ * - Обработка примеров использования
+ * - Структурированное представление информации о перечислении
+ *
+ * @see PageParser для базовой функциональности парсинга
+ * @see EnumInfo для структуры результата
+ * @see EnumPageParseHandler для обработки конкретных блоков
+ */
 class EnumPageParser : PageParser<EnumInfo>(EnumPageParseHandler())

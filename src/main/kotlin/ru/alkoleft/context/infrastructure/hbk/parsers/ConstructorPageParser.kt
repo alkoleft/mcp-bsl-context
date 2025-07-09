@@ -7,9 +7,27 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
-import java.rmi.UnexpectedException
+import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
+import ru.alkoleft.context.infrastructure.hbk.exceptions.UnknownPageBlockType
 
+/**
+ * Обработчик для парсинга страниц конструкторов объектов платформы 1С:Предприятие.
+ *
+ * Этот класс отвечает за извлечение и структурирование информации о конструкторах
+ * из HTML страниц документации HBK. Он обрабатывает различные блоки страницы,
+ * такие как синтаксис, параметры, описание, примеры и связанные объекты.
+ *
+ * Поддерживаемые блоки:
+ * - Синтаксис: синтаксис вызова конструктора
+ * - Параметры: список параметров конструктора
+ * - Описание: подробное описание функциональности
+ * - Пример: примеры использования
+ * - См. также: связанные объекты
+ * - Примечание: дополнительные заметки
+ *
+ * @see PageProxyHandler для базовой функциональности
+ * @see ConstructorInfo для структуры результата
+ */
 class ConstructorPageProxyHandler : PageProxyHandler<ConstructorInfo>() {
     private var name = ""
     private var syntax = ""
@@ -28,7 +46,7 @@ class ConstructorPageProxyHandler : PageProxyHandler<ConstructorInfo>() {
             "См. также:" -> RelatedObjectsBlockHandler()
             "Примечание:" -> NoteBlockHandler()
             "Доступность:", "Использование в версии:" -> null
-            else -> throw UnexpectedException("Неизвестный тип блока страницы описания конструктора `$blockTitle`")
+            else -> throw UnknownPageBlockType(blockTitle)
         }
 
     override fun onBlockFinished(handler: BlockHandler<*>) {
@@ -42,7 +60,7 @@ class ConstructorPageProxyHandler : PageProxyHandler<ConstructorInfo>() {
             is ExampleBlockHandler -> example = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
             is NoteBlockHandler -> note = handler.getResult()
-            else -> throw UnexpectedException("Не реализована обработка парсера `$handler`")
+            else -> throw HandlerProcessingNotImplemented(handler)
         }
     }
 
@@ -68,4 +86,22 @@ class ConstructorPageProxyHandler : PageProxyHandler<ConstructorInfo>() {
     }
 }
 
+/**
+ * Парсер для страниц конструкторов объектов платформы 1С:Предприятие.
+ *
+ * Этот класс специализируется на парсинге HTML страниц документации,
+ * содержащих информацию о конструкторах объектов. Он извлекает структурированную
+ * информацию о синтаксисе, параметрах, описании и примерах использования конструкторов.
+ *
+ * Основные возможности:
+ * - Парсинг синтаксиса конструктора
+ * - Извлечение списка параметров с типами и описаниями
+ * - Обработка описания функциональности
+ * - Извлечение примеров использования
+ * - Обработка связанных объектов и заметок
+ *
+ * @see PageParser для базовой функциональности парсинга
+ * @see ConstructorInfo для структуры результата
+ * @see ConstructorPageProxyHandler для обработки конкретных блоков
+ */
 class ConstructorPageParser : PageParser<ConstructorInfo>(ConstructorPageProxyHandler())

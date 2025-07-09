@@ -10,16 +10,40 @@ package ru.alkoleft.context.infrastructure.hbk.parsers
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 
 private val PARAMETER_NAME_PATTERN = """<([^&]+)>\s*(?:\(([^)]+)\))?""".toRegex()
+private val NAMES_PATTERN = """([^(]+)\s*\(([^)]+)\)""".toRegex()
 
 /**
- * Базовый интерфейс для обработчиков блоков
+ * Базовый интерфейс для обработчиков блоков HTML документации.
+ *
+ * Этот интерфейс расширяет KsoupHtmlHandler и добавляет функциональность
+ * для получения результата обработки и очистки состояния обработчика.
+ *
+ * @param R Тип результата обработки блока
+ *
+ * @see KsoupHtmlHandler для базовой функциональности обработки HTML
  */
 interface BlockHandler<R> : KsoupHtmlHandler {
+    /**
+     * Получает результат обработки блока.
+     *
+     * @return Результат обработки
+     */
     fun getResult(): R
 
+    /**
+     * Очищает состояние обработчика для повторного использования.
+     */
     fun cleanState()
 }
 
+/**
+ * Базовая реализация обработчика блоков.
+ *
+ * Предоставляет пустые реализации методов KsoupHtmlHandler,
+ * которые могут быть переопределены в наследниках.
+ *
+ * @param R Тип результата обработки блока
+ */
 abstract class BaseBlockHandler<R> : BlockHandler<R> {
     override fun onOpenTag(
         name: String,
@@ -36,7 +60,11 @@ abstract class BaseBlockHandler<R> : BlockHandler<R> {
 }
 
 /**
- * Обработчик блока имени метода
+ * Обработчик блока имени сущности.
+ *
+ * Извлекает название сущности из HTML блока.
+ *
+ * @return Пара (русское название, английское название)
  */
 class NameBlockHandler : BlockHandler<Pair<String, String>> {
     private var title = StringBuilder()
@@ -70,7 +98,7 @@ class NameBlockHandler : BlockHandler<Pair<String, String>> {
         }
     }
 
-    override fun getResult(): Pair<String, String> = Helper.readName(if (heading.isNotEmpty()) heading.trim() else title.trim())!!
+    override fun getResult(): Pair<String, String> = readName(if (heading.isNotEmpty()) heading.trim() else title.trim())
 
     override fun cleanState() {
         heading.clear()
@@ -78,10 +106,26 @@ class NameBlockHandler : BlockHandler<Pair<String, String>> {
         inHeading = false
         inTitle = false
     }
+    fun readName(text: CharSequence): Pair<String, String> {
+        if (text.isBlank()) {
+            throw IllegalArgumentException("Имя страницы должно быть заполнено")
+        }
+        val match = NAMES_PATTERN.find(text)
+
+        return if (match != null) {
+            Pair(match.groupValues[1].trim(), match.groupValues[2].trim())
+        } else {
+            Pair(text.toString(), "")
+        }
+    }
 }
 
 /**
- * Обработчик блока синтаксиса
+ * Обработчик блока синтаксиса метода.
+ *
+ * Извлекает синтаксис вызова метода из HTML блока.
+ *
+ * @return Строка с синтаксисом метода
  */
 class SyntaxBlockHandler : BaseBlockHandler<String>() {
     private val syntax = StringBuilder()
@@ -100,6 +144,17 @@ class SyntaxBlockHandler : BaseBlockHandler<String>() {
     }
 }
 
+/**
+ * Обработчик блока параметров метода.
+ *
+ * Парсит список параметров метода, извлекая для каждого параметра:
+ * - Название
+ * - Тип
+ * - Флаг необязательности
+ * - Описание
+ *
+ * @return Список информации о параметрах метода
+ */
 class ParametersBlockHandler : MarkdownHtmlHandler<List<MethodParameterInfo>>() {
     private val parameters = mutableListOf<MethodParameterInfo>()
 
@@ -198,6 +253,15 @@ class ParametersBlockHandler : MarkdownHtmlHandler<List<MethodParameterInfo>>() 
         super.cleanState()
     }
 
+    /**
+     * Перечисление типов блоков при парсинге параметров метода.
+     *
+     * Определяет текущее состояние обработки параметра:
+     * - NONE: начальное состояние
+     * - NAME: обработка имени параметра
+     * - TYPE: обработка типа параметра
+     * - DESCRIPTION: обработка описания параметра
+     */
     enum class BlockType {
         NONE,
         NAME,
@@ -207,7 +271,16 @@ class ParametersBlockHandler : MarkdownHtmlHandler<List<MethodParameterInfo>>() 
 }
 
 /**
- * Обработчик блока возвращаемого значения
+ * Обработчик блока возвращаемого значения.
+ *
+ * Парсит информацию о возвращаемом значении метода или типе свойства, извлекая:
+ * - Тип возвращаемого значения (для методов) или тип данных (для свойств)
+ * - Описание возвращаемого значения или свойства
+ *
+ * Обрабатывает структурированный контент, начинающийся с "Тип:"
+ * и заканчивающийся точкой, после которой следует описание.
+ *
+ * @return Информация о возвращаемом значении или null, если информация отсутствует
  */
 class ValueInfoBlockHandler : MarkdownHtmlHandler<ValueInfo?>() {
     private var returnValue: ValueInfo? = null
@@ -272,6 +345,14 @@ class ValueInfoBlockHandler : MarkdownHtmlHandler<ValueInfo?>() {
         blockType = BlockType.NONE
     }
 
+    /**
+     * Перечисление типов блоков при парсинге возвращаемого значения.
+     *
+     * Определяет текущее состояние обработки:
+     * - NONE: начальное состояние
+     * - TYPE: обработка типа возвращаемого значения
+     * - DESCRIPTION: обработка описания возвращаемого значения
+     */
     enum class BlockType {
         NONE,
         TYPE,
@@ -280,18 +361,36 @@ class ValueInfoBlockHandler : MarkdownHtmlHandler<ValueInfo?>() {
 }
 
 /**
- * Обработчик блока описания
+ * Обработчик блока описания.
+ *
+ * Извлекает описание сущности из HTML блока, преобразуя его в Markdown формат.
+ * Использует базовую функциональность MarkdownHtmlHandler для обработки HTML разметки.
+ *
+ * @return Описание в формате Markdown
  */
 class DescriptionBlockHandler : MarkdownHtmlHandler<String>() {
     override fun getResult() = getMarkdown()
 }
 
+/**
+ * Обработчик блока примечаний.
+ *
+ * Извлекает примечания из HTML блока, преобразуя их в Markdown формат.
+ * Используется для обработки дополнительной информации о сущности.
+ *
+ * @return Примечания в формате Markdown
+ */
 class NoteBlockHandler : MarkdownHtmlHandler<String>() {
     override fun getResult() = getMarkdown()
 }
 
 /**
- * Обработчик блока описания
+ * Обработчик блока примеров.
+ *
+ * Извлекает примеры использования из HTML блока, сохраняя структуру
+ * с переносами строк.
+ *
+ * @return Пример использования в текстовом формате
  */
 class ExampleBlockHandler : BaseBlockHandler<String>() {
     private val description = StringBuilder()
@@ -317,6 +416,14 @@ class ExampleBlockHandler : BaseBlockHandler<String>() {
     }
 }
 
+/**
+ * Обработчик блока связанных объектов.
+ *
+ * Извлекает список связанных объектов из HTML блока, содержащего ссылки.
+ * Обрабатывает теги <a> и извлекает текст ссылки и href атрибут.
+ *
+ * @return Список связанных объектов с названием и ссылкой
+ */
 class RelatedObjectsBlockHandler : BaseBlockHandler<List<RelatedObject>>() {
     private val relatedObjects = mutableListOf<RelatedObject>()
     private var linkText = StringBuilder()
@@ -366,6 +473,14 @@ class RelatedObjectsBlockHandler : BaseBlockHandler<List<RelatedObject>>() {
     }
 }
 
+/**
+ * Обработчик блока флага "только чтение".
+ *
+ * Определяет, является ли сущность доступной только для чтения,
+ * анализируя текстовый контент на наличие фразы "Только чтение".
+ *
+ * @return true, если сущность доступна только для чтения, false в противном случае
+ */
 class ReadOnlyBlockHandler : BaseBlockHandler<Boolean>() {
     private var value = false
 

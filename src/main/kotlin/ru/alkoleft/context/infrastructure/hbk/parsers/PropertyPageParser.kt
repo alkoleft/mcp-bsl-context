@@ -7,9 +7,32 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
-import java.rmi.UnexpectedException
+import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
+import ru.alkoleft.context.infrastructure.hbk.exceptions.UnknownPageBlockType
 
+/**
+ * Обработчик для парсинга страниц свойств объектов платформы 1С:Предприятие.
+ *
+ * Этот класс отвечает за извлечение и структурирование информации о свойствах
+ * из HTML страниц документации HBK. Он обрабатывает различные блоки страницы,
+ * такие как описание, тип, флаг только для чтения, связанные объекты и заметки.
+ *
+ * Поддерживаемые блоки:
+ * - Описание: подробное описание свойства и его типа
+ * - Использование: информация о том, является ли свойство только для чтения
+ * - См. также: связанные объекты
+ * - Примечание: дополнительные заметки о свойстве
+ *
+ * Особенности:
+ * - Извлечение названий на русском и английском языках
+ * - Обработка типа свойства
+ * - Определение флага только для чтения
+ * - Обработка описания функциональности
+ * - Поддержка связанных объектов и заметок
+ *
+ * @see PageProxyHandler для базовой функциональности
+ * @see PropertyInfo для структуры результата
+ */
 class PropertyPageProxyHandler : PageProxyHandler<PropertyInfo>() {
     private var nameRu = ""
     private var nameEn = ""
@@ -26,7 +49,7 @@ class PropertyPageProxyHandler : PageProxyHandler<PropertyInfo>() {
             "См. также:" -> RelatedObjectsBlockHandler()
             "Примечание:" -> NoteBlockHandler()
             "Доступность:", "Использование в версии:" -> null
-            else -> throw UnexpectedException("Неизвестный тип блока страницы описания `$blockTitle`")
+            else -> throw UnknownPageBlockType(blockTitle)
         }
 
     override fun onBlockFinished(handler: BlockHandler<*>) {
@@ -46,7 +69,7 @@ class PropertyPageProxyHandler : PageProxyHandler<PropertyInfo>() {
             is ReadOnlyBlockHandler -> readonly = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
             is NoteBlockHandler -> note = handler.getResult()
-            else -> throw UnexpectedException("Не реализована обработка парсера `$handler`")
+            else -> throw HandlerProcessingNotImplemented(handler)
         }
     }
 
@@ -72,4 +95,24 @@ class PropertyPageProxyHandler : PageProxyHandler<PropertyInfo>() {
     }
 }
 
+/**
+ * Парсер для страниц свойств объектов платформы 1С:Предприятие.
+ *
+ * Этот класс специализируется на парсинге HTML страниц документации,
+ * содержащих информацию о свойствах объектов. Он извлекает структурированную
+ * информацию о названии, типе, описании, флаге только для чтения и связанных объектах.
+ *
+ * Основные возможности:
+ * - Извлечение названий на двух языках
+ * - Обработка типа свойства
+ * - Определение флага только для чтения
+ * - Обработка описания функциональности
+ * - Поддержка связанных объектов
+ * - Обработка дополнительных заметок
+ * - Структурированное представление информации о свойстве
+ *
+ * @see PageParser для базовой функциональности парсинга
+ * @see PropertyInfo для структуры результата
+ * @see PropertyPageProxyHandler для обработки конкретных блоков
+ */
 class PropertyPageParser : PageParser<PropertyInfo>(PropertyPageProxyHandler())

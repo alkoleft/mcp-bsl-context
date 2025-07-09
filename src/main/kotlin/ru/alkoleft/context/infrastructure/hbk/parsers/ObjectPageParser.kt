@@ -7,9 +7,35 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import ru.alkoleft.context.infrastructure.hbk.pages.PageParser
-import java.rmi.UnexpectedException
+import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
+import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
 
+/**
+ * Обработчик для парсинга страниц объектов платформы 1С:Предприятие.
+ *
+ * Этот класс отвечает за извлечение и структурирование информации об объектах
+ * из HTML страниц документации HBK. Он обрабатывает основные блоки страницы,
+ * такие как описание, примеры использования, связанные объекты и заметки.
+ *
+ * Поддерживаемые блоки:
+ * - Описание: подробное описание объекта
+ * - Пример: примеры использования объекта
+ * - См. также: связанные объекты
+ * - Примечание: дополнительные заметки об объекте
+ *
+ * Игнорируемые блоки:
+ * - Свойства, Методы, События, Конструкторы: обрабатываются отдельными парсерами
+ * - Доступность, Использование в версии: служебная информация
+ *
+ * Особенности:
+ * - Извлечение названий на русском и английском языках
+ * - Обработка описания функциональности
+ * - Поддержка примеров использования
+ * - Обработка связанных объектов и заметок
+ *
+ * @see PageProxyHandler для базовой функциональности
+ * @see ObjectInfo для структуры результата
+ */
 class ObjectPageProxyHandler : PageProxyHandler<ObjectInfo>() {
     private var nameRu = ""
     private var nameEn = ""
@@ -49,7 +75,7 @@ class ObjectPageProxyHandler : PageProxyHandler<ObjectInfo>() {
             is ExampleBlockHandler -> example = handler.getResult()
             is RelatedObjectsBlockHandler -> relatedObjects = handler.getResult()
             is NoteBlockHandler -> note = handler.getResult()
-            else -> throw UnexpectedException("Не реализована обработка парсера `$handler`")
+            else -> throw HandlerProcessingNotImplemented(handler)
         }
     }
 
@@ -65,6 +91,22 @@ class ObjectPageProxyHandler : PageProxyHandler<ObjectInfo>() {
 }
 
 /**
- * Парсер для страниц объектов
+ * Парсер для страниц объектов платформы 1С:Предприятие.
+ *
+ * Этот класс специализируется на парсинге HTML страниц документации,
+ * содержащих информацию об объектах. Он извлекает структурированную
+ * информацию о названии, описании, примерах использования и связанных объектах.
+ *
+ * Основные возможности:
+ * - Извлечение названий на двух языках
+ * - Обработка описания функциональности объекта
+ * - Поддержка примеров использования
+ * - Обработка связанных объектов
+ * - Поддержка дополнительных заметок
+ * - Структурированное представление информации об объекте
+ *
+ * @see PageParser для базовой функциональности парсинга
+ * @see ObjectInfo для структуры результата
+ * @see ObjectPageProxyHandler для обработки конкретных блоков
  */
 class ObjectPageParser : PageParser<ObjectInfo>(ObjectPageProxyHandler())

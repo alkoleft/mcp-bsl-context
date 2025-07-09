@@ -1,22 +1,41 @@
-package ru.alkoleft.context.infrastructure.hbk
+/*
+ * Copyright (c) 2025 alkoleft. All rights reserved.
+ * This file is part of the mcp-bsl-context project.
+ *
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
+package ru.alkoleft.context.infrastructure.hbk.toc
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import ru.alkoleft.context.infrastructure.hbk.exceptions.TocParsingError
-import ru.alkoleft.context.infrastructure.hbk.toc.Chunk
-import ru.alkoleft.context.infrastructure.hbk.toc.NameContainer
-import ru.alkoleft.context.infrastructure.hbk.toc.NameObject
-import ru.alkoleft.context.infrastructure.hbk.toc.PeekableIterator
-import ru.alkoleft.context.infrastructure.hbk.toc.PropertiesContainer
-import ru.alkoleft.context.infrastructure.hbk.toc.Tokenizer
 
 private val logger = KotlinLogging.logger {}
 
 /**
- * Парсер для HBK файлов на чистом Kotlin
+ * Парсер для разбора структуры оглавления (Table of Contents) HBK файлов.
+ *
+ * Этот класс отвечает за парсинг бинарных данных оглавления HBK файлов
+ * платформы 1С:Предприятие. Он преобразует бинарные данные в текстовый формат
+ * и затем токенизирует и разбирает структуру оглавления.
+ *
+ * Основные возможности:
+ * - Парсинг бинарных данных оглавления
+ * - Токенизация текстового содержимого
+ * - Разбор иерархической структуры чанков
+ * - Извлечение метаданных страниц (ID, родительские связи, названия)
+ * - Обработка двуязычных названий
+ *
+ * @see Toc для представления разобранного оглавления
+ * @see Tokenizer для токенизации содержимого
+ * @see PeekableIterator для навигации по токенам
  */
-class TocParser {
+internal class TocParser {
     /**
-     * Парсит ByteArray и возвращает структуру TableOfContent
+     * Парсит бинарные данные и возвращает структуру оглавления.
+     *
+     * @param bytes Бинарные данные оглавления
+     * @return Последовательность чанков оглавления
      */
     fun parseContent(bytes: ByteArray): Sequence<Chunk> {
         logger.debug { "Чтение из ByteArray, размер: ${bytes.size}" }
@@ -25,9 +44,12 @@ class TocParser {
     }
 
     /**
-     * Парсит строку содержимого и возвращает структуру TableOfContent
+     * Парсит строку содержимого и возвращает структуру оглавления.
+     *
+     * @param content Текстовое содержимое оглавления
+     * @return Последовательность чанков оглавления
      */
-    fun parseContent(content: String): Sequence<Chunk> {
+    private fun parseContent(content: String): Sequence<Chunk> {
         logger.debug { "Токенизация содержимого..." }
         val tokens = Tokenizer.tokenize(content)
         logger.debug { "Токенов получено: ${tokens.size}" }

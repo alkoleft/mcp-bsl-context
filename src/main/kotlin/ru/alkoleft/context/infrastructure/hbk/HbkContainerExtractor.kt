@@ -18,11 +18,41 @@ import java.nio.file.Path
 
 private const val BYTES_BY_FILE_INFOS = 12 // int * 4
 
+/**
+ * Извлекает содержимое из HBK (Help Book) контейнеров платформы 1С:Предприятие.
+ *
+ * Этот класс отвечает за чтение и разбор структуры HBK файлов, которые содержат
+ * сжатую документацию платформы 1С:Предприятие. HBK файлы представляют собой
+ * бинарные контейнеры с определенной структурой заголовков и блоков данных.
+ *
+ * Основные возможности:
+ * - Чтение структуры HBK файла и извлечение метаданных
+ * - Получение списка всех сущностей (файлов) в контейнере
+ * - Извлечение содержимого конкретных сущностей по имени
+ * - Работа с бинарными буферами в little-endian порядке
+ *
+ * @see HbkContentReader для работы с извлеченным содержимым
+ * @see PlatformContextReader для полного процесса чтения контекста платформы
+ */
 class HbkContainerExtractor {
+    /**
+     * Область видимости для работы с сущностями HBK контейнера.
+     *
+     * Предоставляет доступ к извлеченным сущностям и буферу данных.
+     *
+     * @property entities Карта имен сущностей к их адресам в буфере
+     * @property buffer Буфер с данными HBK файла
+     */
     inner class EntitiesScope(
         val entities: Map<String, Int>,
         val buffer: MappedByteBuffer,
     ) {
+        /**
+         * Получает содержимое сущности по имени.
+         *
+         * @param name Имя сущности в HBK контейнере
+         * @return Массив байтов с содержимым сущности или null, если сущность не найдена
+         */
         fun getEntity(name: String): ByteArray? = entities[name]?.let { getHbkFileBody(buffer, it) }
     }
 
@@ -43,7 +73,7 @@ class HbkContainerExtractor {
         }
     }
 
-    fun entities(buffer: ByteBuffer): Map<String, Int> {
+    private fun entities(buffer: ByteBuffer): Map<String, Int> {
         val result = mutableMapOf<String, Int>()
         buffer.order(ByteOrder.LITTLE_ENDIAN)
 
