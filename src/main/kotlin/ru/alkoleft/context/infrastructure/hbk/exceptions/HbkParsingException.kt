@@ -7,7 +7,7 @@
 
 package ru.alkoleft.context.infrastructure.hbk.exceptions
 
-import ru.alkoleft.context.infrastructure.hbk.parsers.BlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.BlockHandler
 
 /**
  * Базовый класс для исключений, возникающих при разборе HBK файлов.

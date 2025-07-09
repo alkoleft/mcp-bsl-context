@@ -7,8 +7,11 @@
 
 package ru.alkoleft.context.infrastructure.hbk.toc
 
-import ru.alkoleft.context.infrastructure.hbk.DoubleLanguageString
-import ru.alkoleft.context.infrastructure.hbk.Page
+import ru.alkoleft.context.infrastructure.hbk.models.Chunk
+import ru.alkoleft.context.infrastructure.hbk.models.DoubleLanguageString
+import ru.alkoleft.context.infrastructure.hbk.models.NameContainer
+import ru.alkoleft.context.infrastructure.hbk.models.NameObject
+import ru.alkoleft.context.infrastructure.hbk.models.Page
 
 /**
  * Представляет оглавление (Table of Contents) HBK файла.

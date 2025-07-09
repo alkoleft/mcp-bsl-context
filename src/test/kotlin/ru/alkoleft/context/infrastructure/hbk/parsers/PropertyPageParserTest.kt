@@ -10,6 +10,8 @@ package ru.alkoleft.context.infrastructure.hbk.parsers
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import ru.alkoleft.context.infrastructure.hbk.models.PropertyInfo
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.PropertyPageParser
 import java.io.FileInputStream
 import java.nio.file.Paths
 import kotlin.test.assertEquals

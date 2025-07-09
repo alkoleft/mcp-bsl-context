@@ -7,9 +7,10 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.MethodPageParser
 import java.io.File
+import kotlin.test.assertEquals
 
 class MethodPageParserProxyTest {
     @Test

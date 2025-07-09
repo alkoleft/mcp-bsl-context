@@ -5,7 +5,7 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.infrastructure.hbk
+package ru.alkoleft.context.infrastructure.hbk.models
 
 /**
  * Представляет страницу документации в HBK файле.

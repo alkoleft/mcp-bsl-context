@@ -5,15 +5,7 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.infrastructure.hbk.toc
-
-/**
- * Модели данных для представления структуры HBK файла.
- *
- * Этот файл содержит классы данных, используемые для представления
- * иерархической структуры оглавления (Table of Contents) HBK файлов
- * платформы 1С:Предприятие.
- */
+package ru.alkoleft.context.infrastructure.hbk.models
 
 /**
  * Представляет чанк (фрагмент) в структуре оглавления HBK файла.

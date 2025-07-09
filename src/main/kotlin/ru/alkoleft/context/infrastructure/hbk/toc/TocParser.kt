@@ -9,6 +9,10 @@ package ru.alkoleft.context.infrastructure.hbk.toc
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import ru.alkoleft.context.infrastructure.hbk.exceptions.TocParsingError
+import ru.alkoleft.context.infrastructure.hbk.models.Chunk
+import ru.alkoleft.context.infrastructure.hbk.models.NameContainer
+import ru.alkoleft.context.infrastructure.hbk.models.NameObject
+import ru.alkoleft.context.infrastructure.hbk.models.PropertiesContainer
 
 private val logger = KotlinLogging.logger {}
 

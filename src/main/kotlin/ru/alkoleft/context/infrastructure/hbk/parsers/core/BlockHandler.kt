@@ -5,9 +5,12 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.infrastructure.hbk.parsers
+package ru.alkoleft.context.infrastructure.hbk.parsers.core
 
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
+import ru.alkoleft.context.infrastructure.hbk.models.MethodParameterInfo
+import ru.alkoleft.context.infrastructure.hbk.models.RelatedObject
+import ru.alkoleft.context.infrastructure.hbk.models.ValueInfo
 
 private val PARAMETER_NAME_PATTERN = """<([^&]+)>\s*(?:\(([^)]+)\))?""".toRegex()
 private val NAMES_PATTERN = """([^(]+)\s*\(([^)]+)\)""".toRegex()
@@ -106,6 +109,7 @@ class NameBlockHandler : BlockHandler<Pair<String, String>> {
         inHeading = false
         inTitle = false
     }
+
     fun readName(text: CharSequence): Pair<String, String> {
         if (text.isBlank()) {
             throw IllegalArgumentException("Имя страницы должно быть заполнено")

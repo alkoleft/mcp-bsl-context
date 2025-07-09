@@ -8,7 +8,9 @@
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
 import org.assertj.core.api.Assertions
-import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.EnumPageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.EnumValuePageParser
 import java.io.FileInputStream
 import java.nio.file.Paths
 import kotlin.test.Test

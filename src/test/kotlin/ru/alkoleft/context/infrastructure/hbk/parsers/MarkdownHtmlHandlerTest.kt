@@ -10,6 +10,7 @@ package ru.alkoleft.context.infrastructure.hbk.parsers
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.MarkdownHtmlHandler
 
 class MarkdownHtmlHandlerTest {
     private fun parseHtmlToMarkdown(html: String): String {

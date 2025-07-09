@@ -5,12 +5,13 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.infrastructure.hbk
+package ru.alkoleft.context.infrastructure.hbk.reader
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.commons.compress.archivers.zip.ZipFile
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel
 import ru.alkoleft.context.exceptions.PlatformContextLoadException
+import ru.alkoleft.context.infrastructure.hbk.models.Page
 import ru.alkoleft.context.infrastructure.hbk.toc.Toc
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -35,9 +36,9 @@ private val logger = KotlinLogging.logger { }
  * - Доступ к HTML файлам документации через ZIP-архив
  * - Предоставление контекста для парсинга страниц
  *
- * @see HbkContainerExtractor для извлечения данных из HBK контейнера
+ * @see HbkContainerReader для извлечения данных из HBK контейнера
  * @see Toc для работы с оглавлением
- * @see PlatformContextReader для полного процесса чтения контекста
+ * @see ru.alkoleft.context.infrastructure.hbk.PlatformContextReader для полного процесса чтения контекста
  */
 class HbkContentReader {
     /**
@@ -50,7 +51,7 @@ class HbkContentReader {
         path: Path,
         block: Context.() -> Unit,
     ) {
-        val extractor = HbkContainerExtractor()
+        val extractor = HbkContainerReader()
 
         extractor.readHbk(path) {
             val toc = Toc.parse(getInflatePackBlock(getEntity(PACK_BLOCK_NAME) as ByteArray))

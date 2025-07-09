@@ -8,9 +8,17 @@
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
 import ru.alkoleft.context.exceptions.PlatformContextLoadException
-import ru.alkoleft.context.infrastructure.hbk.HbkContentReader
-import ru.alkoleft.context.infrastructure.hbk.Page
-import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
+import ru.alkoleft.context.infrastructure.hbk.models.EnumInfo
+import ru.alkoleft.context.infrastructure.hbk.models.ObjectInfo
+import ru.alkoleft.context.infrastructure.hbk.models.Page
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.ConstructorPageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.EnumPageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.EnumValuePageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.MethodPageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.ObjectPageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.PropertyPageParser
+import ru.alkoleft.context.infrastructure.hbk.reader.HbkContentReader
 
 /**
  * Координатор парсеров для различных типов страниц HBK документации.

@@ -5,11 +5,24 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.infrastructure.hbk.parsers
+package ru.alkoleft.context.infrastructure.hbk.parsers.specialized
 
 import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
 import ru.alkoleft.context.infrastructure.hbk.exceptions.UnknownPageBlockType
-import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
+import ru.alkoleft.context.infrastructure.hbk.models.MethodInfo
+import ru.alkoleft.context.infrastructure.hbk.models.MethodSignatureInfo
+import ru.alkoleft.context.infrastructure.hbk.models.RelatedObject
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.BlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.DescriptionBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.ExampleBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.NameBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.NoteBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageProxyHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.ParametersBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.RelatedObjectsBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.SyntaxBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.ValueInfoBlockHandler
 
 /**
  * Обработчик для парсинга страниц методов объектов платформы 1С:Предприятие.

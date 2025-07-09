@@ -8,14 +8,16 @@
 package ru.alkoleft.context.infrastructure.hbk
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import ru.alkoleft.context.infrastructure.hbk.HbkContentReader.Context
-import ru.alkoleft.context.infrastructure.hbk.pages.GlobalContextPage
-import ru.alkoleft.context.infrastructure.hbk.parsers.ConstructorInfo
-import ru.alkoleft.context.infrastructure.hbk.parsers.EnumInfo
-import ru.alkoleft.context.infrastructure.hbk.parsers.MethodInfo
-import ru.alkoleft.context.infrastructure.hbk.parsers.ObjectInfo
+import ru.alkoleft.context.infrastructure.hbk.models.ConstructorInfo
+import ru.alkoleft.context.infrastructure.hbk.models.EnumInfo
+import ru.alkoleft.context.infrastructure.hbk.models.GlobalContextPage
+import ru.alkoleft.context.infrastructure.hbk.models.MethodInfo
+import ru.alkoleft.context.infrastructure.hbk.models.ObjectInfo
+import ru.alkoleft.context.infrastructure.hbk.models.Page
+import ru.alkoleft.context.infrastructure.hbk.models.PropertyInfo
 import ru.alkoleft.context.infrastructure.hbk.parsers.PlatformContextPagesParser
-import ru.alkoleft.context.infrastructure.hbk.parsers.PropertyInfo
+import ru.alkoleft.context.infrastructure.hbk.reader.HbkContentReader
+import ru.alkoleft.context.infrastructure.hbk.reader.HbkContentReader.Context
 import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
@@ -35,7 +37,7 @@ private val CATALOG_PAGE_PATTERN = """/catalog\d+\.html""".toRegex()
  * - Координация работы специализированных парсеров
  * - Сбор информации о перечислениях, объектах, методах и свойствах
  *
- * @see HbkContentReader для доступа к содержимому HBK файла
+ * @see ru.alkoleft.context.infrastructure.hbk.reader.HbkContentReader для доступа к содержимому HBK файла
  * @see PlatformContextPagesParser для парсинга различных типов страниц
  */
 class PlatformContextReader {

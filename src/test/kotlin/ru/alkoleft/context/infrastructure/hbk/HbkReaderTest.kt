@@ -8,6 +8,7 @@
 package ru.alkoleft.context.infrastructure.hbk
 
 import org.junit.jupiter.api.Test
+import ru.alkoleft.context.infrastructure.hbk.reader.HbkContentReader
 import kotlin.io.path.Path
 
 class HbkReaderTest {

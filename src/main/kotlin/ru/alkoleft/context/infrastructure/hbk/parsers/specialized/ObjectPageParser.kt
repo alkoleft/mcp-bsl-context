@@ -5,10 +5,19 @@
  * Licensed under the MIT License. See LICENSE file in the project root for full license information.
  */
 
-package ru.alkoleft.context.infrastructure.hbk.parsers
+package ru.alkoleft.context.infrastructure.hbk.parsers.specialized
 
 import ru.alkoleft.context.infrastructure.hbk.exceptions.HandlerProcessingNotImplemented
-import ru.alkoleft.context.infrastructure.hbk.parsers.PageParser
+import ru.alkoleft.context.infrastructure.hbk.models.ObjectInfo
+import ru.alkoleft.context.infrastructure.hbk.models.RelatedObject
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.BlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.DescriptionBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.ExampleBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.NameBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.NoteBlockHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageParser
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.PageProxyHandler
+import ru.alkoleft.context.infrastructure.hbk.parsers.core.RelatedObjectsBlockHandler
 
 /**
  * Обработчик для парсинга страниц объектов платформы 1С:Предприятие.

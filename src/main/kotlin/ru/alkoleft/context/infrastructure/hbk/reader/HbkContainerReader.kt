@@ -6,7 +6,7 @@
  */
 
 // За основу взято https://github.com/1c-syntax/bsl-context/blob/rnd/src/main/java/com/github/_1c_syntax/bsl/context/platform/hbk/HbkContainerExtractor.java
-package ru.alkoleft.context.infrastructure.hbk
+package ru.alkoleft.context.infrastructure.hbk.reader
 
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -32,9 +32,9 @@ private const val BYTES_BY_FILE_INFOS = 12 // int * 4
  * - Работа с бинарными буферами в little-endian порядке
  *
  * @see HbkContentReader для работы с извлеченным содержимым
- * @see PlatformContextReader для полного процесса чтения контекста платформы
+ * @see ru.alkoleft.context.infrastructure.hbk.PlatformContextReader для полного процесса чтения контекста платформы
  */
-class HbkContainerExtractor {
+class HbkContainerReader {
     /**
      * Область видимости для работы с сущностями HBK контейнера.
      *
@@ -95,7 +95,7 @@ class HbkContainerExtractor {
         val count = remainingBuffer.capacity() / BYTES_BY_FILE_INFOS
 
         // 559
-        for (i in 0 until count) {
+        for (i in 1..count) {
             val headerAddress = remainingBuffer.int
             val bodyAddress = remainingBuffer.int
             val reserved = remainingBuffer.int

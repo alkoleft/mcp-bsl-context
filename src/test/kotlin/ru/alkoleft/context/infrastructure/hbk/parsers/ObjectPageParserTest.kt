@@ -7,15 +7,14 @@
 
 package ru.alkoleft.context.infrastructure.hbk.parsers
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import ru.alkoleft.context.infrastructure.hbk.parsers.specialized.ObjectPageParser
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class ObjectPageParserTest {
-    private val logger = KotlinLogging.logger {}
     private val parser = ObjectPageParser()
 
     @Test
@@ -30,8 +29,6 @@ class ObjectPageParserTest {
             }
 
         // Assert
-        logger.debug { "Parsed object: $result" }
-
         assertEquals("COMSafeArray", result.nameRu)
         assertEquals("COMSafeArray", result.nameEn)
         assertTrue(result.description.isNotEmpty())
@@ -39,11 +36,11 @@ class ObjectPageParserTest {
 
         // Проверяем пример
         assertNotNull(result.example)
-        assertTrue(result.example!!.contains("COMSafeArray"))
+        assertTrue(result.example.contains("COMSafeArray"))
 
         // Проверяем связанные объекты
         assertNotNull(result.relatedObjects)
-        assertTrue(result.relatedObjects!!.isNotEmpty())
+        assertTrue(result.relatedObjects.isNotEmpty())
     }
 
     @Test
@@ -58,8 +55,6 @@ class ObjectPageParserTest {
             }
 
         // Assert
-        logger.debug { "Parsed object: $result" }
-
         assertEquals("ОписаниеОповещения", result.nameRu)
         assertEquals("CallbackDescription", result.nameEn)
         assertTrue(result.description.isNotEmpty())
@@ -67,11 +62,11 @@ class ObjectPageParserTest {
 
         // Проверяем пример
         assertNotNull(result.example)
-        assertTrue(result.example!!.contains("ОписаниеОповещения"))
+        assertTrue(result.example.contains("ОписаниеОповещения"))
 
         // Проверяем связанные объекты
         assertNotNull(result.relatedObjects)
-        assertTrue(result.relatedObjects!!.isNotEmpty())
+        assertTrue(result.relatedObjects.isNotEmpty())
     }
 
     @Test
@@ -86,8 +81,6 @@ class ObjectPageParserTest {
             }
 
         // Assert
-        logger.debug { "Parsed object: $result" }
-
         assertEquals("СправочникОбъект.<Имя справочника>", result.nameRu)
         assertEquals("CatalogObject.<Catalog name>", result.nameEn)
         assertTrue(result.description.isNotEmpty())
@@ -95,6 +88,6 @@ class ObjectPageParserTest {
 
         // Проверяем связанные объекты
         assertNotNull(result.relatedObjects)
-        assertTrue(result.relatedObjects!!.isNotEmpty())
+        assertTrue(result.relatedObjects.isNotEmpty())
     }
 }
