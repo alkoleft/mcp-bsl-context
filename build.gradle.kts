@@ -52,15 +52,14 @@ repositories {
 dependencies {
     // Kotlin Standard Library
     implementation(libs.bundles.kotlin)
+    implementation("org.apache.commons", "commons-compress", "1.27.1")
+    implementation("com.mohamedrejeb.ksoup:ksoup-html:0.6.0")
 
     // Spring Boot with Kotlin
     implementation(libs.bundles.spring.boot)
 
     // Spring AI MCP Server
     implementation(libs.spring.ai.starter.mcp.server)
-
-    // HBK
-    implementation(libs.bsl.context)
 
     // JSON/XML with Kotlin support
     implementation(libs.bundles.jackson)
@@ -70,9 +69,6 @@ dependencies {
 
     // Reactor Core для Spring AI MCP
     implementation(libs.reactor.core)
-
-    // ANTLR - принудительное управление версиями для исправления несоответствия
-    implementation(libs.bundles.antlr)
 
     // Tests
     testImplementation(libs.spring.boot.starter.test)

@@ -7,10 +7,10 @@
 
 package ru.alkoleft.context.infrastructure.persistent.storage
 
-import com.github._1c_syntax.bsl.context.PlatformContextGrabber
-import com.github._1c_syntax.bsl.context.api.ContextProvider
 import io.github.oshai.kotlinlogging.KotlinLogging
 import ru.alkoleft.context.exceptions.PlatformContextLoadException
+import ru.alkoleft.context.infrastructure.hbk.PlatformContextReader
+import ru.alkoleft.context.infrastructure.hbk.PlatformContextReader.Context
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -35,7 +35,10 @@ class PlatformContextLoader {
      * @throws FileNotFoundException если файл контекста не найден
      * @throws RuntimeException если не удалось загрузить контекст
      */
-    fun loadPlatformContext(platformPath: Path): ContextProvider {
+    fun loadPlatformContext(
+        platformPath: Path,
+        block: Context.() -> Unit,
+    ) {
         log.info { "${"Загрузка контекста платформы из каталога '{}'"} $platformPath" }
 
         val syntaxContextFile =
@@ -44,18 +47,14 @@ class PlatformContextLoader {
 
         log.info { "Найден файл контекста: $syntaxContextFile" }
 
-        return Files.createTempDirectory("platform-context").use { tmpDir ->
-            try {
-                val grabber = PlatformContextGrabber(syntaxContextFile, tmpDir)
-                grabber.parse()
-
-                grabber.provider.also {
-                    log.info { "Контекст платформы успешно загружен" }
-                }
-            } catch (e: Exception) {
-                log.error(e) { "Ошибка при загрузке контекста платформы" }
-                throw PlatformContextLoadException("Не удалось загрузить контекст платформы: ${e.message}", e)
+        try {
+            val reader = PlatformContextReader()
+            reader.read(syntaxContextFile, block).also {
+                log.info { "Контекст платформы успешно загружен" }
             }
+        } catch (e: Exception) {
+            log.error(e) { "Ошибка при загрузке контекста платформы" }
+            throw PlatformContextLoadException("Не удалось загрузить контекст платформы: ${e.message}", e)
         }
     }
 

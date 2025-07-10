@@ -7,11 +7,12 @@
 
 package ru.alkoleft.context.infrastructure.persistent.storage
 
-import com.github._1c_syntax.bsl.context.platform.PlatformContextType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import ru.alkoleft.context.business.entities.MethodDefinition
 import ru.alkoleft.context.business.entities.PlatformTypeDefinition
 import ru.alkoleft.context.business.entities.PropertyDefinition
+import ru.alkoleft.context.infrastructure.hbk.models.MethodInfo
+import ru.alkoleft.context.infrastructure.hbk.models.PropertyInfo
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -60,13 +61,11 @@ class PlatformContextStorage(
             return
         }
         logger.info { "Загрузка платформенного контекста..." }
-        val provider = loader.loadPlatformContext(platformPath)
-        methods = provider.globalContext.methods().map { it.toEntity() }
-        properties = provider.globalContext.properties().map { it.toEntity() }
-        types =
-            provider.contexts
-                .filterIsInstance<PlatformContextType>()
-                .map { it.toEntity() }
+        loader.loadPlatformContext(platformPath) {
+            methods = globalMethods().map(MethodInfo::toEntity).toList()
+            properties = globalProperties().map(PropertyInfo::toEntity).toList()
+            types = types().map { it.toEntity() }.toList()
+        }
         logger.info { "Загружено: методы=${methods.size}, свойства=${properties.size}, типы=${types.size}" }
         indexInitialized.set(true)
     }

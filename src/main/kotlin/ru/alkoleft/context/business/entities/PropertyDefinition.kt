@@ -16,5 +16,4 @@ data class PropertyDefinition(
     override val description: String,
     val propertyType: String,
     val isReadOnly: Boolean = false,
-    val isDeprecated: Boolean = false,
 ) : Definition
