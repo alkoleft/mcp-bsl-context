@@ -61,9 +61,6 @@ dependencies {
     // Spring AI MCP Server
     implementation(libs.spring.ai.starter.mcp.server)
 
-    // HBK
-    implementation(libs.bsl.context)
-
     // JSON/XML with Kotlin support
     implementation(libs.bundles.jackson)
 
@@ -72,9 +69,6 @@ dependencies {
 
     // Reactor Core для Spring AI MCP
     implementation(libs.reactor.core)
-
-    // ANTLR - принудительное управление версиями для исправления несоответствия
-    implementation(libs.bundles.antlr)
 
     // Tests
     testImplementation(libs.spring.boot.starter.test)

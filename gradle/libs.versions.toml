@@ -10,7 +10,6 @@ jackson = "2.15.2"
 logback = "1.5.18"
 janino = "3.1.12"
 reactor-core = "3.6.11"
-antlr = "4.9.3"
 junit-bom = "5.11.4"
 assertj = "3.8.0"
 slf4j-log4j12 = "1.7.30"
@@ -33,9 +32,6 @@ spring-boot-starter-cache = { group = "org.springframework.boot", name = "spring
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-ai-starter-mcp-server = { group = "org.springframework.ai", name = "spring-ai-starter-mcp-server" }
 
-# HBK
-bsl-context = { group = "com.github._1c_syntax.bsl", name = "bsl-context", version = "1.0-SNAPSHOT" }
-
 # Jackson
 jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
 jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
@@ -52,10 +48,6 @@ reactor-core = { group = "io.projectreactor", name = "reactor-core", version.ref
 
 # Kotlinx CLI
 kotlinx-cli = { group = "org.jetbrains.kotlinx", name = "kotlinx-cli", version.ref = "kotlinx-cli" }
-
-# ANTLR
-antlr4-runtime = { group = "org.antlr", name = "antlr4-runtime", version.ref = "antlr" }
-antlr4 = { group = "org.antlr", name = "antlr4", version.ref = "antlr" }
 
 # Testing
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
@@ -88,12 +80,6 @@ spring-boot = [
     "spring-boot-starter-cache"
 ]
 
-# ANTLR bundle
-antlr = [
-    "antlr4-runtime",
-    "antlr4"
-]
-
 # Logging bundle
 logging = [
     "logback-classic",
@@ -105,12 +91,6 @@ junit = [
     "kotlin-test-junit5",
     "junit-jupiter",
     "junit-platform-launcher"
-]
-
-# Tests bundle
-tests = [
-    "kotlin-test-junit5",
-    "spring-boot-starter-test"
 ]
 
 [plugins]

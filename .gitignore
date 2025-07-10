@@ -38,4 +38,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
 *.log
+*.gz
+*.tmp
+/.kotlin

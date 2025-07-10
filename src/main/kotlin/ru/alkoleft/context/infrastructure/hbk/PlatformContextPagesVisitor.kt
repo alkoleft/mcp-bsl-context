@@ -73,11 +73,10 @@ class PagesVisitor(
      * @param parser Парсер для обработки страниц
      */
     fun visitTypePage(page: Page): ObjectInfo {
-        logger.debug { "Анализ описания типа: ${page.title.ru}" }
         val objectInfo = parser.parseObjectPage(page)
-        var properties: Sequence<PropertyInfo>
-        var methods: Sequence<MethodInfo>
-        var constructors: Sequence<ConstructorInfo>
+        var properties: Sequence<PropertyInfo>? = null
+        var methods: Sequence<MethodInfo>? = null
+        var constructors: Sequence<ConstructorInfo>? = null
 
         for (subPage in page.children) {
             when (subPage.title.en) {
@@ -86,7 +85,11 @@ class PagesVisitor(
                 "Конструкторы" -> constructors = getConstructorsFromPage(subPage)
             }
         }
-        return objectInfo
+        return objectInfo.copy(
+            methods = methods?.toList(),
+            properties = properties?.toList(),
+            constructors = constructors?.toList(),
+        )
     }
 
     fun visitPropertiesPage(page: Page) =

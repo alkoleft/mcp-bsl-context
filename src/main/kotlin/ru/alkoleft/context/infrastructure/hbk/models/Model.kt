@@ -170,6 +170,9 @@ data class ObjectInfo(
     val example: String?,
     val note: String?,
     val relatedObjects: List<RelatedObject>?,
+    val properties: List<PropertyInfo>? = null,
+    val methods: List<MethodInfo>? = null,
+    val constructors: List<ConstructorInfo>? = null,
 )
 
 /**
