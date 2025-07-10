@@ -117,7 +117,11 @@ abstract class PageProxyHandler<R>(
         }
     }
 
-    open fun onBlockStarted(text: String, handler: BlockHandler<*>?) {}
+    open fun onBlockStarted(
+        text: String,
+        handler: BlockHandler<*>?,
+    ) {}
+
     /**
      * Вызывается при завершении обработки блока.
      *

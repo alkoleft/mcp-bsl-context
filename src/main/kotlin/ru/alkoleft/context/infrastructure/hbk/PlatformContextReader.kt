@@ -8,21 +8,14 @@
 package ru.alkoleft.context.infrastructure.hbk
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import ru.alkoleft.context.infrastructure.hbk.models.ConstructorInfo
 import ru.alkoleft.context.infrastructure.hbk.models.EnumInfo
-import ru.alkoleft.context.infrastructure.hbk.models.GlobalContextPage
-import ru.alkoleft.context.infrastructure.hbk.models.MethodInfo
 import ru.alkoleft.context.infrastructure.hbk.models.ObjectInfo
 import ru.alkoleft.context.infrastructure.hbk.models.Page
-import ru.alkoleft.context.infrastructure.hbk.models.PropertyInfo
 import ru.alkoleft.context.infrastructure.hbk.parsers.PlatformContextPagesParser
 import ru.alkoleft.context.infrastructure.hbk.reader.HbkContentReader
-import ru.alkoleft.context.infrastructure.hbk.reader.HbkContentReader.Context
 import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
-
-private val CATALOG_PAGE_PATTERN = """/catalog\d+\.html""".toRegex()
 
 /**
  * Основной класс для чтения контекста платформы 1С:Предприятие из HBK файлов.
@@ -49,129 +42,57 @@ class PlatformContextReader {
      *
      * @param path Путь к HBK файлу
      */
-    fun read(path: Path) {
+    fun read(
+        path: Path,
+        block: Context.() -> Unit,
+    ) {
         val reader = HbkContentReader()
         reader.read(path) {
-            visitPages(this, toc.pages)
+            val visitor = PagesVisitor(PlatformContextPagesParser(this))
+            val rootPages = visitor.collectPages(toc.pages)
+            val context =
+                Context(
+                    visitor = visitor,
+                    globalContextPage = rootPages.globalContext,
+                    enumPages = rootPages.enums,
+                    typePages = rootPages.types,
+                )
+            context.block()
         }
     }
 
-    private fun visitPages(
-        context: Context,
-        pages: List<Page>,
+    class Context(
+        private val visitor: PagesVisitor,
+        private val globalContextPage: Page,
+        private val enumPages: List<Page>,
+        private val typePages: List<Page>,
     ) {
-        val parser = PlatformContextPagesParser(context)
-
-        pages
-            .filter { it.htmlPath.isNotEmpty() }
-            .forEach { page ->
-                if (isGlobalContextPage(page)) {
-                    visitGlobalContextPage(page, parser)
-                } else if (isCatalogPage(page)) {
-                    visitPages(context, page.children)
-                } else if (isEnumPage(page)) {
-                    visitEnumPage(page, parser)
-                } else {
-                    visitTypePage(page, parser)
+        fun types() =
+            sequence {
+                for (page in typePages) {
+                    drillDown(page)
                 }
-            }
-    }
+            }.map(visitor::visitTypePage)
 
-    /**
-     * Обрабатывает страницу глобального контекста платформы.
-     *
-     * @param page Страница глобального контекста
-     * @param parser Парсер для обработки страниц
-     * @return Информация о глобальном контексте
-     */
-    private fun visitGlobalContextPage(
-        page: Page,
-        parser: PlatformContextPagesParser,
-    ): GlobalContextPage {
-        logger.info { "Анализ описания глобального контекста: ${page.title.ru}" }
-        var properties: List<PropertyInfo> = emptyList()
-        var methods = mutableListOf<MethodInfo>()
-        page.children.forEach {
-            when {
-                it.title.en == "Свойства" ->
-                    properties = getPropertiesFromPage(it, parser)
-                it.htmlPath.contains("/methods/") ->
-                    methods.addAll(getMethodsFromPage(it, parser))
-            }
-        }
-        return GlobalContextPage(emptyList(), emptyList())
-    }
+        fun enums() =
+            sequence {
+                for (page in enumPages) {
+                    drillDown(page)
+                }
+            }.map(visitor::visitEnumPage)
 
-    /**
-     * Обрабатывает страницу перечисления.
-     *
-     * @param page Страница перечисления
-     * @param parser Парсер для обработки страниц
-     */
-    private fun visitEnumPage(
-        page: Page,
-        parser: PlatformContextPagesParser,
-    ) {
-        val values =
-            page.children
-                .filter { it.htmlPath.contains("/properties/") }
-                .map { parser.parseEnumValuePage(it) }
-        enums += parser.parseEnumPage(page).apply { this.values.addAll(values) }
-    }
+        fun globalMethods() =
+            sequence {
+                for (page in globalContextPage.children) {
+                    if (page.htmlPath.contains("/methods/")) {
+                        yield(page)
+                    }
+                }
+            }.flatMap(visitor::visitMethodsPage)
 
-    /**
-     * Обрабатывает страницу типа (объекта).
-     *
-     * @param page Страница типа
-     * @param parser Парсер для обработки страниц
-     */
-    private fun visitTypePage(
-        page: Page,
-        parser: PlatformContextPagesParser,
-    ) {
-        logger.debug { "Анализ описания типа: ${page.title.ru}" }
-        val objectInfo = parser.parseObjectPage(page)
-        var properties: List<PropertyInfo>
-        var methods: List<MethodInfo>
-        var constructors: List<ConstructorInfo>
-
-        for (subPage in page.children) {
-            when (subPage.title.en) {
-                "Свойства" -> properties = getPropertiesFromPage(subPage, parser)
-                "Методы" -> methods = getMethodsFromPage(subPage, parser)
-                "Конструкторы" -> constructors = getConstructorsFromPage(subPage, parser)
-            }
-        }
-        objects.add(objectInfo)
-    }
-
-    private fun getPropertiesFromPage(
-        page: Page,
-        parser: PlatformContextPagesParser,
-    ) = page.children
-        .filter { it.htmlPath.contains("/properties/") } // TODO проверить на обязательность
-        .filter { !it.title.ru.startsWith("<") }
-        .map { parser.parsePropertyPage(it) }
-
-    private fun getMethodsFromPage(
-        page: Page,
-        parser: PlatformContextPagesParser,
-    ) = page.children
-        .map { parser.parseMethodPage(it) }
-
-    private fun getConstructorsFromPage(
-        page: Page,
-        parser: PlatformContextPagesParser,
-    ) = page.children
-        .filter { it.htmlPath.contains("/ctors/") }
-        .map { parser.parseConstructorPage(it) }
-
-    private fun isGlobalContextPage(page: Page): Boolean = page.htmlPath.contains("Global context.html")
-
-    private fun isCatalogPage(page: Page) = CATALOG_PAGE_PATTERN.find(page.htmlPath) != null
-
-    private fun isEnumPage(page: Page): Boolean {
-        // FIXME нужна проверка более точная
-        return page.children.any { it.htmlPath.contains("/properties/") }
+        fun globalProperties() =
+            globalContextPage.children
+                .first { it.title.en == "Свойства" }
+                .let(visitor::visitPropertiesPage)
     }
 }

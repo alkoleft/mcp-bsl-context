@@ -208,7 +208,7 @@ class ParametersBlockHandler : MarkdownHtmlHandler<List<MethodParameterInfo>>() 
             BlockType.NONE -> {
                 if (isTypeBlock(trimmed)) {
                     blockType = BlockType.TYPE
-                } else if(isTextTypeBlock(trimmed)){
+                } else if (isTextTypeBlock(trimmed)) {
                     if (trimmed.endsWith(".")) {
                         currentParameterType.append(trimmed.substring(4, trimmed.length - 1).trim())
                         blockType = BlockType.DESCRIPTION
@@ -328,7 +328,7 @@ class ValueInfoBlockHandler : MarkdownHtmlHandler<ValueInfo?>() {
             BlockType.NONE -> {
                 if (isTypeBlock(trimmed)) {
                     blockType = BlockType.TYPE
-                } else if(isTextTypeBlock(trimmed)){
+                } else if (isTextTypeBlock(trimmed)) {
                     if (trimmed.endsWith(".")) {
                         currentValueType.append(trimmed.substring(4, trimmed.length - 1).trim())
                         blockType = BlockType.DESCRIPTION
@@ -336,7 +336,8 @@ class ValueInfoBlockHandler : MarkdownHtmlHandler<ValueInfo?>() {
                         currentValueType.append(trimmed.substring(4).trim())
                         blockType = BlockType.TYPE
                     }
-                }            }
+                }
+            }
 
             BlockType.TYPE -> {
                 if (trimmed != ".") {
@@ -521,4 +522,5 @@ class ReadOnlyBlockHandler : BaseBlockHandler<Boolean>() {
 }
 
 fun isTextTypeBlock(text: String) = text != "Тип:" && text.startsWith("Тип:")
+
 fun isTypeBlock(text: String) = text == "Тип:"

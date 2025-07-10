@@ -28,4 +28,4 @@ class PlatformContextPagesParserTest {
         assertNotNull(ObjectPageParser())
         assertNotNull(PropertyPageParser())
     }
-} 
+}

@@ -50,4 +50,4 @@ class EnumValuePageParserTest {
         // Проверяем связанные объекты
         assertNull(result.relatedObjects)
     }
-} 
+}

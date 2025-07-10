@@ -38,11 +38,11 @@ class MethodPageParserTest {
         // Проверяем синтаксис
         assertEquals(
             "НачатьПолучениеФайлаССервера(<Адрес>, <ИмяФайла>, <ПараметрыДиалогаПолученияФайлов>)",
-            signature1.syntax
+            signature1.syntax,
         )
         assertEquals(
             "НачатьПолучениеФайлаССервера(<ОписаниеОповещенияОЗавершении>, <Адрес>, <ПутьКФайлу>)",
-            signature2.syntax
+            signature2.syntax,
         )
 
         // Проверяем наличие описания
@@ -58,7 +58,8 @@ class MethodPageParserTest {
             """
             Расположение данных во временном хранилище или в информационной базе.
             Параметр не должен быть пустой строкой. В противном случае будет сгенерировано сообщение об ошибке.
-        """.trimIndent(), signature1.parameters[0].description
+            """.trimIndent(),
+            signature1.parameters[0].description,
         )
 
         assertEquals("ИмяФайла", signature1.parameters[1].name)
@@ -68,7 +69,8 @@ class MethodPageParserTest {
             """
             Имя файла, которое будет предложено пользователю для сохранения файла. Пользователь может изменить имя файла.
             Значение по умолчанию: Пустая строка.
-        """.trimIndent(), signature1.parameters[1].description
+            """.trimIndent(),
+            signature1.parameters[1].description,
         )
 
         assertEquals("ПараметрыДиалогаПолученияФайлов", signature1.parameters[2].name)
@@ -76,7 +78,7 @@ class MethodPageParserTest {
         assertTrue { signature1.parameters[2].isOptional }
         assertEquals(
             "Структура, содержащая параметры диалога, который будет показан пользователю.",
-            signature1.parameters[2].description
+            signature1.parameters[2].description,
         )
 
         // Проверяем параметры второй сигнатуры
@@ -89,7 +91,8 @@ class MethodPageParserTest {
             Содержит описание процедуры, которая будет вызвана после завершения со следующими параметрами:
             * <ПолученныйФайл> – объект типа `ОписаниеПереданногоФайла`.
             * <ДополнительныеПараметры> – значение, которое было указано при создании объекта `ОписаниеОповещения`.
-        """.trimIndent(), signature2.parameters[0].description
+            """.trimIndent(),
+            signature2.parameters[0].description,
         )
 
         assertEquals("Адрес", signature2.parameters[1].name)
@@ -99,7 +102,8 @@ class MethodPageParserTest {
             """
             Расположение данных во временном хранилище или в информационной базе.
             Параметр не должен быть пустой строкой. В противном случае будет сгенерировано сообщение об ошибке.
-        """.trimIndent(), signature2.parameters[1].description
+            """.trimIndent(),
+            signature2.parameters[1].description,
         )
 
         assertEquals("ПутьКФайлу", signature2.parameters[2].name)
@@ -136,7 +140,7 @@ class MethodPageParserTest {
         // Проверяем, что есть хотя бы одна сигнатура
         assertTrue(result.signatures.isNotEmpty())
 
-            val signature = result.signatures[0]
+        val signature = result.signatures[0]
 
         // Проверяем синтаксис
         assertEquals("ПолучитьОбщийМакет(<ОбщийМакет>)", signature.syntax)
@@ -148,14 +152,14 @@ class MethodPageParserTest {
         assertFalse { signature.parameters[0].isOptional }
         assertEquals(
             "Имя общего макета, как оно задано в конфигураторе, или объект описания метаданного общего макета.",
-            signature.parameters[0].description
+            signature.parameters[0].description,
         )
 
-            // Проверка возвращаемого значения
+        // Проверка возвращаемого значения
         assertNotNull(result.returnValue)
         assertEquals(
             "ТабличныйДокумент,ТекстовыйДокумент; другой объект, который может быть макетом.",
-            result.returnValue!!.type
+            result.returnValue!!.type,
         )
         assertNotNull(result.returnValue!!.description)
     }
@@ -188,7 +192,8 @@ class MethodPageParserTest {
             Если к моменту вызова данного метода была начата транзакция, выполняющаяся в управляемом режиме блокировок, то установка значения параметра `Автоматический` приведет к возникновению исключительной ситуации, которая может быть обработана конструкцией Попытка... Исключение... КонецПопытки.
             Если для свойства конфигурации "Режим управления блокировкой данных" выбрано значение "Управляемый", то значение параметра по умолчанию `Управляемый`.
             Значение по умолчанию: `Автоматический`.
-        """.trimIndent(), signature.parameters[0].description
+            """.trimIndent(),
+            signature.parameters[0].description,
         )
 
         assertNull(result.returnValue)
@@ -231,7 +236,8 @@ class MethodPageParserTest {
             Компонент должен быть выполнен по технологии COM и зарегистрирован в реестре MS Windows.
             Эти компоненты совместимы с компонентами 1С:Предприятия 7.7.
             Внимание! Вариант метода не работает на сервере и во внешнем соединении.
-        """.trimIndent(), signature0.description
+            """.trimIndent(),
+            signature0.description,
         )
         assertEquals("ИдентификаторОбъекта", signature0.parameters[0].name)
         assertEquals("Строка", signature0.parameters[0].type)
@@ -239,7 +245,8 @@ class MethodPageParserTest {
             """
             Идентификатор объекта внешнего компонента в виде ProgID (Programmatic Identifier) реестра MS Windows (например: "AddIn.Scanner").
             Должно соответствовать информации, находящейся в регистрационной базе данных системы (Registry).
-        """.trimIndent(), signature0.parameters[0].description
+            """.trimIndent(),
+            signature0.parameters[0].description,
         )
         assertFalse { signature0.parameters[0].isOptional }
 
@@ -250,7 +257,8 @@ class MethodPageParserTest {
             Подключает компоненты, выполненные по технологии Native API и COM. 
             Компонент может храниться в информационной базе или макете конфигурации в виде двоичных данных или в ZIP-архиве.
             Для режимов запуска "Тонкий клиент" и "Веб-клиент", компонент должен быть предварительно установлен методом `УстановитьВнешнююКомпоненту`.
-        """.trimIndent(), signature1.description
+            """.trimIndent(),
+            signature1.description,
         )
         assertEquals(
             """
@@ -259,7 +267,8 @@ class MethodPageParserTest {
             * путь к файлу внешнего компонента в файловой системе (недоступно на веб-клиенте), не ZIP-архив;
             * полное имя макета, хранящего двоичные данные или ZIP-архив;
             * URL к внешнему компоненту, в виде двоичных данных или ZIP-архива, в формате, аналогичном `ПолучитьНавигационнуюСсылку`.
-            """.trimIndent(), signature1.parameters[0].description
+            """.trimIndent(),
+            signature1.parameters[0].description,
         )
 
         assertEquals("ТипПодключения", signature1.parameters[3].name)
@@ -270,7 +279,8 @@ class MethodPageParserTest {
 
             В режиме совместимости конфигурации `Версия8_3_20` и ниже, используется значение `НеИзолированно`. 
             В остальных случаях, на сервере используется `Изолированно`, а на клиенте - `НеИзолированно`.
-        """.trimIndent(), signature1.parameters[3].description
+            """.trimIndent(),
+            signature1.parameters[3].description,
         )
         assertTrue { signature1.parameters[3].isOptional }
 
@@ -283,7 +293,8 @@ class MethodPageParserTest {
             Иначе
                 Сообщить("Компонента для сканера штрихкодов не загружена");
             КонецЕсли;
-        """.trimIndent(), result.example
+            """.trimIndent(),
+            result.example,
         )
     }
 
@@ -322,7 +333,8 @@ class MethodPageParserTest {
             * ИИ (AU) - Определяет формирование классической (с использованием союза and перед прописью десятков и/или единиц внутри прописи триады) или упрощенной (без использования союза and) прописи числа. Имеет смысл и анализируется только при англоязычной локализации (en, en_XX). Возможные значения параметра:
             * НеИспользовать (DontUse) - формировать упрощенную пропись числа (используется по умолчанию);
             * Использовать (Use) - формировать классическую пропись числа.
-        """.trimIndent(), signature.parameters[1].description
+            """.trimIndent(),
+            signature.parameters[1].description,
         )
 
         assertEquals("ПараметрыПредметаИсчисления", signature.parameters[2].name)
@@ -437,7 +449,8 @@ class MethodPageParserTest {
             * "分" – фынь/дробная (одна сотая) часть;
             * 2 – количество разрядов дробной части.
             Значение по умолчанию: Пустая строка.
-        """.trimIndent(), signature.parameters[2].description
+            """.trimIndent(),
+            signature.parameters[2].description,
         )
 
         assertNotNull(result.returnValue)
@@ -457,7 +470,8 @@ class MethodPageParserTest {
             // Результат вычисления:
 
             // "Две тысячи триста сорок один доллар пятьдесят шесть центов"
-            """.trimIndent(), result.example
+            """.trimIndent(),
+            result.example,
         )
     }
 
@@ -485,7 +499,8 @@ class MethodPageParserTest {
             """
             Строка, содержащая маркеры подстановки вида: "%1..%N". Нумерация маркеров начинается с 1. N не может быть больше 10. 
             Если требуется сразу после номера подстановки написать цифру, то номер подстановки должен быть указан в скобках. Тогда строка может иметь следующий вид: "%(1)1cv8с.exe"
-        """.trimIndent(), signature.parameters[0].description
+            """.trimIndent(),
+            signature.parameters[0].description,
         )
 
         assertEquals("Значение1-Значение10", signature.parameters[1].name)
@@ -495,7 +510,8 @@ class MethodPageParserTest {
             """
             Параметры, содержащие произвольные значения, строковые представления которых должны быть подставлены в шаблон. Указываются через запятую.
             Количество значений должно совпадать с числом N из %N. Если количество значений не совпадает с числом N из %N, тогда генерируется исключительная ситуация "Недостаточно фактических параметров".
-        """.trimIndent(), signature.parameters[1].description
+            """.trimIndent(),
+            signature.parameters[1].description,
         )
 
         assertNotNull(result.returnValue)
@@ -524,7 +540,7 @@ class MethodPageParserTest {
         assertFalse { signature.parameters[0].isOptional }
         assertEquals(
             "Имя доступной в модуле переменной. В эту переменную будет помещено введенное значение даты. Начальное значение переменной будет использовано в качестве начального значения в диалоге.",
-            signature.parameters[0].description
+            signature.parameters[0].description,
         )
 
         assertEquals("Подсказка", signature.parameters[1].name)
@@ -534,7 +550,8 @@ class MethodPageParserTest {
             """
             Текст заголовка окна диалога ввода даты. Может использоваться в качестве подсказки пользователю.
             Значение по умолчанию: Пустая строка.
-        """.trimIndent(), signature.parameters[1].description
+            """.trimIndent(),
+            signature.parameters[1].description,
         )
 
         assertEquals("ЧастьДаты", signature.parameters[2].name)
@@ -544,7 +561,8 @@ class MethodPageParserTest {
             """
             Вводимая в диалоге часть (или части) даты.
             Значение по умолчанию: `ДатаВремя`.
-        """.trimIndent(), signature.parameters[2].description
+            """.trimIndent(),
+            signature.parameters[2].description,
         )
 
         assertNotNull(result.returnValue)
@@ -560,7 +578,10 @@ class MethodPageParserTest {
             
             КонецЕсли;
             """.trimIndent(),
-            result.example?.replace("\r\n", "\n")?.replace("\r", "\n")?.trim()
+            result.example
+                ?.replace("\r\n", "\n")
+                ?.replace("\r", "\n")
+                ?.trim(),
         )
     }
 }

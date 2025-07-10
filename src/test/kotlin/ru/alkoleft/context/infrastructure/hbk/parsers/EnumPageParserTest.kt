@@ -44,4 +44,15 @@ class EnumPageParserTest {
             .assertThat(info.description)
             .isEqualTo("Определяет набор картинок, используемых в конфигурации. Значения этого набора имеют тип `Картинка`.")
     }
+
+    @Test
+    fun `test parse ActionOnThePasswordRequirementsViolationOnAuthentication`() {
+        val info = parseFile("ActionOnThePasswordRequirementsViolationOnAuthentication.html", EnumPageParser())
+
+        Assertions.assertThat(info.nameRu).isEqualTo("ДействиеПриНесоответствииПароляТребованиямПриАутентификации")
+        Assertions.assertThat(info.nameEn).isEqualTo("ActionOnThePasswordRequirementsViolationOnAuthentication")
+        Assertions
+            .assertThat(info.description)
+            .isEqualTo("Содержит варианты возможных действий при несоответствии паролей требованиям в ходе аутентификации.")
+    }
 }

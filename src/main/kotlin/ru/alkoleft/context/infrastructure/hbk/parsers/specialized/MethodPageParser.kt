@@ -62,7 +62,6 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
     private var returnValue: ValueInfo? = null
     private var description: String = ""
 
-
     private val currentSignature: MethodSignatureInfo
         get() = signatures.last()
 
@@ -84,7 +83,10 @@ class MethodPageProxyHandler : PageProxyHandler<MethodInfo>() {
             }
         }
 
-    override fun onBlockStarted(text: String, handler: BlockHandler<*>?) {
+    override fun onBlockStarted(
+        text: String,
+        handler: BlockHandler<*>?,
+    ) {
         if (text.startsWith("Вариант синтаксиса:")) {
             appendNewSignature(text.substring(19).trim())
         }

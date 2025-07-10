@@ -14,6 +14,11 @@ class PlatformContextReaderTest {
     @Test
     fun read() {
         val reader = PlatformContextReader()
-        reader.read(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk"))
+        reader.read(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk")) {
+            println("Types: ${types().count()}")
+            println("Enums: ${enums().count()}")
+            println("Global methods: ${globalMethods().count()}")
+            println("Global properties: ${globalProperties().count()}")
+        }
     }
 }
