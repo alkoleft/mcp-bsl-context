@@ -91,7 +91,7 @@ java -jar build/libs/mcp-bsl-context.jar \
 ```
 
 ### Запуск в Docker c STDIO
-- В папке с `Dockerfile'ом` рядом должен быть JAR-файл.
+- В папке с `Dockerfile'ом` рядом должен быть JAR-файл (например, `mcp-bsl-context-0.2.2.jar`).
 - Собираем docker image:
 ```bash
 docker build -t 1c-platform-mcp-server-stdio -f Dockerfile.stdio --build-arg APP_VERSION=х.х.х .
@@ -117,6 +117,26 @@ docker build -t 1c-platform-mcp-server-stdio -f Dockerfile.stdio --build-arg APP
     }
 }
 ```
+Если запуск будет в Windows, то путь к папке платформы должен быть без пробелов (и с экранированием слешей, если речь о конфигурации в JSON):
+```json
+{
+    "mcpServers": {
+        "1c-platform-stdio": {
+            "command": "docker",
+            "args": [
+                "run",
+                "--rm",
+                "-i",
+                "-v",
+                "C:\\ваша_папка_без_пробелов\\bin:/app/1c-platform:ro",
+                "1c-platform-mcp-server-stdio",
+                "--platform-path",
+                "/app/1c-platform"
+            ]
+        }
+    }
+}
+```
 
 ### Запуск в Docker c проксированием в SSE
 Это вариант, если хотите запускать MCP на удаленном хосте с доступом по сети.
@@ -124,7 +144,7 @@ docker build -t 1c-platform-mcp-server-stdio -f Dockerfile.stdio --build-arg APP
 - В папке с `Dockerfile'ом` рядом должен быть JAR-файл.
 - Собираем и запускаем docker:
 ```bash
-docker build -t 1c-platform-mcp-server-sse -f Dockerfile.sse --build-arg APP_VERSION=0.1.4 .
+docker build -t 1c-platform-mcp-server-sse -f Dockerfile.sse --build-arg APP_VERSION=0.2.2 .
 
 docker run -d \
   -v ./platform:/app/1c-platform:ro \
@@ -150,9 +170,9 @@ docker run -d \
 #### Получение образа
 
 ```bash
-docker pull ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-sse
+docker pull ghcr.io/alkoleft/mcp-bsl-context:v0.2.2-sse
 # или для stdio:
-docker pull ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-stdio
+docker pull ghcr.io/alkoleft/mcp-bsl-context:v0.2.2-stdio
 ```
 
 #### Запуск STDIO-версии
@@ -160,7 +180,7 @@ docker pull ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-stdio
 ```bash
 docker run --rm -i \
   -v /path/to/1c/platform:/app/1c-platform:ro \
-  ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-stdio \
+  ghcr.io/alkoleft/mcp-bsl-context:v0.2.2-stdio \
   --platform-path /app/1c-platform
 ```
 
@@ -170,7 +190,7 @@ docker run --rm -i \
 docker run -d \
   -v /path/to/1c/platform:/app/1c-platform:ro \
   -p 8001:8000 \
-  ghcr.io/alkoleft/mcp-bsl-context:v0.2.1-sse \
+  ghcr.io/alkoleft/mcp-bsl-context:v0.2.2-sse \
   --platform-path /app/1c-platform
 ```
 

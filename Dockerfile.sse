@@ -6,10 +6,11 @@ RUN apt-get update && apt-get install -y openjdk-17-jre
 RUN npm install -g supergateway
 
 WORKDIR /app
-COPY mcp-bsl-context.jar /app/mcp-bsl-context.jar
+ARG APP_VERSION=0.2.2
+COPY mcp-bsl-context-${APP_VERSION}.jar /app/mcp-bsl-context.jar
 
 # Expose the port for Streamable HTTP
 EXPOSE 8000
 
 # Run Supergateway with the MCP server JAR
-CMD ["npx", "-y", "supergateway", "--stdio", "java -jar /app/mcp-bsl-context.jar mcp-server --platform-path /app/1c-platform --verbose", "--port", "8000"]
+CMD ["npx", "-y", "supergateway", "--stdio", "java -jar /app/mcp-bsl-context.jar --platform-path /app/1c-platform --verbose", "--port", "8000"]

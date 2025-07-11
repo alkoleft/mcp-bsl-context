@@ -1,13 +1,13 @@
 # Работает и на Intel, и на Apple Silicon
 FROM eclipse-temurin:17-jre-jammy
 
-ARG APP_VERSION=0.1.4
+ARG APP_VERSION=0.2.2
 
 WORKDIR /app
-COPY mcp-bsl-context.jar /app/mcp-bsl-context.jar
+COPY mcp-bsl-context-${APP_VERSION}.jar /app/mcp-bsl-context.jar
 
 # ENTRYPOINT чтобы STDIO сразу уходил наружу
-ENTRYPOINT ["java","-jar","/app/mcp-bsl-context.jar","mcp-server"]
+ENTRYPOINT ["java","-jar","/app/mcp-bsl-context.jar"]
 
 # Дополнительные аргументы (например --platform-path)
 # получим из docker run, поэтому CMD не задаём
