@@ -18,17 +18,23 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout bsl-context
-        uses: actions/checkout@v4
+      - name: Установка 1С:Предприятие
+        uses: 1CDevFlow/onec-setup-action@main
         with:
-          repository: 1c-syntax/bsl-context
-          path: bsl-context
-          ref: rnd
+          type: onec
+          onec_version: 8.3.27.1508
+          cache: true
+        env:
+          ONEC_USERNAME: ${{ secrets.ONEC_USERNAME }}
+          ONEC_PASSWORD: ${{ secrets.ONEC_PASSWORD }}
+        timeout-minutes: 10
 
-      - name: Build and publish bsl-context to mavenLocal
-        run: |
-          cd bsl-context
-          ./gradlew publishToMavenLocal
+      - name: Создание файла параметров тестирования
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: gradle.properties
+          contents: |
+            PLATFORM_PATH=/opt/1cv8/x86_64/8.3.27.1508
 
       - name: Checkout code
         uses: actions/checkout@v4

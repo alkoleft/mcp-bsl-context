@@ -34,7 +34,6 @@
 - Spring Boot 3.5.0
 - Spring AI 1.0.0
 - Jackson 2.15.2
-- BSL Context Parser
 - Kotlin Coroutines
 
 ## Сборка
@@ -150,8 +149,11 @@ java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.125
 - Spring AI MCP Server
 - Kotlin с Coroutines
 - Jackson (для работы с JSON)
-- [bsl-context](https://github.com/1c-syntax/bsl-context) (от [1c-syntax](https://github.com/1c-syntax/))
 - Logback для логирования
+
+## Использованные идеи
+
+Алгоритм чтения справки базируется на идеях [bsl-context](https://github.com/1c-syntax/bsl-context) (от [1c-syntax](https://github.com/1c-syntax/)).
 
 ## Лицензия
 
