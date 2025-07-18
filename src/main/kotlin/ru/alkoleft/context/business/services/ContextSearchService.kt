@@ -41,10 +41,10 @@ class ContextSearchService(
 
     fun getInfo(
         name: String,
-        type: String?,
+        type: String,
     ): Definition? {
         logger.debug { "getInfo called with name='$name', type='$type'" }
-        if (name.isBlank() || type.isNullOrBlank()) {
+        if (name.isBlank() || type.isBlank()) {
             logger.warn { "getInfo: name or type is blank" }
             throw InvalidSearchQueryException("Имя элемента и тип элемента не могут быть пустыми")
         }
