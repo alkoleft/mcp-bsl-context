@@ -1,5 +1,6 @@
 [versions]
 kotlin = "2.1.20"
+kotlin-logging = "7.0.3"
 springBoot = "3.5.0"
 springDependencyManagement = "1.1.7"
 gitVersioning = "6.4.4"
@@ -9,10 +10,10 @@ jackson = "2.15.2"
 logback = "1.5.18"
 janino = "3.1.12"
 reactor-core = "3.6.11"
-antlr = "4.9.3"
 junit-bom = "5.11.4"
 assertj = "3.8.0"
 slf4j-log4j12 = "1.7.30"
+kotlinx-cli = "0.3.6"
 
 springAi = "1.0.0"
 ktlint = "1.4.1"
@@ -23,15 +24,13 @@ jacoco = "0.8.11"
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8" }
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5" }
+kotlin-logging-jvm = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
 # Spring Boot
 spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter" }
 spring-boot-starter-cache = { group = "org.springframework.boot", name = "spring-boot-starter-cache" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-ai-starter-mcp-server = { group = "org.springframework.ai", name = "spring-ai-starter-mcp-server" }
-
-# HBK
-bsl-context = { group = "com.github._1c_syntax.bsl", name = "bsl-context", version = "1.0-SNAPSHOT" }
 
 # Jackson
 jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
@@ -47,9 +46,8 @@ janino = { group = "org.codehaus.janino", name = "janino", version.ref = "janino
 # Reactor
 reactor-core = { group = "io.projectreactor", name = "reactor-core", version.ref = "reactor-core" }
 
-# ANTLR
-antlr4-runtime = { group = "org.antlr", name = "antlr4-runtime", version.ref = "antlr" }
-antlr4 = { group = "org.antlr", name = "antlr4", version.ref = "antlr" }
+# Kotlinx CLI
+kotlinx-cli = { group = "org.jetbrains.kotlinx", name = "kotlinx-cli", version.ref = "kotlinx-cli" }
 
 # Testing
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
@@ -62,7 +60,9 @@ assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "as
 # Kotlin bundle
 kotlin = [
     "kotlin-reflect",
-    "kotlin-stdlib-jdk8"
+    "kotlin-stdlib-jdk8",
+    "kotlin-logging-jvm",
+    "kotlinx-cli"
 ]
 
 # Jackson bundle
@@ -80,12 +80,6 @@ spring-boot = [
     "spring-boot-starter-cache"
 ]
 
-# ANTLR bundle
-antlr = [
-    "antlr4-runtime",
-    "antlr4"
-]
-
 # Logging bundle
 logging = [
     "logback-classic",
@@ -97,12 +91,6 @@ junit = [
     "kotlin-test-junit5",
     "junit-jupiter",
     "junit-platform-launcher"
-]
-
-# Tests bundle
-tests = [
-    "kotlin-test-junit5",
-    "spring-boot-starter-test"
 ]
 
 [plugins]

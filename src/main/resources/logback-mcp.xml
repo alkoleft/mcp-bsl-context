@@ -25,7 +25,7 @@
 
     <!-- Логгеры -->
     <!-- ПРИМЕЧАНИЕ: Уровни логгирования могут переопределяться из application.yml или профилей -->
-    <logger name="ru.alkoleft.context.platform.mcp" level="DEBUG"/>
+    <logger name="ru.alkoleft.context" level="DEBUG"/>
     <logger name="org.springframework.ai.mcp" level="INFO"/>
     <logger name="org.springframework.boot" level="WARN"/>
     <logger name="org.springframework.cache" level="DEBUG"/>

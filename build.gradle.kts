@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.alkoleft"
-version = "0.2.0-SNAPSHOT"
+version = "0.3.0-SNAPSHOT"
 
 gitVersioning.apply {
     refs {
@@ -37,6 +37,12 @@ kotlin {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -46,15 +52,14 @@ repositories {
 dependencies {
     // Kotlin Standard Library
     implementation(libs.bundles.kotlin)
+    implementation("org.apache.commons", "commons-compress", "1.27.1")
+    implementation("com.mohamedrejeb.ksoup:ksoup-html:0.6.0")
 
     // Spring Boot with Kotlin
     implementation(libs.bundles.spring.boot)
 
     // Spring AI MCP Server
     implementation(libs.spring.ai.starter.mcp.server)
-
-    // HBK
-    implementation(libs.bsl.context)
 
     // JSON/XML with Kotlin support
     implementation(libs.bundles.jackson)
@@ -65,15 +70,13 @@ dependencies {
     // Reactor Core для Spring AI MCP
     implementation(libs.reactor.core)
 
-    // ANTLR - принудительное управление версиями для исправления несоответствия
-    implementation(libs.bundles.antlr)
-
     // Tests
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.bundles.junit)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.assertj.core)
     testImplementation(libs.slf4j.log4j12)
+    testImplementation("io.mockk:mockk:1.14.5")
 }
 
 dependencyManagement {
@@ -83,6 +86,10 @@ dependencyManagement {
 }
 
 tasks.test {
+    if (project.properties["PLATFORM_PATH"] != null) {
+        systemProperty("platform.context.path", project.properties["PLATFORM_PATH"]!!)
+    }
+
     useJUnitPlatform()
 
     testLogging {
@@ -98,7 +105,7 @@ tasks.jar {
 tasks.bootJar {
     enabled = true
     archiveClassifier.set("")
-    mainClass.set("ru.alkoleft.context.platform.McpServerApplication")
+    mainClass.set("ru.alkoleft.context.McpServerApplicationKt")
 }
 
 // Исправление зависимостей для задач распространения

@@ -1,5 +1,6 @@
 # Профиль разработки
 logging:
+  config:
   level:
-    root: DEBUG
-    ru.alkoleft.context.platform: DEBUG
+    root: INFO
+    ru.alkoleft.context: DEBUG
