@@ -76,6 +76,7 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.assertj.core)
     testImplementation(libs.slf4j.log4j12)
+    testImplementation("io.mockk:mockk:1.14.5")
 }
 
 dependencyManagement {

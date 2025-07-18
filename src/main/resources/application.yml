@@ -53,7 +53,6 @@ logging:
   # Все остальные настройки логгирования теперь берутся из logback-mcp.xml
   level:
     root: INFO
-    ru.alkoleft.context: DEBUG
 
 # Настройки кэширования
 cache:

@@ -81,9 +81,9 @@ class PlatformContextMcpController(
                 "Уточнение типа элемента: " +
                     "'method' - метод/функция, " +
                     "'property' - свойство/реквизит, " +
-                    "'type' - тип данных, null - автоматическое определение",
+                    "'type' - тип данных",
         )
-        type: String? = null,
+        type: String,
     ): String {
         logger.debug { "getInfo called with name='$name', type='$type'" }
         try {

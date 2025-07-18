@@ -3,7 +3,8 @@ logging:
   config:
   level:
     root: INFO
-    ru.alkoleft.context: DEBUG
+    org.springframework: WARN
+
 platform:
   context:
     path: ${PLATFORM_CONTEXT_PATH:/opt/1cv8/x86_64/8.3.27.1326}

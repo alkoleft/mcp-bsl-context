@@ -1,0 +1,11 @@
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Конфигурация для интеграционных тестов
+mcp:
+  server:
+    test:
+      enabled: true
+      mock-data: true
+      timeout: 5000 
