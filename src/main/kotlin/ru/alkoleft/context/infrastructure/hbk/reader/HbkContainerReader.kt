@@ -61,7 +61,7 @@ class HbkContainerReader {
         block: EntitiesScope.() -> Unit,
     ) {
         if (!path.toFile().exists()) {
-            throw IllegalArgumentException("Hbk-file not exists")
+            throw IllegalArgumentException("Hbk-file $path not exists")
         }
         FileInputStream(path.toFile()).use { stream ->
             val channel = stream.channel

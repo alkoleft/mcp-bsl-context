@@ -14,15 +14,17 @@ import kotlin.io.path.Path
 class HbkReaderTest {
     @Test
     fun read() {
+        val platformPath = System.getProperty("platform.context.path")
         val reader = HbkContentReader()
-        reader.read(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk")) {
+        reader.read(Path(platformPath, "shcntx_ru.hbk")) {
             println("Success")
         }
     }
 
 //    @Test
 //    fun readPlatformContextGrabber(@TempDir path: Path){
-//        val parser = PlatformContextGrabber(Path("/opt/1cv8/x86_64/8.3.27.1326/shcntx_ru.hbk"), path)
+//        val platformPath = System.getProperty("platform.context.path");
+//        val parser = PlatformContextGrabber(Path(platformPath, "shcntx_ru.hbk")), path)
 //        parser.parse()
 //    }
 }

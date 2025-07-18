@@ -85,6 +85,10 @@ dependencyManagement {
 }
 
 tasks.test {
+    if (project.properties["PLATFORM_PATH"] != null) {
+        systemProperty("platform.context.path", project.properties["PLATFORM_PATH"]!!)
+    }
+
     useJUnitPlatform()
 
     testLogging {
