@@ -180,6 +180,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: mcp-bsl-context-jar
+
+      - name: Copy JAR to project root for Docker
+        run: cp mcp-bsl-context.jar mcp-bsl-context-test.jar
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build Docker image (no push)
@@ -189,6 +193,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           push: false
           tags: mcp-bsl-context:test-${{ matrix.dockerfile == 'Dockerfile.sse' && 'sse' || 'stdio' }}
+          build-args: APP_VERSION=test
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

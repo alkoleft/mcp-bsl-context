@@ -111,9 +111,6 @@ jobs:
         with:
           name: mcp-bsl-context-jar
       
-      - name: Copy JAR to project root for Docker
-        run: cp mcp-bsl-context-*.jar mcp-bsl-context.jar
-      
       - name: Extract tag version
         id: tag_version
         run: |
@@ -150,6 +147,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          build-args: APP_VERSION=${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max 
