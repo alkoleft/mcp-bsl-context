@@ -62,21 +62,23 @@ class SimpleSearchEngine(
         }
     }
 
-    override fun search(searchQuery: SearchQuery): List<Definition> {
+    fun <T> initializeIfNeed(block: () -> T): T {
         synchronized(this) {
             if (hashIndexes.types.isEmpty()) {
                 initialize(context)
             }
         }
-
-        return search(searchQuery.query, searchQuery.maxResults, searchQuery.apiType)
+        return block()
     }
 
-    override fun findType(name: String) = hashIndexes.types.get(name).firstOrNull()
+    override fun search(searchQuery: SearchQuery): List<Definition> =
+        initializeIfNeed { search(searchQuery.query, searchQuery.maxResults, searchQuery.apiType) }
 
-    override fun findProperty(name: String) = hashIndexes.properties.get(name).firstOrNull()
+    override fun findType(name: String) = initializeIfNeed { hashIndexes.types.get(name).firstOrNull() }
 
-    override fun findMethod(name: String) = hashIndexes.methods.get(name).firstOrNull()
+    override fun findProperty(name: String) = initializeIfNeed { hashIndexes.properties.get(name).firstOrNull() }
+
+    override fun findMethod(name: String) = initializeIfNeed { hashIndexes.methods.get(name).firstOrNull() }
 
     override fun findTypeMember(
         type: PlatformTypeDefinition,
@@ -84,10 +86,12 @@ class SimpleSearchEngine(
     ): Definition? {
         val memberName = memberName.lowercase()
         // Поиск среди методов
-        return type.methods
-            .find { it.name.lowercase() == memberName }
-            ?: type.properties
+        return initializeIfNeed {
+            type.methods
                 .find { it.name.lowercase() == memberName }
+                ?: type.properties
+                    .find { it.name.lowercase() == memberName }
+        }
     }
 
     fun search(
