@@ -40,5 +40,9 @@ fun main(args: Array<String>) {
         System.setProperty("logging.level.root", "DEBUG")
     }
 
+    if (System.getProperty("os.name").startsWith("Windows")) {
+        System.setProperty("file.encoding", "UTF-8")
+    }
+
     runApplication<McpServerApplication>(*args)
 }

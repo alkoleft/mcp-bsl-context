@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.1.20"
 kotlin-logging = "7.0.3"
-springBoot = "3.5.0"
+springBoot = "3.5.3"
 springDependencyManagement = "1.1.7"
 gitVersioning = "6.4.4"
 gradleGitProperties = "2.4.2"
