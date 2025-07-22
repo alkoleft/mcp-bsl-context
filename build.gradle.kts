@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
     id("maven-publish")
-    id("jacoco")
+    jacoco
     alias(libs.plugins.ktlint)
 }
 
@@ -46,7 +46,6 @@ java {
 repositories {
     mavenCentral()
     mavenLocal()
-    maven(url = "https://jitpack.io")
 }
 
 dependencies {
