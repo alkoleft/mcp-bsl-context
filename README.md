@@ -59,21 +59,26 @@ java -jar mcp-bsl-context-<версия>.jar [опции]
 - `--platform-path`, `-p` - путь к каталогу установки 1С Предприятия
 - `--help`, `-h` - показать справку по использованию
 - `--verbose` - включить отладочное логирование
+- `--sse`, `-s` - запустить в SSE режиме (HTTP Server-Sent Events)
+- `--port` - порт для SSE сервера (по умолчанию 8080)
 
 **Примеры:**
 
 ```bash
-# Основной способ запуска
-java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+# STDIO режим (по умолчанию)
+java -jar mcp-bsl-context-0.3.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+
+# SSE режим (HTTP Server-Sent Events)
+java -jar mcp-bsl-context-0.3.0.jar --mode sse --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+
+# SSE режим с кастомным портом
+java -jar mcp-bsl-context-0.3.0.jar --mode sse --port 9000 --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
 
 # Сокращенная форма
-java -jar mcp-bsl-context-0.2.0.jar -p "/opt/1cv8/x86_64/8.3.25.1257"
+java -jar mcp-bsl-context-0.3.0.jar -m stdio -p "/opt/1cv8/x86_64/8.3.25.1257"
 
 # Показать справку
-java -jar mcp-bsl-context-0.2.0.jar --help
-
-# С дополнительными Spring Boot параметрами
-java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257" --server.port=8080
+java -jar mcp-bsl-context-0.3.0.jar --help
 ```
 
 ### Возможности MCP сервера
@@ -90,9 +95,12 @@ java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.125
 
 ## Интеграция с AI клиентами
 
-### Claude Desktop
+### Режимы работы
 
-Добавьте конфигурацию в `claude_desktop_config.json`:
+#### STDIO режим (по умолчанию)
+Для локального использования с AI клиентами через stdin/stdout.
+
+**Claude Desktop** - добавьте конфигурацию в `claude_desktop_config.json`:
 
 ```json
 {
@@ -110,9 +118,7 @@ java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.125
 }
 ```
 
-### Cursor IDE
-
-Создайте файл `.cursor/mcp.json` в корне проекта:
+**Cursor IDE** - создайте файл `.cursor/mcp.json` в корне проекта:
 
 ```json
 {
@@ -128,6 +134,32 @@ java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.125
     }
   }
 }
+```
+
+#### SSE режим (HTTP Server-Sent Events)
+Для сетевого доступа и веб-интерфейса.
+
+**Запуск сервера:**
+```bash
+java -jar mcp-bsl-context.jar --mode sse --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+```
+
+**Доступные эндпоинты:**
+- `http://localhost:8080/sse` - SSE соединение
+
+**Пример HTTP запроса:**
+```bash
+curl -X POST http://localhost:8080/mcp/request \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "req-1",
+    "method": "search",
+    "params": {
+      "query": "СтрНайти",
+      "type": "method",
+      "limit": 5
+    }
+  }'
 ```
 
 ## Алгоритм поиска

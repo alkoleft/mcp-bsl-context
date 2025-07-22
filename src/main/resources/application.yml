@@ -12,8 +12,6 @@ spring:
         description: "MCP сервер для поиска по API платформы 1С Предприятие"
         instructions: "MCP сервер для поиска по API платформы 1С Предприятие. Выполняет поиск по свойствам, методам и типам."
         type: SYNC
-        # Транспорт - используем STDIO для интеграции с MCP клиентами
-        stdio: true
 
         # Возможности сервера
         capabilities:
@@ -29,12 +27,6 @@ spring:
   # Отключаем баннер Spring Boot для чистого STDIO вывода
   main:
     banner-mode: off
-    web-application-type: none
-  # Отключаем автоконфигурацию веб-слоя
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
-      - org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
 
 # Настройки платформы 1С
 platform:
@@ -42,10 +34,6 @@ platform:
     # Путь к каталогу с файлами платформы (содержащий shcntx_ru.hbk)
     # Можно переопределить через переменную окружения PLATFORM_CONTEXT_PATH
     path: ${PLATFORM_CONTEXT_PATH:}
-
-# Отключаем веб-сервер (используем только STDIO)
-server:
-  port: -1
 
 # Настройки логирования
 logging:

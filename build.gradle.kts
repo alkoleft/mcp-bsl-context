@@ -54,11 +54,8 @@ dependencies {
     implementation("org.apache.commons", "commons-compress", "1.27.1")
     implementation("com.mohamedrejeb.ksoup:ksoup-html:0.6.0")
 
-    // Spring Boot with Kotlin
+    // Spring Boot
     implementation(libs.bundles.spring.boot)
-
-    // Spring AI MCP Server
-    implementation(libs.spring.ai.starter.mcp.server)
 
     // JSON/XML with Kotlin support
     implementation(libs.bundles.jackson)

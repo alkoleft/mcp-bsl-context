@@ -29,8 +29,10 @@ kotlin-logging-jvm = { group = "io.github.oshai", name = "kotlin-logging-jvm", v
 # Spring Boot
 spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter" }
 spring-boot-starter-cache = { group = "org.springframework.boot", name = "spring-boot-starter-cache" }
-spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-ai-starter-mcp-server = { group = "org.springframework.ai", name = "spring-ai-starter-mcp-server" }
+
+spring-ai-starter-mcp-server-webflux = { group = "org.springframework.ai", name = "spring-ai-starter-mcp-server-webflux" }
+spring-webflux= { group = "org.springframework", name = "spring-webflux" }
 
 # Jackson
 jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
@@ -55,6 +57,7 @@ slf4j-log4j12 = { group = "org.slf4j", name = "slf4j-log4j12", version.ref = "sl
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit-bom" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 
 [bundles]
 # Kotlin bundle
@@ -77,7 +80,10 @@ jackson = [
 # Spring Boot bundle
 spring-boot = [
     "spring-boot-starter",
-    "spring-boot-starter-cache"
+    "spring-boot-starter-cache",
+    "spring-ai-starter-mcp-server",
+    "spring-ai-starter-mcp-server-webflux",
+    "spring-webflux"
 ]
 
 # Logging bundle

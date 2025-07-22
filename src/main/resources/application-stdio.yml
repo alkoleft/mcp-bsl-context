@@ -1,0 +1,16 @@
+# Профиль для STDIO режима (по умолчанию)
+spring:
+  ai:
+    mcp:
+      server:
+        stdio: true
+  main:
+    web-application-type: none
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration
+
+server:
+  port: -1
