@@ -11,3 +11,6 @@ ENTRYPOINT ["java","-jar","/app/mcp-bsl-context.jar"]
 
 # Дополнительные аргументы (например --platform-path)
 # получим из docker run, поэтому CMD не задаём
+
+# Run the application in SSE mode
+CMD ["java", "-jar", "/app/mcp-bsl-context.jar", "--mode", "stdio", "--platform-path", "/app/1c-platform"]

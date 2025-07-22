@@ -1,16 +1,16 @@
-# Use a base image with Java and Node.js (for Supergateway)
-FROM nikolaik/python-nodejs:python3.11-nodejs23
+# Работает и на Intel, и на Apple Silicon
+FROM eclipse-temurin:17-jre-jammy
 
-# Install libs
-RUN apt-get update && apt-get install -y openjdk-17-jre
-RUN npm install -g supergateway
+ARG APP_VERSION=0.2.2
 
 WORKDIR /app
-ARG APP_VERSION=0.2.2
 COPY mcp-bsl-context-${APP_VERSION}.jar /app/mcp-bsl-context.jar
 
-# Expose the port for Streamable HTTP
-EXPOSE 8000
+# Create directory for 1C platform files
+RUN mkdir -p /app/1c-platform
 
-# Run Supergateway with the MCP server JAR
-CMD ["npx", "-y", "supergateway", "--stdio", "java -jar /app/mcp-bsl-context.jar --platform-path /app/1c-platform --verbose", "--port", "8000"]
+# Expose the port for SSE
+EXPOSE 8080
+
+# Run the application in SSE mode
+CMD ["java", "-jar", "/app/mcp-bsl-context.jar", "--mode", "sse", "--platform-path", "/app/1c-platform", "--port", "8080"]

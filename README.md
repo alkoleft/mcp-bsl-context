@@ -13,8 +13,23 @@
 - **Навигация по объектной модели** — просмотр методов и свойств конкретных типов данных
 - **Информация о конструкторах** — способы создания объектов платформы 1С
 - **Интеграция с AI** — стандартизированный протокол MCP для взаимодействия с AI-ассистентами
+- **Два режима работы** — STDIO для локальной разработки и SSE для сетевого доступа
 
 Проект использует Spring Boot и Spring AI для создания MCP сервера на базе Kotlin.
+
+## Режимы работы
+
+### STDIO режим (по умолчанию)
+- **Назначение** — локальная интеграция с MCP клиентами
+- **Транспорт** — стандартный ввод/вывод (stdin/stdout)
+- **Применение** — Claude Desktop, Cursor IDE, VS Code
+- **Преимущества** — простота настройки, низкие накладные расходы
+
+### SSE режим (Server-Sent Events)
+- **Назначение** — сетевая интеграция и веб-интерфейс
+- **Транспорт** — HTTP с Server-Sent Events
+- **Применение** — веб-клиенты, удаленные подключения, REST API
+- **Преимущества** — сетевой доступ, встроенный веб-интерфейс, real-time коммуникация
 
 ## Требования
 
@@ -59,21 +74,26 @@ java -jar mcp-bsl-context-<версия>.jar [опции]
 - `--platform-path`, `-p` - путь к каталогу установки 1С Предприятия
 - `--help`, `-h` - показать справку по использованию
 - `--verbose` - включить отладочное логирование
+- `--mode`, `-m` - режим работы: sse (HTTP Server-Sent Events) или stdio (стандартный ввод/вывод) (по умолчанию stdio)
+- `--port` - порт для SSE сервера (по умолчанию 8080)
 
 **Примеры:**
 
 ```bash
-# Основной способ запуска
-java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+# STDIO режим (по умолчанию)
+java -jar mcp-bsl-context-0.3.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+
+# SSE режим (HTTP Server-Sent Events)
+java -jar mcp-bsl-context-0.3.0.jar --mode sse --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+
+# SSE режим с кастомным портом
+java -jar mcp-bsl-context-0.3.0.jar --mode sse --port 9000 --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
 
 # Сокращенная форма
-java -jar mcp-bsl-context-0.2.0.jar -p "/opt/1cv8/x86_64/8.3.25.1257"
+java -jar mcp-bsl-context-0.3.0.jar -m stdio -p "/opt/1cv8/x86_64/8.3.25.1257"
 
 # Показать справку
-java -jar mcp-bsl-context-0.2.0.jar --help
-
-# С дополнительными Spring Boot параметрами
-java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.1257" --server.port=8080
+java -jar mcp-bsl-context-0.3.0.jar --help
 ```
 
 ### Возможности MCP сервера
@@ -86,13 +106,32 @@ java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.125
 - **getMembers** - получение полного списка всех методов и свойств для указанного типа
 - **getConstructors** - получение списка конструкторов для указанного типа
 
-Подробная документация по использованию MCP сервера доступна в [MCP_SERVER_USAGE.md](documentation/MCP_SERVER_USAGE.md).
+Подробная документация по использованию MCP сервера доступна в [MCP_SERVER_USAGE.md](documentation/README.md).
 
 ## Интеграция с AI клиентами
 
-### Claude Desktop
+### STDIO режим (по умолчанию)
+Для локального использования с AI клиентами через stdin/stdout.
 
-Добавьте конфигурацию в `claude_desktop_config.json`:
+**Claude Desktop** - добавьте конфигурацию в `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "1c-platform": {
+      "command": "java",
+      "args": [
+        "-jar", 
+        "/path/to/mcp-bsl-context.jar", 
+        "--platform-path", 
+        "/opt/1cv8/x86_64/8.3.25.1257"
+      ]
+    }
+  }
+}
+```
+
+**Cursor IDE** - создайте файл `.cursor/mcp.json` в корне проекта:
 
 ```json
 {
@@ -110,25 +149,53 @@ java -jar mcp-bsl-context-0.2.0.jar --platform-path "/opt/1cv8/x86_64/8.3.25.125
 }
 ```
 
-### Cursor IDE
+### SSE режим (HTTP Server-Sent Events)
+Для сетевого доступа и веб-интерфейса.
 
-Создайте файл `.cursor/mcp.json` в корне проекта:
+**Запуск сервера:**
+```bash
+java -jar mcp-bsl-context.jar --mode sse --platform-path "/opt/1cv8/x86_64/8.3.25.1257"
+```
 
+**Доступные эндпоинты:**
+- `http://localhost:8080/sse` - SSE соединение
+
+**Подключение через URL:**
 ```json
 {
   "mcpServers": {
-    "1c-platform": {
-      "command": "java",
-      "args": [
-        "-jar", 
-        "/path/to/mcp-bsl-context.jar", 
-        "--platform-path", 
-        "/opt/1cv8/x86_64/8.3.25.1257"
-      ]
+    "1c-platform-sse": {
+      "url": "http://localhost:8080/mcp/sse"
     }
   }
 }
 ```
+
+**Пример HTTP запроса:**
+```bash
+curl -X POST http://localhost:8080/mcp/request \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "req-1",
+    "method": "search",
+    "params": {
+      "query": "СтрНайти",
+      "type": "method",
+      "limit": 5
+    }
+  }'
+```
+
+## Документация
+
+- [Обзор](documentation/00_OVERVIEW.md) - общий обзор и быстрый старт
+- [Возможности](documentation/01_CAPABILITIES.md) - описание доступных инструментов и функций
+- [Установка и запуск](documentation/02_SETUP.md) - инструкции по установке и настройке
+- [Docker](documentation/03_DOCKER.md) - работа с Docker контейнерами
+- [Техническая документация](documentation/04_TECHNICAL.md) - архитектура и технические детали
+- [Интеграция](documentation/05_INTEGRATION.md) - интеграция с IDE и AI клиентами
+- [SSE режим](documentation/SSE_USAGE.md) - подробная документация по SSE режиму
+- [Использование MCP сервера](documentation/README.md) - базовое использование
 
 ## Алгоритм поиска
 

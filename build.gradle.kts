@@ -8,12 +8,12 @@ plugins {
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
     id("maven-publish")
-    id("jacoco")
+    jacoco
     alias(libs.plugins.ktlint)
 }
 
 group = "io.github.alkoleft"
-version = "0.3.0-SNAPSHOT"
+version = "0.3.1-SNAPSHOT"
 
 gitVersioning.apply {
     refs {
@@ -46,7 +46,6 @@ java {
 repositories {
     mavenCentral()
     mavenLocal()
-    maven(url = "https://jitpack.io")
 }
 
 dependencies {
@@ -55,11 +54,8 @@ dependencies {
     implementation("org.apache.commons", "commons-compress", "1.27.1")
     implementation("com.mohamedrejeb.ksoup:ksoup-html:0.6.0")
 
-    // Spring Boot with Kotlin
+    // Spring Boot
     implementation(libs.bundles.spring.boot)
-
-    // Spring AI MCP Server
-    implementation(libs.spring.ai.starter.mcp.server)
 
     // JSON/XML with Kotlin support
     implementation(libs.bundles.jackson)

@@ -1,0 +1,8 @@
+# Профиль для SSE режима
+spring:
+  ai:
+    mcp:
+      server:
+        stdio: false
+server:
+  port: ${SSE_PORT:8080}
