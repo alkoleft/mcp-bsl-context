@@ -1,5 +1,7 @@
 # MCP Server SSE (Server-Sent Events) Режим
 
+> 📖 **См. также:** [Основная документация](../README.md) | [Интеграция с IDE](05_INTEGRATION.md) | [Установка и запуск](02_SETUP.md)
+
 ## Обзор
 
 SSE (Server-Sent Events) режим позволяет запускать MCP сервер как HTTP сервер с поддержкой Server-Sent Events. Это обеспечивает:
@@ -15,20 +17,13 @@ SSE (Server-Sent Events) режим позволяет запускать MCP с
 
 ```bash
 # Базовый запуск
-java -jar mcp-bsl-context.jar --sse --platform-path "/path/to/1c/platform"
+java -jar mcp-bsl-context.jar --mode sse --platform-path "/path/to/1c/platform"
 
 # С кастомным портом
-java -jar mcp-bsl-context.jar --sse --port 9000 --platform-path "/path/to/1c/platform"
+java -jar mcp-bsl-context.jar --mode sse --port 9000 --platform-path "/path/to/1c/platform"
 
 # С отладочным логированием
-java -jar mcp-bsl-context.jar --sse --verbose --platform-path "/path/to/1c/platform"
-```
-
-### Скрипт запуска
-
-```bash
-# Использование готового скрипта
-./scripts/run-sse.sh "/path/to/1c/platform" 8080
+java -jar mcp-bsl-context.jar --mode sse --verbose --platform-path "/path/to/1c/platform"
 ```
 
 ### Переменные окружения
@@ -37,7 +32,7 @@ java -jar mcp-bsl-context.jar --sse --verbose --platform-path "/path/to/1c/platf
 # Настройка через переменные окружения
 export PLATFORM_CONTEXT_PATH="/path/to/1c/platform"
 export SSE_PORT=8080
-java -jar mcp-bsl-context.jar --sse
+java -jar mcp-bsl-context.jar --mode sse
 ```
 
 ## Доступные эндпоинты
@@ -271,7 +266,7 @@ grep "SSE connection" mcp-server.log
 
 1. **Увеличьте heap size JVM:**
    ```bash
-   java -Xmx2g -jar mcp-bsl-context.jar --sse
+   java -Xmx2g -jar mcp-bsl-context.jar --mode sse
    ```
 
 2. **Проверьте загрузку CPU и памяти**
@@ -287,7 +282,7 @@ java -Xms1g -Xmx4g \
   -XX:+UseG1GC \
   -XX:MaxGCPauseMillis=200 \
   -jar mcp-bsl-context.jar \
-  --sse \
+  --mode sse \
   --platform-path "/path/to/1c/platform"
 ```
 
