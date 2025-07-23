@@ -153,7 +153,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          build-args: APP_VERSION=${{ steps.meta.outputs.tags }}
+          build-args: APP_VERSION=${{ steps.tag_version.outputs.VERSION_NUMBER }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max 
